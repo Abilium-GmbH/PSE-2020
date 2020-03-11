@@ -12,4 +12,3 @@ class Resource(models.Model):
     endDate = fields.Datetime(string='End Datum')
 
 
-
