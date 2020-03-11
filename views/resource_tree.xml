@@ -1,0 +1,60 @@
+<odoo>
+  <data>
+      <record id="view_resource_tree" model="ir.ui.view">
+          <field name="name">resource.model.search</field>
+          <field name="model">resource.model</field>
+          <field name="priority" eval="8"/>
+          <field name="arch" type="xml">
+              <tree string="Resrouce">
+                  <field name="project"/>
+                  <field name="employee"/>
+                  <field name="workload"/>
+                  <field name="startDate"/>
+                  <field name="endDate"/>
+              </tree>
+          </field>
+      </record>
+
+      <record id="view_resource_form" model="ir.ui.view">
+          <field name="name">resource.model.form</field>
+          <field name="model">resource.model</field>
+          <field name="priority" eval="8"/>
+          <field name="arch" type="xml">
+              <form string="Resrouce">
+                  <sheet>
+                      <notebook colspan="4">
+                          <page name="add_resource" string="Ressource">
+                              <group col="4" colspan="4" name="resrouce_detail">
+                                  <field name="project" widget="selection"/>
+                                  <field name="employee" widget="selection"/>
+                                  <field name="workload"/>
+                                  <field name="startDate"/>
+                                  <field name="endDate"/>
+                              </group>
+                          </page>
+                      </notebook>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+
+
+
+
+
+      <record model="ir.actions.act_window" id="action_view_resource">
+          <field name="name">Resources</field>
+          <field name="res_model">resource.model</field>
+          <field name="view_mode">tree,form</field>
+          <field name="domain">[]</field>
+          <field name="help" type="html">
+              <p class="oe_view_nocontent_create">Create</p>
+          </field>
+          <field name="view_id" ref="view_resource_tree"/>
+      </record>
+
+      <menuitem id="menu_resource" name="Resource Planning"/>
+      <menuitem id="menu_resource_test" name="Leistungen" parent="menu_resource"
+                action="action_view_resource"/>
+    </data>
+</odoo>
