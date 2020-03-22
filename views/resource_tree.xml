@@ -9,8 +9,8 @@
                   <field name="project"/>
                   <field name="employee"/>
                   <field name="workload"/>
-                  <field name="startDate"/>
-                  <field name="endDate"/>
+                  <field name="start_date"/>
+                  <field name="end_date"/>
               </tree>
           </field>
       </record>
@@ -28,8 +28,8 @@
                                   <field name="project" widget="selection"/>
                                   <field name="employee" widget="selection"/>
                                   <field name="workload"/>
-                                  <field name="startDate"/>
-                                  <field name="endDate"/>
+                                  <field name="start_date"/>
+                                  <field name="end_date"/>
                               </group>
                           </page>
                       </notebook>
@@ -54,7 +54,7 @@
       </record>
 
       <menuitem id="menu_resource" name="Resource Planning"/>
-      <menuitem id="menu_resource_test" name="Leistungen" parent="menu_resource"
+      <menuitem id="menu_resource_test" name="Resources" parent="menu_resource"
                 action="action_view_resource"/>
     </data>
 </odoo>

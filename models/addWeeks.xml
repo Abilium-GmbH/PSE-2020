@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        [$ foreach my $i (1..5) $]
+        <record model="week.model" id="[$i]">
+            <field name="week_num">[$i]</field>
+        </record>
+        [$ endforeach $]
+
+    </data>
+</odoo>

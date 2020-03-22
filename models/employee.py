@@ -3,7 +3,7 @@ from odoo import models, fields
 
 class Employee(models.Model):
     _inherit = 'hr.employee'
-    total_workload_planed = fields.Integer(compute='_calculate_planed', string="Total")
+    total_workload_planed = fields.Integer(compute='_calculate_planed', string="Total", store=True)
 
     def _calculate_planed(self):
         for employee in self:

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_week_tree" model="ir.ui.view">
+            <field name="name">Weeks</field>
+            <field name="model">week.model</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <tree string="weeks">
+                    <field name="week_num"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_view_week">
+            <field name="name">Weeks</field>
+            <field name="res_model">week.model</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="view_week_tree"/>
+        </record>
+
+        <menuitem id="menu_leistung_week" name="Weeks" parent="menu_resource"
+                action="action_view_week"/>
+        
+
+    </data>
+</odoo>
