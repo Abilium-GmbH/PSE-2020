@@ -31,7 +31,7 @@ class Resource(models.Model):
         return rec
 
     def get_weeks(self, start_date, end_date, rec):
-        start = self.env['leistung.model'].search([])
+        start = self.env['resource.model'].search([])
         if start:
             min_date = min(start.mapped('start_date'))
             max_date = max(start.mapped('end_date'))
