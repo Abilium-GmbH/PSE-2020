@@ -16,18 +16,34 @@ class Resource(models.Model):
         weeks = self.env['week.model']
         return weeks.create(week)
 
-    # Creating the "missing" week models for a project
+    @api.model_create_multi
+    def add_weekly_resource(self, values):
+        weekly_resource = self.env['weekly_resource.model']
+        return weekly_resource.create(values)
+
+
+    # Constructor
+    # Initiates the creation of missing week.models
+    # Initiates the creation of corresponding weekly_resource.models
     # TODO: Optimize week-representation (e.g. yyyy, W+weekNumber)
     # TODO: Optimize storing/loading the week model to/from the database so they can be displayed in chronological order
     @api.model
     def create(self, values):
+        # Create resource.model
         rec = super(Resource, self).create(values)
-        week_data = rec.get_weeks(rec.start_date, rec.end_date, rec)
 
+        # Create week.model
+        week_data = rec.get_weeks(rec.start_date, rec.end_date, rec)
         for week in week_data:
             exists = self.env['week.model'].search([('week_num', '=', week['week_num'])])
             if not exists:
                 rec.add_weeks_object(week)
+
+            # Create weekly_resource.model
+            #TODO: Determine data to be passed on to weekly_resource.model
+            week_num = week['week_num']
+            values = {'week': week_num, 'resource_id': rec.id}
+            rec.add_weekly_resource(values)
         return rec
 
     def get_weeks(self, start_date, end_date, rec):
@@ -60,3 +76,14 @@ class Resource(models.Model):
 
     def get_first_week(self):
         start = datetime.date.min
+
+
+class WeeklyResource(models.Model):
+    _name = "weekly_resource.model"
+    week = fields.Integer(string='Week')
+    resource_id = fields.Integer(string='Resource')
+
+    #TODO: Try to create weekly resources using Many2one-fields
+    # week_num = fields.Many2one('weeks.model', "Week")
+    # resource_id = fields.Many2one('resource.model', 'Resource', ondelete="cascade")
+
