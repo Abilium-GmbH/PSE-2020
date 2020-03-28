@@ -43,7 +43,7 @@ class Resource(models.Model):
         # Create week.model
         week_data = rec.get_weeks(rec.start_date, rec.end_date, rec)
         for week in week_data:
-            exists = self.env['week.model'].search([('week_num', '=', week['week_num'])])
+            exists = self.env['week.model'].search([['week_num', '=', week['week_num']],['year', '=', week['year']]])
             if not exists:
                 rec.add_weeks_object(week)
 
@@ -57,36 +57,63 @@ class Resource(models.Model):
 
             if rec.start_date < min_date:
                 start_week = rec.start_date.isocalendar()[1]
+                start_year = rec.start_date.isocalendar()[0]
             else:
                 start_week = min_date.isocalendar()[1]
+                start_year = min_date.isocalendar()[0]
 
             if rec.end_date > max_date:
                 end_week = rec.end_date.isocalendar()[1]
+                end_year = rec.end_date.isocalendar()[0]
             else:
                 end_week = max_date.isocalendar()[1]
+                end_year = max_date.isocalendar()[0]
         else:
             start_week = rec.start_date.isocalendar()[1]
+            start_year = rec.start_date.isocalendar()[0]
             end_week = rec.end_date.isocalendar()[1]
+            end_year = rec.end_date.isocalendar()[0]
 
+        j = start_year
         i = start_week
         week_data_array = []
-        while i <= end_week:
-            week_data = {}
-            week_data['week_num'] = i
-            week_data_array = week_data_array + [week_data]
-            i = i + 1
+        while j <= end_year:
+            if j == end_year:
+                end_week_j = end_week
+            else:
+                end_week_j = datetime.date(j, 12, 31).isocalendar()[1]
+            while i <= end_week_j:
+                week_data = {}
+                week_data['week_num'] = i
+                week_data['year'] = j
+                week_data_array = week_data_array + [week_data]
+                i = i + 1
+            j = j + 1
+            i = 1
         return week_data_array
 
     def get_project_weeks(self, start_date, end_date, rec):
         start_week = rec.start_date.isocalendar()[1]
+        start_year = rec.start_date.isocalendar()[0]
         end_week = rec.end_date.isocalendar()[1]
+        end_year = rec.end_date.isocalendar()[0]
+
+        j = start_year
         i = start_week
         week_data_array = []
-        while i <= end_week:
-            week_data = {}
-            week_data['week_num'] = i
-            week_data_array = week_data_array + [week_data]
-            i = i + 1
+        while j <= end_year:
+            if j == end_year:
+               end_week_j = end_week
+            else:
+               end_week_j = datetime.date(j, 12, 31).isocalendar()[1]
+            while i <= end_week_j:
+                week_data = {}
+                week_data['week_num'] = i
+                week_data['year'] = j
+                week_data_array = week_data_array + [week_data]
+                i = i + 1
+            j = j + 1
+            i = 1
         return week_data_array
 
     def get_first_week(self):
