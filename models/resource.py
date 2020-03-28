@@ -32,6 +32,14 @@ class Resource(models.Model):
         # Create resource.model
         rec = super(Resource, self).create(values)
 
+        # Create weekly_resource.xml.model
+        # TODO: Determine data to be passed on to weekly_resource.model
+        project_week_data = rec.get_project_weeks(rec.start_date, rec.end_date, rec)
+        for week in project_week_data:
+            week_num = week['week_num']
+            values = {'week': week_num, 'resource_id': rec.id}
+            rec.add_weekly_resource(values)
+
         # Create week.model
         week_data = rec.get_weeks(rec.start_date, rec.end_date, rec)
         for week in week_data:
@@ -39,11 +47,6 @@ class Resource(models.Model):
             if not exists:
                 rec.add_weeks_object(week)
 
-            # Create weekly_resource.model
-            #TODO: Determine data to be passed on to weekly_resource.model
-            week_num = week['week_num']
-            values = {'week': week_num, 'resource_id': rec.id}
-            rec.add_weekly_resource(values)
         return rec
 
     def get_weeks(self, start_date, end_date, rec):
@@ -74,14 +77,27 @@ class Resource(models.Model):
             i = i + 1
         return week_data_array
 
+    def get_project_weeks(self, start_date, end_date, rec):
+        start_week = rec.start_date.isocalendar()[1]
+        end_week = rec.end_date.isocalendar()[1]
+        i = start_week
+        week_data_array = []
+        while i <= end_week:
+            week_data = {}
+            week_data['week_num'] = i
+            week_data_array = week_data_array + [week_data]
+            i = i + 1
+        return week_data_array
+
     def get_first_week(self):
         start = datetime.date.min
 
 
 class WeeklyResource(models.Model):
     _name = "weekly_resource.model"
+    _inherits = {'resource.model': 'resource_id'}
     week = fields.Integer(string='Week')
-    resource_id = fields.Integer(string='Resource')
+    resource_id = fields.Many2one('resource.model', 'Resource Id', ondelete="cascade")
 
     #TODO: Try to create weekly resources using Many2one-fields
     # week_num = fields.Many2one('weeks.model', "Week")
