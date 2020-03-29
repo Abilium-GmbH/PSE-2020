@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_weekly_tree" model="ir.ui.view">
+            <field name="name">weekly_resource.tree</field>
+            <field name="model">weekly_resource.model</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <tree string="Resource">
+                    <field name="week"/>
+                    <field name="resource_id"/>
+                    <field name="employee"/>
+                    <field name="project"/>
+                    <field name="workload"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_view_weekly">
+            <field name="name">Weekly Resources</field>
+            <field name="res_model">weekly_resource.model</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[]</field>
+        </record>
+
+         <menuitem id="menu_weekly" name="Weekly Resources" parent="menu_resource"
+                  action="action_view_weekly"/>
+
+    </data>
+</odoo>

@@ -126,6 +126,7 @@ class WeeklyResource(models.Model):
     week = fields.Integer(string='Week')
     resource_id = fields.Many2one('resource.model', 'Resource Id', ondelete="cascade")
 
+
     #TODO: Try to create weekly resources using Many2one-fields
     # week_num = fields.Many2one('weeks.model', "Week")
     # resource_id = fields.Many2one('resource.model', 'Resource', ondelete="cascade")

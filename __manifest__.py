@@ -32,7 +32,8 @@
         'views/resource_tree.xml',
         'views/projects.xml',
         'views/employees.xml',
-        'views/weeks.xml'
+        'views/weeks.xml',
+        'views/weekly_resource.xml'
     ],
     # only loaded in demonstration mode
     'demo': [],
