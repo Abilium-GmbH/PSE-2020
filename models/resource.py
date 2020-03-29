@@ -34,14 +34,13 @@ class Resource(models.Model):
     # Initiates the creation of missing week.models
     # Initiates the creation of corresponding weekly_resource.models
     # TODO: Optimize week-representation (e.g. yyyy, W+weekNumber)
-    # TODO: Optimize storing/loading the week model to/from the database so they can be displayed in chronological order
     @api.model
     def create(self, values):
         # Create resource.model
         rec = super(Resource, self).create(values)
 
         # Create weekly_resource.xml.model
-        # TODO: Determine data to be passed on to weekly_resource.model
+        # TODO: Determine data to be passed on to weekly_resource.model --> week-model?
         project_week_data = rec.get_project_weeks(rec.start_date, rec.end_date, rec)
         for week in project_week_data:
             week_num = week['week_num']
@@ -82,6 +81,7 @@ class Resource(models.Model):
             end_week = rec.end_date.isocalendar()[1]
             end_year = rec.end_date.isocalendar()[0]
 
+        # TODO: Does this work around New Year?
         j = start_year
         i = start_week
         week_data_array = []
@@ -131,11 +131,7 @@ class Resource(models.Model):
 class WeeklyResource(models.Model):
     _name = "weekly_resource.model"
     _inherits = {'resource.model': 'resource_id'}
+    # TODO: Inherits also week.model?
     week = fields.Integer(string='Week')
     resource_id = fields.Many2one('resource.model', 'Resource Id', ondelete="cascade")
-
-
-    #TODO: Try to create weekly resources using Many2one-fields
-    # week_num = fields.Many2one('weeks.model', "Week")
-    # resource_id = fields.Many2one('resource.model', 'Resource', ondelete="cascade")
 
