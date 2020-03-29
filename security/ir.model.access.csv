@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_resource,Manager,model_resource_model,resource_manager,1,1,1,1
 access_resource_employee,Manager,model_hr_employee,resource_manager,1,1,1,1
 access_resource_project,Manager,model_project_project,resource_manager,1,1,1,1
+access_resource_weekly_resource,Manager,model_weekly_resource_model,resource_manager,1,1,1,1

@@ -63,5 +63,25 @@
         <menuitem id="menu_resource" name="Resource Planning"/>
         <menuitem id="menu_resource_test" name="Resources" parent="menu_resource"
                   action="action_view_resource"/>
+
+        <record model="ir.ui.view" id="view_weekly_resource_tree">
+            <field name="name">weekly_resource.model.tree</field>
+            <field name="model">weekly_resource.model</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="week"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_view_weekly_resource">
+            <field name="name">Weekly Resource</field>
+            <field name="res_model">weekly_resource.model</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <menuitem id="menu_weekly_resource_test" name="Weekly Resource" parent="menu_resource"
+                  action="action_view_weekly_resource"/>
+
     </data>
 </odoo>

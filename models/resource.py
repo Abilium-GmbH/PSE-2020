@@ -11,6 +11,14 @@ class Resource(models.Model):
     start_date = fields.Datetime(string='Start Date')
     end_date = fields.Datetime(string='End Date')
 
+    @api.onchange('workload')
+    def verify_workload(self):
+        if self.workload > 100:
+            return {'warning': {
+                'title': "Workload too high",
+                'message': "The given workload is too high for an employee",
+            }, }
+
     @api.model_create_multi
     def add_weeks_object(self, week):
         weeks = self.env['week.model']
