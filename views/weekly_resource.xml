@@ -16,10 +16,23 @@
             </field>
         </record>
 
+        <record id="view_weekly_pivot" model="ir.ui.view">
+            <field name="name">weekly_resource.pivot</field>
+            <field name="model">weekly_resource.model</field>
+            <field name="arch" type="xml">
+                <pivot string="Resource Pivot">
+                    <field name="week" type="col"/>
+                    <field name="workload" type="measure"/>
+                    <field name="employee" type="row"/>
+                    <field name="resource_id" type="row"/>
+                </pivot>
+            </field>
+        </record>
+
         <record model="ir.actions.act_window" id="action_view_weekly">
             <field name="name">Weekly Resources</field>
             <field name="res_model">weekly_resource.model</field>
-            <field name="view_mode">tree</field>
+            <field name="view_mode">tree,pivot</field>
             <field name="domain">[]</field>
         </record>
 
