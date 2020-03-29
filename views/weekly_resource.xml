@@ -24,7 +24,7 @@
                     <field name="week" type="col"/>
                     <field name="workload" type="measure"/>
                     <field name="employee" type="row"/>
-                    <field name="resource_id" type="row"/>
+                    <field name="project" type="row"/>
                 </pivot>
             </field>
         </record>
