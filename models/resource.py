@@ -11,6 +11,31 @@ class Resource(models.Model):
     start_date = fields.Datetime(string='Start Date')
     end_date = fields.Datetime(string='End Date')
 
+    # Constructor
+    # Initiates the creation of missing week.models
+    # Initiates the creation of corresponding weekly_resource.models
+    @api.model
+    def create(self, values):
+        # Create resource.model
+        rec = super(Resource, self).create(values)
+
+        # Create week.model
+        week_data = rec.get_weeks(rec.start_date, rec.end_date, rec)
+        for week in week_data:
+            exists = self.env['week.model'].search([['week_num', '=', week['week_num']],['year', '=', week['year']]])
+            if not exists:
+                rec.add_weeks_object(week)
+
+        # Create weekly_resource.model
+        # TODO: Determine data to be passed on to weekly_resource.model --> week-model?
+        project_week_data = rec.get_project_weeks(rec.start_date, rec.end_date, rec)
+        for week in project_week_data:
+            week_num = week['week_num']
+            values = {'week': week_num, 'resource_id': rec.id}
+            rec.add_weekly_resource(values)
+
+        return rec
+
     @api.onchange('workload')
     def verify_workload(self):
         if self.workload > 100:
@@ -29,32 +54,6 @@ class Resource(models.Model):
         weekly_resource = self.env['weekly_resource.model']
         return weekly_resource.create(values)
 
-
-    # Constructor
-    # Initiates the creation of missing week.models
-    # Initiates the creation of corresponding weekly_resource.models
-    # TODO: Optimize week-representation (e.g. yyyy, W+weekNumber)
-    @api.model
-    def create(self, values):
-        # Create resource.model
-        rec = super(Resource, self).create(values)
-
-        # Create weekly_resource.xml.model
-        # TODO: Determine data to be passed on to weekly_resource.model --> week-model?
-        project_week_data = rec.get_project_weeks(rec.start_date, rec.end_date, rec)
-        for week in project_week_data:
-            week_num = week['week_num']
-            values = {'week': week_num, 'resource_id': rec.id}
-            rec.add_weekly_resource(values)
-
-        # Create week.model
-        week_data = rec.get_weeks(rec.start_date, rec.end_date, rec)
-        for week in week_data:
-            exists = self.env['week.model'].search([['week_num', '=', week['week_num']],['year', '=', week['year']]])
-            if not exists:
-                rec.add_weeks_object(week)
-
-        return rec
 
     def get_weeks(self, start_date, end_date, rec):
         start = self.env['resource.model'].search([])
@@ -81,7 +80,7 @@ class Resource(models.Model):
             end_week = rec.end_date.isocalendar()[1]
             end_year = rec.end_date.isocalendar()[0]
 
-        # TODO: Does this work around New Year?
+        # TODO: Refactor to avoid duplicate code
         j = start_year
         i = start_week
         week_data_array = []
@@ -106,6 +105,7 @@ class Resource(models.Model):
         end_week = rec.end_date.isocalendar()[1]
         end_year = rec.end_date.isocalendar()[0]
 
+        # TODO: Refactor to avoid duplicate code
         j = start_year
         i = start_week
         week_data_array = []
@@ -123,9 +123,6 @@ class Resource(models.Model):
             j = j + 1
             i = 1
         return week_data_array
-
-    def get_first_week(self):
-        start = datetime.date.min
 
 
 class WeeklyResource(models.Model):
