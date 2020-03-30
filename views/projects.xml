@@ -1,3 +1,5 @@
+<!-- Goal of first iteration -->
+<!-- File not used currently  -->
 <odoo>
     <data>
         <record id="view_project_tree" model="ir.ui.view">

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Goal of first iteration -->
+<!-- File not used currently -->
 <odoo>
     <data>
         <record id="view_employee_tree" model="ir.ui.view">

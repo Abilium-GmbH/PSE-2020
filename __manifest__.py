@@ -30,8 +30,6 @@
         'security/security.xml',
         'security/ir.model.access.csv',
         'views/resource_tree.xml',
-        'views/projects.xml',
-        'views/employees.xml',
         'views/weeks.xml',
         'views/weekly_resource.xml'
     ],
