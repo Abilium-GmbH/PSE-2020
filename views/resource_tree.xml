@@ -37,22 +37,10 @@
             </field>
         </record>
 
-        <record id="view_resource_pivot" model="ir.ui.view">
-            <field name="name">resource.model.pivot</field>
-            <field name="model">resource.model</field>
-            <field name="arch" type="xml">
-                <pivot string="Resource Pivot View">
-                    <field name="employee" type="row"/>
-                    <field name="project" type="row"/>
-                    <field name="start_date" interval="week" type="col"/>
-                </pivot>
-            </field>
-        </record>
-
         <record model="ir.actions.act_window" id="action_view_resource">
             <field name="name">Resources</field>
             <field name="res_model">resource.model</field>
-            <field name="view_mode">tree,form,pivot</field>
+            <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">Create/Edit</p>
