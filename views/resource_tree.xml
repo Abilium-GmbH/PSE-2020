@@ -55,7 +55,7 @@
             <field name="view_mode">tree,form,pivot</field>
             <field name="domain">[]</field>
             <field name="help" type="html">
-                <p class="oe_view_nocontent_create">Create</p>
+                <p class="oe_view_nocontent_create">Create/Edit</p>
             </field>
             <field name="view_id" ref="view_resource_tree"/>
         </record>
