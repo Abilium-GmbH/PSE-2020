@@ -32,7 +32,7 @@
         <record model="ir.actions.act_window" id="action_view_weekly">
             <field name="name">Weekly Resources</field>
             <field name="res_model">weekly_resource.model</field>
-            <field name="view_mode">tree,pivot</field>
+            <field name="view_mode">pivot,tree</field>
             <field name="domain">[]</field>
         </record>
 
