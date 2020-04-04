@@ -22,7 +22,7 @@ class Resource(models.Model):
         # Create week.model
         week_data = rec.get_weeks(rec.start_date, rec.end_date, rec)
         for week in week_data:
-            exists = self.env['week.model'].search([['week_num', '=', week['week_num']],['year', '=', week['year']]])
+            exists = self.env['week.model'].search([['week_num', '=', week['week_num']], ['year', '=', week['year']]])
             if not exists:
                 rec.add_weeks_object(week)
 
@@ -36,14 +36,6 @@ class Resource(models.Model):
 
         return rec
 
-    @api.onchange('workload')
-    def verify_workload(self):
-        if self.workload > 100:
-            return {'warning': {
-                'title': "Workload too high",
-                'message': "The given workload is too high for an employee",
-            }, }
-
     @api.model_create_multi
     def add_weeks_object(self, week):
         weeks = self.env['week.model']
@@ -53,7 +45,6 @@ class Resource(models.Model):
     def add_weekly_resource(self, values):
         weekly_resource = self.env['weekly_resource.model']
         return weekly_resource.create(values)
-
 
     def get_weeks(self, start_date, end_date, rec):
         start = self.env['resource.model'].search([])
@@ -80,7 +71,18 @@ class Resource(models.Model):
             end_week = rec.end_date.isocalendar()[1]
             end_year = rec.end_date.isocalendar()[0]
 
-        # TODO: Refactor to avoid duplicate code
+        week_data_array = rec.get_week_data(start_week, start_year, end_week, end_year)
+        return week_data_array
+
+    def get_project_weeks(self, start_date, end_date, rec):
+        start_week = rec.start_date.isocalendar()[1]
+        start_year = rec.start_date.isocalendar()[0]
+        end_week = rec.end_date.isocalendar()[1]
+        end_year = rec.end_date.isocalendar()[0]
+        week_data_array = rec.get_week_data(start_week, start_year, end_week, end_year)
+        return week_data_array
+
+    def get_week_data(self, start_week, start_year, end_week, end_year):
         j = start_year
         i = start_week
         week_data_array = []
@@ -99,30 +101,14 @@ class Resource(models.Model):
             i = 1
         return week_data_array
 
-    def get_project_weeks(self, start_date, end_date, rec):
-        start_week = rec.start_date.isocalendar()[1]
-        start_year = rec.start_date.isocalendar()[0]
-        end_week = rec.end_date.isocalendar()[1]
-        end_year = rec.end_date.isocalendar()[0]
-
-        # TODO: Refactor to avoid duplicate code
-        j = start_year
-        i = start_week
-        week_data_array = []
-        while j <= end_year:
-            if j == end_year:
-               end_week_j = end_week
-            else:
-               end_week_j = datetime.date(j, 12, 31).isocalendar()[1]
-            while i <= end_week_j:
-                week_data = {}
-                week_data['week_num'] = i
-                week_data['year'] = j
-                week_data_array = week_data_array + [week_data]
-                i = i + 1
-            j = j + 1
-            i = 1
-        return week_data_array
+    # Alert when trying to assign a workload of more than 100%
+    @api.onchange('workload')
+    def verify_workload(self):
+        if self.workload > 100:
+            return {'warning': {
+                'title': "Workload too high",
+                'message': "The given workload is too high for an employee",
+            }, }
 
 
 class WeeklyResource(models.Model):
@@ -131,4 +117,3 @@ class WeeklyResource(models.Model):
     # TODO: Inherits also week.model?
     week = fields.Integer(string='Week')
     resource_id = fields.Many2one('resource.model', 'Resource Id', ondelete="cascade")
-

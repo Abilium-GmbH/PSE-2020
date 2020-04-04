@@ -15,7 +15,6 @@
                 </tree>
             </field>
         </record>
-
         <record id="view_weekly_pivot" model="ir.ui.view">
             <field name="name">weekly_resource.pivot</field>
             <field name="model">weekly_resource.model</field>
