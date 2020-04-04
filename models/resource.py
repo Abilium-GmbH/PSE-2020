@@ -28,13 +28,11 @@ class Resource(models.Model):
                 rec.add_weeks_object(week)
 
         # Create weekly_resource.model
-        # TODO: Determine data to be passed on to weekly_resource.model --> week-model?
         project_week_data = rec.get_project_weeks(rec.start_date, rec.end_date, rec)
         for week in project_week_data:
             week_model = self.env['week.model'].search([['week_num', '=', week['week_num']], ['year', '=', week['year']]])
             values = {'week_id': week_model.id, 'resource_id': rec.id}
             rec.add_weekly_resource(values)
-
         return rec
 
     @api.model_create_multi
@@ -117,6 +115,5 @@ class WeeklyResource(models.Model):
     _inherits = {'resource.model': 'resource_id',
                  'week.model': 'week_id'}
 
-    # TODO: Inherits also week.model?
     week_id = fields.Many2one('week.model', 'Week Id', ondelete="cascade")
     resource_id = fields.Many2one('resource.model', 'Resource Id', ondelete="cascade")
