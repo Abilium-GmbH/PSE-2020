@@ -45,6 +45,8 @@ class Resource(models.Model):
         weekly_resource = self.env['weekly_resource.model']
         return weekly_resource.create(values)
 
+    # Computes and returns weeks between the earliest start_date
+    # and the latest end_date of all resources
     def get_weeks(self, start_date, end_date, rec):
         start = self.env['resource.model'].search([])
         if start:
@@ -73,6 +75,7 @@ class Resource(models.Model):
         week_data_array = rec.get_week_data(start_week, start_year, end_week, end_year)
         return week_data_array
 
+    # Computes the weeks a resource takes place in
     def get_project_weeks(self, start_date, end_date, rec):
         start_week = rec.start_date.isocalendar()[1]
         start_year = rec.start_date.isocalendar()[0]
@@ -81,6 +84,7 @@ class Resource(models.Model):
         week_data_array = rec.get_week_data(start_week, start_year, end_week, end_year)
         return week_data_array
 
+    # Computes and returns all weeks between start_week and end_week
     def get_week_data(self, start_week, start_year, end_week, end_year):
         j = start_year
         i = start_week
