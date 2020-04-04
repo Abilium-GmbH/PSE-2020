@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from . import weeks
 import datetime
 
 
@@ -30,8 +31,8 @@ class Resource(models.Model):
         # TODO: Determine data to be passed on to weekly_resource.model --> week-model?
         project_week_data = rec.get_project_weeks(rec.start_date, rec.end_date, rec)
         for week in project_week_data:
-            week_num = week['week_num']
-            values = {'week': week_num, 'resource_id': rec.id}
+            week_model = self.env['week.model'].search([['week_num', '=', week['week_num']], ['year', '=', week['year']]])
+            values = {'week_id': week_model.id, 'resource_id': rec.id}
             rec.add_weekly_resource(values)
 
         return rec
@@ -113,7 +114,9 @@ class Resource(models.Model):
 
 class WeeklyResource(models.Model):
     _name = "weekly_resource.model"
-    _inherits = {'resource.model': 'resource_id'}
+    _inherits = {'resource.model': 'resource_id',
+                 'week.model': 'week_id'}
+
     # TODO: Inherits also week.model?
-    week = fields.Integer(string='Week')
+    week_id = fields.Many2one('week.model', 'Week Id', ondelete="cascade")
     resource_id = fields.Many2one('resource.model', 'Resource Id', ondelete="cascade")
