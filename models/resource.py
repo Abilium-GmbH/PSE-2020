@@ -86,6 +86,10 @@ class Resource(models.Model):
 
     # Computes and returns all weeks between start_week and end_week
     def get_week_data(self, start_week, start_year, end_week, end_year):
+        if start_week == 0:
+            start_week = 1
+        if end_week == 0:
+            end_week = 52
         j = start_year
         i = start_week
         week_data_array = []
