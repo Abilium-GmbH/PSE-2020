@@ -1,4 +1,5 @@
-from odoo import models, fields, api
+
+from odoo import models, fields, api, exceptions
 from . import weeks
 import datetime
 
@@ -11,6 +12,12 @@ class Resource(models.Model):
     workload = fields.Integer(string='Workload', required=True)
     start_date = fields.Datetime(string='Start Date')
     end_date = fields.Datetime(string='End Date')
+
+    #checks that start date is before or at the same date as enddate
+    @api.constrains('start_date', 'end_date')
+    def check_start_date_before_end_date(self):
+        if self.start_date > self.end_date:
+            raise exceptions.ValidationError("Start date must be before end date")
 
     # Constructor
     # Initiates the creation of missing week.models
