@@ -1,8 +1,11 @@
 from datetime import datetime
-
+from odoo import exceptions
 from odoo.tests import common
 
-
+#testing the behaviour of the resource model
+#please be aware that some tests might fail, because the date of the localdatabase
+#and the data of your localdatabase might not be the same and therefore some ids might
+#not get found
 class TestResource(common.TransactionCase):
 
     def test_get_week_data_normal(self):
@@ -81,6 +84,19 @@ class TestResource(common.TransactionCase):
         self.assertNotEqual(self.env['resource.model'].add_weeks_object(week).week_num, 1, 'Week number is not 1')
         self.assertNotEqual(self.env['resource.model'].add_weeks_object(week).year, 2020, 'Year is not 2020')
 
+    #tests if weekly_resource gets the correct input, test might fail because of difference in the databases
+    def test_add_weekly_object_normal(self):
+        values = [{'week_id': 65, 'resource_id': 86}]
+        self.assertEqual(int(self.env['resource.model'].add_weekly_resource(values).week_id), 65, 'Week id is 65')
+        self.assertEqual(int(self.env['resource.model'].add_weekly_resource(values).resource_id), 86, 'Resource id is 86')
+
+    # tests if weekly_resource gets the correct input, test might fail because of difference in the databases
+    def test_add_weekly_object_normal_2(self):
+        values = [{'week_id': 68, 'resource_id': 119}]
+        self.assertEqual(int(self.env['resource.model'].add_weekly_resource(values).week_id), 68, 'Week id is 68')
+        self.assertEqual(int(self.env['resource.model'].add_weekly_resource(values).resource_id), 119,
+                         'Resource id is 119')
+
     def test_create_resource_normal(self):
         values = {'project': 2, 'employee': 15, 'workload': 60, 'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
@@ -88,8 +104,8 @@ class TestResource(common.TransactionCase):
         manual_end_date = datetime(2020, 4, 12, 13, 42, 7)
         created_resource = self.env['resource.model'].create(values)
         self.assertEqual(created_resource.workload, 60, 'workload is 60%')
-        self.assertEqual(created_resource.start_date, manual_start_date, 'Starting dates is 2020-04-05 13:42:07')
-        self.assertEqual(created_resource.end_date, manual_end_date, 'Ending dates is 2020-04-12 13:42:07')
+        self.assertEqual(created_resource.start_date, manual_start_date, 'Starting date is 2020-04-05 13:42:07')
+        self.assertEqual(created_resource.end_date, manual_end_date, 'Ending date is 2020-04-12 13:42:07')
         self.assertEqual(int(created_resource.employee.id), 15, 'Id of the assigned employee is 15')
         self.assertEqual(int(created_resource.project.id), 2, 'Id of the project is 2')
 
@@ -100,8 +116,8 @@ class TestResource(common.TransactionCase):
         manual_end_date = datetime(2020, 5, 22, 13, 59, 40)
         created_resource = self.env['resource.model'].create(values)
         self.assertEqual(created_resource.workload, 90, 'workload is 90%')
-        self.assertEqual(created_resource.start_date, manual_start_date, 'Starting dates is 2020-04-13 13:59:40')
-        self.assertEqual(created_resource.end_date, manual_end_date, 'Ending dates is 2020-05-22 13:59:40')
+        self.assertEqual(created_resource.start_date, manual_start_date, 'Starting date is 2020-04-13 13:59:40')
+        self.assertEqual(created_resource.end_date, manual_end_date, 'Ending date is 2020-05-22 13:59:40')
         self.assertEqual(int(created_resource.employee.id), 18, 'Id of the assigned employee is 18')
         self.assertEqual(int(created_resource.project.id), 3, 'Id of the project is 3')
 
@@ -112,8 +128,31 @@ class TestResource(common.TransactionCase):
         manual_end_date = datetime(2020, 5, 3, 14, 12, 5)
         created_resource = self.env['resource.model'].create(values)
         self.assertNotEqual(created_resource.workload, 90, 'workload is not 90%')
-        self.assertNotEqual(created_resource.start_date, manual_start_date, 'Starting dates is not 2020-04-19 14:12:04')
-        self.assertNotEqual(created_resource.end_date, manual_end_date, 'Ending dates is not 2020-05-03 14:12:04')
-        self.assertNotEqual(int(created_resource.employee.id), 5, 'Id of the assigned employee is 5')
+        self.assertNotEqual(created_resource.start_date, manual_start_date, 'Starting date is not 2020-04-19 14:12:04')
+        self.assertNotEqual(created_resource.end_date, manual_end_date, 'Ending date is not 2020-05-03 14:12:04')
+        self.assertNotEqual(int(created_resource.employee.id), 5, 'Id of the assigned employee is not 5')
         self.assertNotEqual(int(created_resource.project.id), 3, 'Id of the project is not 3')
 
+    def test_create_resource_normal_start_date_equals_end_date(self):
+        values = {'project': 6, 'employee': 6, 'workload': 100, 'start_date': '2020-05-03 14:12:04',
+                  'end_date': '2020-05-03 14:12:04'}
+        manual_start_date = datetime(2020, 5, 3, 14, 12, 4)
+        manual_end_date = datetime(2020, 5, 3, 14, 12, 4)
+        created_resource = self.env['resource.model'].create(values)
+        self.assertEqual(created_resource.workload, 100, 'workload is 100%')
+        self.assertEqual(created_resource.start_date, manual_start_date, 'Starting date is 2020-05-03 14:12:04')
+        self.assertEqual(created_resource.end_date, manual_end_date, 'Ending date is 2020-05-03 14:12:04')
+        self.assertEqual(int(created_resource.employee.id), 6, 'Id of the assigned employee is 6')
+        self.assertEqual(int(created_resource.project.id), 6, 'Id of the project is 6')
+
+    def test_create_resource_exception_start_date_after_end_date(self):
+        values = {'project': 6, 'employee': 6, 'workload': 100, 'start_date': '2020-05-03 14:12:04',
+                  'end_date': '2020-04-19 14:12:04'}
+        with self.assertRaises(exceptions.ValidationError):
+            created_resource = self.env['resource.model'].create(values)
+
+    def test_create_resource_exception_start_date_after_end_date_2(self):
+        values = {'project': 6, 'employee': 6, 'workload': 100, 'start_date': '2019-05-03 14:12:04',
+                  'end_date': '2018-04-19 14:12:04'}
+        with self.assertRaises(exceptions.ValidationError):
+            created_resource = self.env['resource.model'].create(values)
