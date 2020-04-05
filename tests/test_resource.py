@@ -2,10 +2,11 @@ from datetime import datetime
 from odoo import exceptions
 from odoo.tests import common
 
-#testing the behaviour of the resource model
-#please be aware that some tests might fail, because the date of the localdatabase
-#and the data of your localdatabase might not be the same and therefore some ids might
-#not get found
+
+# testing the behaviour of the resource model
+# please be aware that some tests might fail, because the date of the localdatabase
+# and the data of your localdatabase might not be the same and therefore some ids might
+# not get found
 class TestResource(common.TransactionCase):
 
     def test_get_week_data_normal(self):
@@ -84,11 +85,12 @@ class TestResource(common.TransactionCase):
         self.assertNotEqual(self.env['resource.model'].add_weeks_object(week).week_num, 1, 'Week number is not 1')
         self.assertNotEqual(self.env['resource.model'].add_weeks_object(week).year, 2020, 'Year is not 2020')
 
-    #tests if weekly_resource gets the correct input, test might fail because of difference in the databases
+    # tests if weekly_resource gets the correct input, test might fail because of difference in the databases
     def test_add_weekly_object_normal(self):
         values = [{'week_id': 65, 'resource_id': 86}]
         self.assertEqual(int(self.env['resource.model'].add_weekly_resource(values).week_id), 65, 'Week id is 65')
-        self.assertEqual(int(self.env['resource.model'].add_weekly_resource(values).resource_id), 86, 'Resource id is 86')
+        self.assertEqual(int(self.env['resource.model'].add_weekly_resource(values).resource_id), 86,
+                         'Resource id is 86')
 
     # tests if weekly_resource gets the correct input, test might fail because of difference in the databases
     def test_add_weekly_object_normal_2(self):
@@ -156,3 +158,63 @@ class TestResource(common.TransactionCase):
                   'end_date': '2018-04-19 14:12:04'}
         with self.assertRaises(exceptions.ValidationError):
             created_resource = self.env['resource.model'].create(values)
+
+    def test_verify_workload_warning(self):
+        values = {'project': 6, 'employee': 6, 'workload': 101, 'start_date': '2020-05-03 14:12:04',
+                  'end_date': '2020-05-03 14:12:04'}
+        created_resource = self.env['resource.model'].create(values)
+        self.assertEqual(created_resource.verify_workload(), {'warning': {
+            'title': "Workload too high",
+            'message': "The given workload is too high for an employee",
+        }, }, 'Warning that workload is too high(101%) is shown')
+
+    def test_verify_workload_warning_2(self):
+        values = {'project': 2, 'employee': 18, 'workload': 1000, 'start_date': '2020-05-12 14:12:04',
+                  'end_date': '2020-05-15 14:12:04'}
+        created_resource = self.env['resource.model'].create(values)
+        self.assertEqual(created_resource.verify_workload(), {'warning': {
+            'title': "Workload too high",
+            'message': "The given workload is too high for an employee",
+        }, }, 'Warning that workload is too high (1000%) is shown')
+
+    def test_verify_workload_warning_3(self):
+        values = {'project': 2, 'employee': 18, 'workload': 1000, 'start_date': '2020-05-12 14:12:04',
+                  'end_date': '2020-05-15 14:12:04'}
+        created_resource = self.env['resource.model'].create(values)
+        self.assertNotEqual(created_resource.verify_workload(), {
+            'title': "Workload too high",
+            'message': "The given workload is too high for an employee",
+        }, 'Warning is not the same as in code')
+
+    def test_verify_workload_no_warning(self):
+        values = {'project': 5, 'employee': 15, 'workload': 100, 'start_date': '2020-05-13 14:12:04',
+                  'end_date': '2020-05-15 14:12:04'}
+        created_resource = self.env['resource.model'].create(values)
+        self.assertEqual(created_resource.verify_workload(), None, 'Warning is not shown (100%)')
+
+    def test_verify_workload_no_warning_3(self):
+        values = {'project': 6, 'employee': 15, 'workload': 1, 'start_date': '2020-05-13 14:12:04',
+                  'end_date': '2020-05-15 14:12:04'}
+        created_resource = self.env['resource.model'].create(values)
+        self.assertEqual(created_resource.verify_workload(), None, 'Warning is not shown (1%)')
+
+
+class TestWeeklyResource(common.TransactionCase):
+
+    def test_create_weekly_resource_normal(self):
+        values = [{'week_id': 65, 'resource_id': 86}]
+        weekly_resource = self.env['weekly_resource.model'].create(values)
+        self.assertEqual(int(weekly_resource.week_id), 65, 'Week Id is 65')
+        self.assertEqual(int(weekly_resource.resource_id), 86, 'Resource Id is 86')
+
+    def test_create_weekly_resource_normal_2(self):
+        values = [{'week_id': 64, 'resource_id': 101}]
+        weekly_resource = self.env['weekly_resource.model'].create(values)
+        self.assertEqual(int(weekly_resource.week_id), 64, 'Week id is 64')
+        self.assertEqual(int(weekly_resource.resource_id), 101, 'Resource id is 101')
+
+    def test_create_weekly_resource_normal_3(self):
+        values = [{'week_id': 65, 'resource_id': 93}]
+        weekly_resource = self.env['weekly_resource.model'].create(values)
+        self.assertNotEqual(int(weekly_resource.week_id), 64, 'Week id is not 64')
+        self.assertNotEqual(int(weekly_resource.resource_id), 94, 'Resource id is not 94')
