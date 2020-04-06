@@ -123,6 +123,11 @@ class Resource(models.Model):
                 'title': "Workload too high",
                 'message': "The given workload is too high for an employee",
             }, }
+        elif self.workload <= 0:
+            return {'warning': {
+                'title': "Workload too low",
+                'message': "The given workload can't be 0 or less",
+            }, }
 
 
 class WeeklyResource(models.Model):

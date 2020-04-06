@@ -247,6 +247,36 @@ class TestResource(common.TransactionCase):
             {'title': "Workload too high", 'message': "The given workload is too high for an employee"},
             'Warning should not be the same')
 
+    def test_verify_workload_warning_4(self):
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': -10,
+                  'start_date': '2020-04-05 13:42:07',
+                  'end_date': '2020-04-12 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        self.assertEqual(
+            resource.verify_workload(),
+            {'warning': {'title': "Workload too low", 'message': "The given workload can't be 0 or less"}, },
+            'Warning that workload is too low (-10%) is shown')
+
+    def test_verify_workload_warning_5(self):
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 0,
+                  'start_date': '2020-04-05 13:42:07',
+                  'end_date': '2020-04-12 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        self.assertEqual(
+            resource.verify_workload(),
+            {'warning': {'title': "Workload too low", 'message': "The given workload can't be 0 or less"}, },
+            'Warning that workload is too low (0%) is shown')
+
     def test_verify_workload_no_warning_1(self):
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
