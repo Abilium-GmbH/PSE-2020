@@ -6,75 +6,46 @@ from odoo.tests import common
 # testing the behaviour of the resource model
 class TestResource(common.TransactionCase):
 
-    def test_get_week_data_normal(self):
-        start_week = 1
-        start_year = 2020
-        end_week = 3
-        end_year = 2020
+    def test_get_weeks_normal(self):
+        start_date = datetime(2020, 4, 5, 23, 55, 0)
+        end_date = datetime(2020, 4, 14, 12, 42, 7)
 
-        week_data = self.env['resource.model'].get_week_data(start_week, start_year, end_week, end_year)
+        week_data = self.env['resource.model'].get_weeks(start_date, end_date)
 
         self.assertEqual(
-            week_data,
-            [{'week_num': 1, 'year': 2020}, {'week_num': 2, 'year': 2020}, {'week_num': 3, 'year': 2020}],
-            'Calculates weeks 1 to 3'
+            week_data[1],
+            [{'week_num': 14, 'year': 2020}, {'week_num': 15, 'year': 2020}, {'week_num': 16, 'year': 2020}],
+            'Should calculate project weeks 14 to 16'
         )
 
-    def test_get_week_data_normal_over_year_bound(self):
-        start_week = 52
-        start_year = 2019
-        end_week = 3
-        end_year = 2020
+    def test_get_weeks_normal_over_year_bound(self):
+        start_date = datetime(2019, 12, 27, 0, 0, 0)
+        end_date = datetime(2020, 1, 17, 7, 30, 25)
 
-        week_data = self.env['resource.model'].get_week_data(start_week, start_year, end_week, end_year)
-        print(week_data)
+        week_data = self.env['resource.model'].get_weeks(start_date, end_date)
 
         self.assertEqual(
-            week_data,
-            [{'week_num': 52, 'year': 2019}, {'week_num': 1, 'year': 2020}, {'week_num': 2, 'year': 2020}, {'week_num': 3, 'year': 2020}],
+            week_data[1],
+            [{'week_num': 52, 'year': 2019}, {'week_num': 1, 'year': 2020},
+             {'week_num': 2, 'year': 2020}, {'week_num': 3, 'year': 2020}],
             'Calculates weeks 52, 2019 to 3, 2020'
         )
 
     def test_get_week_data_start_week_end_week_changed(self):
-        start_week = 3
-        start_year = 2020
-        end_week = 1
-        end_year = 2020
+        start_date = datetime(2020, 1, 17, 7, 30, 25)
+        end_date = datetime(2019, 12, 27, 0, 0, 0)
 
-        week_data = self.env['resource.model'].get_week_data(start_week, start_year, end_week, end_year)
+        week_data = self.env['resource.model'].get_weeks(start_date, end_date)
 
-        self.assertEqual(week_data, [], 'No weeks because start and end date are interchanged')
+        self.assertEqual(week_data[1], [], 'No weeks because start and end date are interchanged')
 
     def test_get_week_data_normal_result_one_week(self):
-        start_week = 46
-        start_year = 2020
-        end_week = 46
-        end_year = 2020
+        start_date = datetime(2020, 11, 10, 20, 45, 25)
+        end_date = datetime(2020, 11, 14, 4, 30, 25)
 
-        week_data = self.env['resource.model'].get_week_data(start_week, start_year, end_week, end_year)
+        week_data = self.env['resource.model'].get_weeks(start_date, end_date)
 
-        self.assertEqual(week_data, [{'week_num': 46, 'year': 2020}], 'Result is only one week (46)')
-
-    ##TODO fix that week 0 gets ignored test should fail!! wrong assertion
-    def test_get_week_data_normal_with_zero(self):
-        start_week = 0
-        start_year = 2020
-        end_week = 2
-        end_year = 2020
-        self.assertEqual(self.env['resource.model'].get_week_data(start_week, start_year, end_week, end_year),
-                         [{'week_num': 1, 'year': 2020}, {'week_num': 2, 'year': 2020}],
-                         'Result is week 1 and 2, week 0 gets ignored as starting week')
-
-    ##TODO fix that week 0 gets ignored test should fail!! wrong assertion
-    def test_get_week_data_normal_with_zero_at_end(self):
-        start_week = 50
-        start_year = 2020
-        end_week = 0
-        end_year = 2020
-        self.assertEqual(self.env['resource.model'].get_week_data(start_week, start_year, end_week, end_year),
-                         [{'week_num': 50, 'year': 2020}, {'week_num': 51, 'year': 2020},
-                          {'week_num': 52, 'year': 2020}],
-                         'Result is week 50, 51 and 52, week 0 gets ignored as ending week')
+        self.assertEqual(week_data[1], [{'week_num': 46, 'year': 2020}], 'Result is only one week (46)')
 
 # -------------------------------------------------------------------------------------------------------------------- #
 
@@ -210,12 +181,13 @@ class TestResource(common.TransactionCase):
                   'workload': 101,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
-        resource = self.env['resource.model'].create(values)
 
-        self.assertEqual(
-            resource.verify_workload(),
-            {'warning': {'title': "Workload too high", 'message': "The given workload is too high for an employee"}, },
-            'Warning that workload is too high(101%) is shown')
+        with self.assertRaises(exceptions.ValidationError) as e:
+            self.env['resource.model'].create(values)
+
+        self.assertEqual(e.exception.name,
+                         "The given workload can't larger than 100",
+                         "Should raise exception for workload being to high")
 
     def test_verify_workload_warning_2(self):
         project = self.env['project.project'].create({'name': 'p1'})
@@ -225,27 +197,29 @@ class TestResource(common.TransactionCase):
                   'workload': 1000,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
-        resource = self.env['resource.model'].create(values)
 
-        self.assertEqual(
-            resource.verify_workload(),
-            {'warning': {'title': "Workload too high", 'message': "The given workload is too high for an employee"}, },
-            'Warning that workload is too high(1000%) is shown')
+        with self.assertRaises(exceptions.ValidationError) as e:
+            self.env['resource.model'].create(values)
+
+        self.assertEqual(e.exception.name,
+                         "The given workload can't larger than 100",
+                         "Should raise exception for workload being to high")
 
     def test_verify_workload_warning_3(self):
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 1000,
+                  'workload': 3243200,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
-        resource = self.env['resource.model'].create(values)
 
-        self.assertNotEqual(
-            resource.verify_workload(),
-            {'title': "Workload too high", 'message': "The given workload is too high for an employee"},
-            'Warning should not be the same')
+        with self.assertRaises(exceptions.ValidationError) as e:
+            self.env['resource.model'].create(values)
+
+        self.assertEqual(e.exception.name,
+                         "The given workload can't larger than 100",
+                         "Should raise exception for workload being to high")
 
     def test_verify_workload_warning_4(self):
         project = self.env['project.project'].create({'name': 'p1'})
@@ -255,12 +229,13 @@ class TestResource(common.TransactionCase):
                   'workload': -10,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
-        resource = self.env['resource.model'].create(values)
 
-        self.assertEqual(
-            resource.verify_workload(),
-            {'warning': {'title': "Workload too low", 'message': "The given workload can't be 0 or less"}, },
-            'Warning that workload is too low (-10%) is shown')
+        with self.assertRaises(exceptions.ValidationError) as e:
+            self.env['resource.model'].create(values)
+
+        self.assertEqual(e.exception.name,
+                         "The given workload can't be equal or smaller than 0",
+                         "Should raise exception for workload being to low")
 
     def test_verify_workload_warning_5(self):
         project = self.env['project.project'].create({'name': 'p1'})
@@ -270,12 +245,13 @@ class TestResource(common.TransactionCase):
                   'workload': 0,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
-        resource = self.env['resource.model'].create(values)
 
-        self.assertEqual(
-            resource.verify_workload(),
-            {'warning': {'title': "Workload too low", 'message': "The given workload can't be 0 or less"}, },
-            'Warning that workload is too low (0%) is shown')
+        with self.assertRaises(exceptions.ValidationError) as e:
+            self.env['resource.model'].create(values)
+
+        self.assertEqual(e.exception.name,
+                         "The given workload can't be equal or smaller than 0",
+                         "Should raise exception for workload being to low")
 
     def test_verify_workload_no_warning_1(self):
         project = self.env['project.project'].create({'name': 'p1'})
@@ -285,6 +261,7 @@ class TestResource(common.TransactionCase):
                   'workload': 100,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
+
         resource = self.env['resource.model'].create(values)
 
         self.assertEqual(resource.verify_workload(), None, 'Warning is not shown (100%)')

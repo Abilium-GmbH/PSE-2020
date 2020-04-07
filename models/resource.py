@@ -1,7 +1,14 @@
 
 from odoo import models, fields, api, exceptions
-from . import weeks
 import datetime
+
+
+# returns the year and week of a given datetime
+# format: YYYYWW   (Y - Year, W - Week)
+def get_week(date):
+    year = date.isocalendar()[0]
+    week = date.isocalendar()[1]
+    return year * 100 + week
 
 
 class Resource(models.Model):
@@ -36,9 +43,9 @@ class Resource(models.Model):
         rec = super(Resource, self).create(values)
 
         # Create week.model
-        week_data = rec.get_weeks(rec.start_date, rec.end_date, rec)
-        week_data_array = week_data[0]
-        for week in week_data_array:
+        week_data = rec.get_weeks(rec.start_date, rec.end_date)
+        week_array = week_data[0]
+        for week in week_array:
             exists = self.env['week.model'].search([['week_num', '=', week['week_num']], ['year', '=', week['year']]])
             if not exists:
                 rec.add_weeks_object(week)
@@ -63,43 +70,43 @@ class Resource(models.Model):
 
     # Computes and returns weeks between the earliest start_date
     # and the latest end_date of all resources
-    def get_weeks(self, start_date, end_date, rec):
+    def get_weeks(self, start_date, end_date):
         start = self.env['resource.model'].search([])
         if start:
             min_date = min(start.mapped('start_date'))
             max_date = max(start.mapped('end_date'))
 
-            if rec.start_date < min_date:
-                first_date = rec.start_date
-            else:
-                first_date = min_date
+            first_date = start_date if start_date < min_date else min_date
 
-            if rec.end_date > max_date:
-                last_date = rec.end_date
-            else:
-                last_date = max_date
+            last_date = end_date if end_date > max_date else max_date
         else:
-            first_date = rec.start_date
-            last_date = rec.end_date
+            first_date = start_date
+            last_date = end_date
+
+        # store dates as Integers to allow comparative operations
+        last_week = get_week(last_date)
+        start_week = get_week(start_date)
+        end_week = get_week(end_date)
 
         date_i = first_date  # date iterator
-        week_data_array = []
-        project_week_array = []
-        while date_i <= (last_date + datetime.timedelta(weeks=1)):
-            # create empty dict object
-            week_data = {}
+        week_i = get_week(date_i)  # week iterator
 
-            # add data to object
-            week_data['week_num'] = date_i.isocalendar()[1]
-            week_data['year'] = date_i.isocalendar()[0]
+        week_array = []
+        project_week_array = []
+
+        while week_i <= last_week:
+            # create dict object
+            week_data = {'week_num': date_i.isocalendar()[1], 'year': date_i.isocalendar()[0]}
 
             # add object to array that can be returned
-            week_data_array = week_data_array + [week_data]
+            week_array = week_array + [week_data]
 
-            if rec.start_date <= date_i <= rec.end_date:
+            # add week to project_week_array
+            if start_week <= week_i <= end_week:
                 project_week_array = project_week_array + [week_data]
 
-            # add one week timediffrence to the date
+            # add one week time difference to the date
             date_i = date_i + datetime.timedelta(weeks=1)
+            week_i = get_week(date_i)
 
-        return [week_data_array, project_week_array]
+        return [week_array, project_week_array]
