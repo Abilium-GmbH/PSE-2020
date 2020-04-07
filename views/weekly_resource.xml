@@ -20,7 +20,7 @@
             <field name="model">weekly_resource.model</field>
             <field name="arch" type="xml">
                 <pivot string="Resource Pivot">
-                    <field name="week_num" type="col"/>
+                    <field name="week_string" type="col"/>
                     <field name="workload" type="measure"/>
                     <field name="employee" type="row"/>
                     <field name="project" type="row"/>
