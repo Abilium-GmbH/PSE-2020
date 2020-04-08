@@ -2,6 +2,9 @@ from odoo import models, fields
 
 
 class Employee(models.Model):
+    """
+    Inherits the 'employee' model from the 'hr' App
+    """
     _inherit = 'hr.employee'
     # total_workload_planed = fields.Integer(compute='_calculate_planed', string="Total", store=True)
 
