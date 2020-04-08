@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- View for the Weeks model -->
+<!-- Lists the Weeks in the database -->
+<!-- may be erased in future iterations -->
 <odoo>
     <data>
         <record id="view_week_tree" model="ir.ui.view">

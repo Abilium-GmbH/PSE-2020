@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- View for the Weekly Resource model -->
+<!-- Adds up the workload per employee per project per week in a pivot view -->
 <odoo>
     <data>
 <!--        <record id="view_weekly_tree" model="ir.ui.view">-->

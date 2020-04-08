@@ -1,3 +1,5 @@
+
+<!-- View for the Resource model-->
 <odoo>
     <data>
         <record id="view_resource_tree" model="ir.ui.view">
@@ -14,6 +16,7 @@
                 </tree>
             </field>
         </record>
+        <!-- Form for creating new Resources -->
         <record id="view_resource_form" model="ir.ui.view">
             <field name="name">resource.model.form</field>
             <field name="model">resource.model</field>
