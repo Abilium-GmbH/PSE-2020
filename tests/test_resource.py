@@ -31,7 +31,7 @@ class TestResource(common.TransactionCase):
             'Calculates weeks 52, 2019 to 3, 2020'
         )
 
-    def test_get_week_data_start_week_end_week_changed(self):
+    def test_get_weeks_start_week_end_week_changed(self):
         start_date = datetime(2020, 1, 17, 7, 30, 25)
         end_date = datetime(2019, 12, 27, 0, 0, 0)
 
@@ -39,7 +39,7 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(week_data[1], [], 'No weeks because start and end date are interchanged')
 
-    def test_get_week_data_normal_result_one_week(self):
+    def test_get_weeks_normal_result_one_week(self):
         start_date = datetime(2020, 11, 10, 20, 45, 25)
         end_date = datetime(2020, 11, 14, 4, 30, 25)
 
