@@ -2,10 +2,14 @@ from odoo import models, fields, api, exceptions
 import datetime
 
 
-# TODO change comments to documentation
-# returns the year and week of a given datetime
-# format: YYYYWW   (Y - Year, W - Week)
 def get_week(date):
+    """
+    Returns the year and week of a given date as Int in
+    the format YYYYWW  (Y Year, W Week)
+
+    :param date:
+    :return: year and week: YYYYWW
+    """
     year = date.isocalendar()[0]
     week = date.isocalendar()[1]
     return year * 100 + week
@@ -14,6 +18,7 @@ def get_week(date):
 class Resource(models.Model):
     """
     A class to assign employees a workload for a period of time in a project
+
     :param project: refers to an existing project from the project model, is required
     :param employee: refers to an existing employee from the employee model, is required
     :param workload: an integer representing the workload in percent (from 0 to 100), is required
@@ -32,7 +37,8 @@ class Resource(models.Model):
     @api.constrains('start_date', 'end_date')
     def check_start_date_before_end_date(self):
         """
-        checks if start date is before or at the same date as end date
+        Checks if start date is before or at the same date as end date
+
         :raises:
             :exception ValidationError: if start_date > end_date
         :return: no return value
@@ -43,7 +49,8 @@ class Resource(models.Model):
     @api.constrains('workload')
     def verify_workload(self):
         """
-        checks if workload is between 1 and 100
+        Checks if workload is between 1 and 100
+
         :raises:
             :exception ValidationError: if workload <= 0 or workload > 100
         :return: no return value
@@ -59,6 +66,7 @@ class Resource(models.Model):
         Constructor
         Initiates the creation of week.models, if missing
         Initiates the creation of corresponding weekly_resource.models
+
         :param values: requires a 'Project' which refers to an existing Project object,
             a 'Employee' which refers to an existing Employee object,
             a 'Workload' representing the workload in percent (from 0 to 100),
@@ -90,6 +98,7 @@ class Resource(models.Model):
     def add_weeks_object(self, week):
         """
         Adds a week object to the weeks database
+
         :param week: the week which should be added to the database
         :return: the weeks with the newly added week
         """
@@ -100,6 +109,7 @@ class Resource(models.Model):
     def add_weekly_resource(self, values):
         """
         Add an WeeklyResource object to the database
+
         :param values: requires a 'week_id' which refers to an existing Weeks object
             and a 'resource_id' which refers to an existing Resource object
         :return: the WeeklyResource
@@ -108,12 +118,14 @@ class Resource(models.Model):
         return weekly_resource.create(values)
 
     def get_weeks(self, start_date, end_date):
-        # TODO change doc of params (start_date and end_date of resource)
         """
-        Computes and returns the subsequent weeks
-        between the earliest start_date and the latest end_date of all resource
-        :param rec: the resource
-        :return: array of weeks
+        Computes the subsequent weeks between the earliest start_date and the latest end_date of all resources.
+        Returns two arrays. The first containing all weeks and the second containing all weeks of
+        the resource, starting on start_date and ending on end_date.
+
+        :param start_date: the start_date of the resource
+        :param end_date: the end_date of the resource
+        :return: array of all weeks and array of project weeks
         """
         dates = self.get_first_and_last_date(start_date, end_date)
 
@@ -144,8 +156,15 @@ class Resource(models.Model):
 
         return [week_array, project_week_array]
 
-    # TODO documentation
     def get_first_and_last_date(self, start_date, end_date):
+        """
+        Computes the first start_date and the last end_date of all resources
+        including the parameters.
+
+        :param start_date: the start_date of the resource
+        :param end_date: the end_date of the resource
+        :return: first_date and last_date of all resources
+        """
         start = self.env['resource.model'].search([])
         if start:
             min_date = min(start.mapped('start_date'))

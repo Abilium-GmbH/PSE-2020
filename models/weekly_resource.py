@@ -5,6 +5,7 @@ from odoo import models, fields
 class WeeklyResource(models.Model):
     """
     A class that represents the mapping between a resource and a week.
+
     :param week_id: refers to an existing week from the week model
     :param resource_id: refers to an existing resource from the resource model
     """

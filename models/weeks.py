@@ -4,6 +4,7 @@ from odoo import models, fields, api, exceptions
 class Weeks(models.Model):
     """
     A class used to represent a specific week in a specific year
+
     :param week_num: the calendaric number of the week in the year, is required
     :param year: the year, is required
     :param week_string: the representation of week and year for the view
@@ -16,8 +17,9 @@ class Weeks(models.Model):
     @api.depends('year', 'week_num')
     def get_week_string(self):
         """
-        builds and stores the week_string attribute
+        Builds and stores the week_string attribute
         based on year and week_num with a 'W' prefix, seperated by a comma
+
         :return: 0
         """
         for s in self:
@@ -28,7 +30,8 @@ class Weeks(models.Model):
     @api.constrains('week_num')
     def _check_if_week_num_is_valid(self):
         """
-        checks if the week_num is within the valid range from 1 to 53
+        Checks if the week_num is within the valid range from 1 to 53
+
         :raises:
             :exception ValidationError: if week_num < 1 or week_num > 53
         :return: no return value
