@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+#
+
 {
     'name': "Resource Planning",
 
@@ -6,10 +8,11 @@
         This module can be used to allocate human resources to projects""",
 
     'description': """
-        tbd
+        With this module you can assign your employees from the HR app with your projects from the Project app.
+        You can set their workload and look at it in the weekly overview. 
     """,
 
-    'author': "Cyrill Rohrbach, Gillian Cathomas, Sophie Pfister, Joel Hari, Jonas Kocher",
+    'author': "Cyrill Rohrbach, Gillian Cathomas, Sophie Pfister, Joel Hari, Jonas Ph. Kocher",
     'website': "https://github.com/Abilium-GmbH/PSE-2020",
 
     # Categories can be used to filter modules in modules listing

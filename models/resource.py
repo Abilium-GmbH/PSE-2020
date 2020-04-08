@@ -1,4 +1,3 @@
-
 from odoo import models, fields, api, exceptions
 import datetime
 
@@ -12,6 +11,15 @@ def get_week(date):
 
 
 class Resource(models.Model):
+    """
+    A class to assign employees a workload for a period of time in a project
+    :param project: refers to an existing project from the project model, is required
+    :param employee: refers to an existing employee from the employee model, is required
+    :param workload: an integer representing the workload in percent (from 0 to 100), is required
+    :param start_date: the date on which the assignment begins, is required
+    :param end_date: the date on which the assignment end, is required
+    start_date has to be before the end_date
+    """
     _name = "resource.model"
     _rec_name = 'project'
     project = fields.Many2one('project.project', 'Project')
@@ -20,9 +28,14 @@ class Resource(models.Model):
     start_date = fields.Datetime(string='Start Date')
     end_date = fields.Datetime(string='End Date')
 
-    # checks that start date is before or at the same date as end date
     @api.constrains('start_date', 'end_date')
     def check_start_date_before_end_date(self):
+        """
+        checks if start date is before or at the same date as end date
+        :raises:
+            :exception ValidationError: if start_date > end_date
+        :return: no return value
+        """
         if self.start_date > self.end_date:
             raise exceptions.ValidationError("Start date must be before end date")
 
@@ -34,11 +47,21 @@ class Resource(models.Model):
         elif self.workload <= 0:
             raise exceptions.ValidationError("The given workload can't be equal or smaller than 0")
 
-    # Constructor
-    # Initiates the creation of missing week.models
-    # Initiates the creation of corresponding weekly_resource.models
     @api.model
     def create(self, values):
+        """
+        Constructor
+        Initiates the creation of week.models, if missing
+        Initiates the creation of corresponding weekly_resource.models
+        :param values: requires a 'Project' which refers to an existing Project object,
+            a 'Employee' which refers to an existing Employee object,
+            a 'Workload' representing the workload in percent (from 0 to 100),
+            a 'Start Date' on which the assignment begins
+            and an 'End Date' on which the assignment ends
+        :return: the created Resource object
+        :rtype: resource
+        """
+
         # Create resource.model
         rec = super(Resource, self).create(values)
 
@@ -53,24 +76,41 @@ class Resource(models.Model):
         # Create weekly_resource.model
         project_week_data = week_data[1]
         for week in project_week_data:
-            week_model = self.env['week.model'].search([['week_num', '=', week['week_num']], ['year', '=', week['year']]])
+            week_model = self.env['week.model'].search(
+                [['week_num', '=', week['week_num']], ['year', '=', week['year']]])
             values = {'week_id': week_model.id, 'resource_id': rec.id}
             rec.add_weekly_resource(values)
         return rec
 
     @api.model_create_multi
     def add_weeks_object(self, week):
+        """
+        Adds a week object to the weeks database
+        :param week: the week which should be added to the database
+        :return: the weeks with the newly added week
+        """
         weeks = self.env['week.model']
         return weeks.create(week)
 
     @api.model_create_multi
     def add_weekly_resource(self, values):
+        """
+        Add an WeeklyResource object to the database
+        :param values: requires a 'week_id' which refers to an existing Weeks object
+            and a 'resource_id' which refers to an existing Resource object
+        :return: the WeeklyResource
+        """
         weekly_resource = self.env['weekly_resource.model']
         return weekly_resource.create(values)
 
-    # Computes and returns weeks between the earliest start_date
-    # and the latest end_date of all resources
     def get_weeks(self, start_date, end_date):
+    ## TODO change doc of params
+        """
+        Computes and returns the subsequent weeks
+        between the earliest start_date and the latest end_date of all resource
+        :param rec: the resource
+        :return: array of weeks
+        """
         start = self.env['resource.model'].search([])
         if start:
             min_date = min(start.mapped('start_date'))
@@ -104,9 +144,15 @@ class Resource(models.Model):
             # add week to project_week_array
             if start_week <= week_i <= end_week:
                 project_week_array = project_week_array + [week_data]
-
+                
             # add one week time difference to the date
             date_i = date_i + datetime.timedelta(weeks=1)
             week_i = get_week(date_i)
+
+    """
+    A class that represents the mapping between a resource and a week.
+    :param week_id: refers to an existing week from the week model
+    :param resource_id: refers to an existing resource from the resource model
+    """
 
         return [week_array, project_week_array]
