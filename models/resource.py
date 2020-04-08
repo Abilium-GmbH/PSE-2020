@@ -1,6 +1,13 @@
 from odoo import models, fields, api, exceptions
-from . import weeks
 import datetime
+
+
+# returns the year and week of a given datetime
+# format: YYYYWW   (Y - Year, W - Week)
+def get_week(date):
+    year = date.isocalendar()[0]
+    week = date.isocalendar()[1]
+    return year * 100 + week
 
 
 class Resource(models.Model):
@@ -32,6 +39,14 @@ class Resource(models.Model):
         if self.start_date > self.end_date:
             raise exceptions.ValidationError("Start date must be before end date")
 
+    # checks if: 0 < workload <= 100
+    @api.constrains('workload')
+    def verify_workload(self):
+        if self.workload > 100:
+            raise exceptions.ValidationError("The given workload can't larger than 100")
+        elif self.workload <= 0:
+            raise exceptions.ValidationError("The given workload can't be equal or smaller than 0")
+
     @api.model
     def create(self, values):
         """
@@ -51,14 +66,15 @@ class Resource(models.Model):
         rec = super(Resource, self).create(values)
 
         # Create week.model
-        week_data = rec.get_weeks(rec.start_date, rec.end_date, rec)
-        for week in week_data:
+        week_data = rec.get_weeks(rec.start_date, rec.end_date)
+        week_array = week_data[0]
+        for week in week_array:
             exists = self.env['week.model'].search([['week_num', '=', week['week_num']], ['year', '=', week['year']]])
             if not exists:
                 rec.add_weeks_object(week)
 
         # Create weekly_resource.model
-        project_week_data = rec.get_project_weeks(rec.start_date, rec.end_date, rec)
+        project_week_data = week_data[1]
         for week in project_week_data:
             week_model = self.env['week.model'].search(
                 [['week_num', '=', week['week_num']], ['year', '=', week['year']]])
@@ -87,7 +103,8 @@ class Resource(models.Model):
         weekly_resource = self.env['weekly_resource.model']
         return weekly_resource.create(values)
 
-    def get_weeks(self, rec):
+    def get_weeks(self, start_date, end_date):
+    ## TODO change doc of params
         """
         Computes and returns the subsequent weeks
         between the earliest start_date and the latest end_date of all resource
@@ -99,100 +116,43 @@ class Resource(models.Model):
             min_date = min(start.mapped('start_date'))
             max_date = max(start.mapped('end_date'))
 
-            if rec.start_date < min_date:
-                start_week = rec.start_date.isocalendar()[1]
-                start_year = rec.start_date.isocalendar()[0]
-            else:
-                start_week = min_date.isocalendar()[1]
-                start_year = min_date.isocalendar()[0]
+            first_date = start_date if start_date < min_date else min_date
 
-            if rec.end_date > max_date:
-                end_week = rec.end_date.isocalendar()[1]
-                end_year = rec.end_date.isocalendar()[0]
-            else:
-                end_week = max_date.isocalendar()[1]
-                end_year = max_date.isocalendar()[0]
+            last_date = end_date if end_date > max_date else max_date
         else:
-            start_week = rec.start_date.isocalendar()[1]
-            start_year = rec.start_date.isocalendar()[0]
-            end_week = rec.end_date.isocalendar()[1]
-            end_year = rec.end_date.isocalendar()[0]
+            first_date = start_date
+            last_date = end_date
 
-        week_data_array = rec.get_week_data(start_week, start_year, end_week, end_year)
-        return week_data_array
+        # store dates as Integers to allow comparative operations
+        last_week = get_week(last_date)
+        start_week = get_week(start_date)
+        end_week = get_week(end_date)
 
-    def get_project_weeks(self, rec):
-        """
-        Computes and returns the subsequent weeks a resource takes place in
-        :param rec: the resource
-        :return: array of weeks
-        """
-        start_week = rec.start_date.isocalendar()[1]
-        start_year = rec.start_date.isocalendar()[0]
-        end_week = rec.end_date.isocalendar()[1]
-        end_year = rec.end_date.isocalendar()[0]
-        week_data_array = rec.get_week_data(start_week, start_year, end_week, end_year)
-        return week_data_array
+        date_i = first_date  # date iterator
+        week_i = get_week(date_i)  # week iterator
 
-    def get_week_data(self, start_week, start_year, end_week, end_year):
-        """
-        Computes and returns an array of subsequent weeks
-        beginning from the start_week/start_year up to the end_week/end_year
-        :param start_week: the week number where the array should start
-        :param start_year: the year of the start_week
-        :param end_week: the week number where the array should end
-        :param end_year: the year of the end_week
-        :return: array of weeks
-        """
-        if start_week == 0:
-            start_week = 1
-        if end_week == 0:
-            end_week = 52
-        j = start_year
-        i = start_week
-        week_data_array = []
-        while j <= end_year:
-            if j == end_year:
-                end_week_j = end_week
-            else:
-                end_week_j = datetime.date(j, 12, 31).isocalendar()[1]
-            while i <= end_week_j:
-                week_data = {}
-                week_data['week_num'] = i
-                week_data['year'] = j
-                week_data_array = week_data_array + [week_data]
-                i = i + 1
-            j = j + 1
-            i = 1
-        return week_data_array
+        week_array = []
+        project_week_array = []
 
-    @api.onchange('workload')
-    def verify_workload(self):
-        """
-        Alerts the user when trying to assign a workload outside the expected range
-        :return: a warning if the workload is either larger than 100 or smaller than 0 (percent)
-        """
-        if self.workload > 100:
-            return {'warning': {
-                'title': "Workload too high",
-                'message': "The given workload is too high for an employee",
-            }, }
-        elif self.workload <= 0:
-            return {'warning': {
-                'title': "Workload too low",
-                'message': "The given workload can't be 0 or less",
-            }, }
+        while week_i <= last_week:
+            # create dict object
+            week_data = {'week_num': date_i.isocalendar()[1], 'year': date_i.isocalendar()[0]}
 
+            # add object to array that can be returned
+            week_array = week_array + [week_data]
 
-class WeeklyResource(models.Model):
+            # add week to project_week_array
+            if start_week <= week_i <= end_week:
+                project_week_array = project_week_array + [week_data]
+                
+            # add one week time difference to the date
+            date_i = date_i + datetime.timedelta(weeks=1)
+            week_i = get_week(date_i)
+
     """
     A class that represents the mapping between a resource and a week.
     :param week_id: refers to an existing week from the week model
     :param resource_id: refers to an existing resource from the resource model
     """
-    _name = "weekly_resource.model"
-    _inherits = {'resource.model': 'resource_id',
-                 'week.model': 'week_id'}
 
-    week_id = fields.Many2one('week.model', 'Week Id', ondelete="cascade")
-    resource_id = fields.Many2one('resource.model', 'Resource Id', ondelete="cascade")
+        return [week_array, project_week_array]

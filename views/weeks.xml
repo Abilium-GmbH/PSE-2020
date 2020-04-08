@@ -6,9 +6,8 @@
             <field name="model">week.model</field>
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
-                <tree string="weeks" default_order="week_num">
-                    <field name="year"/>
-                    <field name="week_num"/>
+                <tree string="weeks" default_order="year, week_num">
+                    <field name="week_string"/>
                 </tree>
             </field>
         </record>
