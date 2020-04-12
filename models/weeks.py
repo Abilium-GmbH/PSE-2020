@@ -23,7 +23,11 @@ class Weeks(models.Model):
         :return: 0
         """
         for s in self:
-            string = str(s.year) + ', W' + str(s.week_num)
+            string = str(s.year) + ', W'
+            if s.week_num < 10:
+                string = string + "0" + str(s.week_num)
+            else:
+                string = string + str(s.week_num)
             s.week_string = string
         return 0
 
