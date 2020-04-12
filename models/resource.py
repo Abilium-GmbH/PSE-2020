@@ -29,8 +29,8 @@ class Resource(models.Model):
     """
     _name = "resource.model"
     _rec_name = 'project'
-    project = fields.Many2one('project.project', 'Project')
-    employee = fields.Many2one('hr.employee', 'Employee')
+    project = fields.Many2one('project.project', 'Project', required=True)
+    employee = fields.Many2one('hr.employee', 'Employee', required=True)
     workload = fields.Integer(string='Workload', required=True)
     start_date = fields.Datetime(string='Start Date')
     end_date = fields.Datetime(string='End Date')

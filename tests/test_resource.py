@@ -1,6 +1,7 @@
 from datetime import datetime
 from odoo import exceptions
 from odoo.tests import common
+from psycopg2 import errors
 
 
 class TestResource(common.TransactionCase):
@@ -311,6 +312,40 @@ class TestResource(common.TransactionCase):
         self.assertEqual(error.exception.name,
                          "Both dates must be filled out", "Should raise exception if start and"
                                                           "end dates are not filled out")
+
+    def test_create_resource_no_project(self):
+        """
+        Tests if create raises an exception if the start_date is after the end_date
+        (part 1, same year)
+
+        :return:
+        """
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': '',
+                  'employee': employee.id,
+                  'workload': 100,
+                  'start_date': '2020-05-03 14:12:04',
+                  'end_date': '2020-04-19 14:12:04'}
+
+        with self.assertRaises(errors.NotNullViolation):
+            self.env['resource.model'].create(values)
+
+    def test_create_resource_no_employee(self):
+        """
+        Tests if create raises an exception if the start_date is after the end_date
+        (part 1, same year)
+
+        :return:
+        """
+        project = self.env['project.project'].create({'name': 'p1'})
+        values = {'project': project.id,
+                  'employee': '',
+                  'workload': 100,
+                  'start_date': '2020-05-03 14:12:04',
+                  'end_date': '2020-04-19 14:12:04'}
+
+        with self.assertRaises(errors.NotNullViolation):
+            self.env['resource.model'].create(values)
 
     # -------------------------------------------------------------------------------------------------------------------- #
 
