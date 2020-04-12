@@ -45,13 +45,12 @@ class Resource(models.Model):
         if self.next_week:
             today = datetime.datetime.today()
             for day in range(1, 8):
-                print(day)
                 if today.isoweekday() != 1:
                     today = today + datetime.timedelta(days=day)
                 elif today.isoweekday() == 1:
                     self.start_date = today
                     self.end_date = today + datetime.timedelta(days=4)
-                    print(self.start_date)
+
 
     @api.constrains('start_date', 'end_date')
     def verify_start_and_end_dates(self):
