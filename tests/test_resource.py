@@ -83,6 +83,7 @@ class TestResource(common.TransactionCase):
         week = self.env['resource.model'].add_weeks_object({'week_num': 52, 'year': 2020})
         self.assertEqual(week.week_num, 52, 'Week number is 52')
         self.assertEqual(week.year, 2020, 'Year is 2020')
+        self.assertEqual(week.week_string, "2020, W52", "Invalid week_string")
 
     def test_add_weeks_object_normal_2(self):
         """
@@ -104,6 +105,7 @@ class TestResource(common.TransactionCase):
         week = self.env['resource.model'].add_weeks_object({'week_num': 50, 'year': 1900})
         self.assertEqual(week.week_num, 50, 'Week number is 50')
         self.assertEqual(week.year, 1900, 'Year is 1900')
+        self.assertEqual(week.week_string, "1900, W50", "Invalid week_string")
 
     def test_add_weeks_object_future_year(self):
         """
@@ -114,6 +116,7 @@ class TestResource(common.TransactionCase):
         week = self.env['resource.model'].add_weeks_object({'week_num': 1, 'year': 3000})
         self.assertEqual(week.week_num, 1, 'Week number is 1')
         self.assertEqual(week.year, 3000, 'Year is 3000')
+        self.assertEqual(week.week_string, "3000, W01", "Invalid week_string")
 
 # -------------------------------------------------------------------------------------------------------------------- #
 
