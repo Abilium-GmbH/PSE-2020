@@ -34,6 +34,7 @@ class Resource(models.Model):
     start_date = fields.Datetime(string='Start Date')
     end_date = fields.Datetime(string='End Date')
 
+    weekly_resources = fields.One2many('weekly_resource.model', 'resource_id')
 
     @api.constrains('start_date', 'end_date')
     def check_start_date_before_end_date(self):
@@ -119,6 +120,10 @@ class Resource(models.Model):
         for week in project_week_data:
             week_model = self.env['week.model'].search(
                 [['week_num', '=', week['week_num']], ['year', '=', week['year']]])
+
+            if rec.employee.get_total_workload(week_model) + rec.workload > 100:
+                raise exceptions.ValidationError("The workload in week " + week_model.week_string + " is too high")
+
             values = {'week_id': week_model.id, 'resource_id': rec.id}
             rec.add_weekly_resource(values)
         return

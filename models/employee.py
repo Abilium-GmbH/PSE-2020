@@ -6,12 +6,21 @@ class Employee(models.Model):
     Inherits the 'employee' model from the 'hr' App
     """
     _inherit = 'hr.employee'
-    # total_workload_planed = fields.Integer(compute='_calculate_planed', string="Total", store=True)
 
-    # TODO: Improve this to check the weekly workload (Iteration 3)
-    # def _calculate_planed(self):
-    #     for employee in self:
-    #         query = self.env['resource.model'].search([('employee', '=', employee.id)])
-    #         total = sum(query.mapped('workload'))
-    #         employee.total_workload_planed = total
-    #     return 0
+    resources = fields.One2many('resource.model', 'employee')
+
+    def get_total_workload(self, week):
+        """
+        Computes the total workload assigned to the employee in a specific week
+
+        :param week: week model of the desired week
+        :return: total workload in that week
+        """
+        total_workload = 0
+
+        for resource in self.resources:
+            for weekly_resource in resource.weekly_resources:
+                if weekly_resource.week_id == week:
+                    total_workload += resource.workload
+
+        return total_workload
