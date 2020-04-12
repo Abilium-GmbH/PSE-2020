@@ -415,15 +415,17 @@ class TestResource(common.TransactionCase):
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
+
+        # Step 2: Update project
         project2 = self.env['project.project'].create({'name': 'p2'})
         values = {'project': project2.id,
                   'employee': employee.id,
                   'workload': 50,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
-        # Step 2: Update project
         resource.write(values)
 
+        # Step 3: Evaluate Values
         manual_start_date = datetime(2020, 4, 5, 13, 42, 7)
         manual_end_date = datetime(2020, 4, 12, 13, 42, 7)
 
@@ -449,15 +451,17 @@ class TestResource(common.TransactionCase):
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
+
+        # Step 2: Update project
         employee2 = self.env['hr.employee'].create({'name': 'e2'})
         values = {'project': project.id,
                   'employee': employee2.id,
                   'workload': 50,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
-        # Step 2: Update project
         resource.write(values)
 
+        #Step 3: Evaluate values
         manual_start_date = datetime(2020, 4, 5, 13, 42, 7)
         manual_end_date = datetime(2020, 4, 12, 13, 42, 7)
 
@@ -483,14 +487,16 @@ class TestResource(common.TransactionCase):
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
+
+        # Step 2: Update project
         values = {'project': project.id,
                   'employee': employee.id,
                   'workload': 99,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
-        # Step 2: Update project
         resource.write(values)
 
+        # Step 3: Evaluate Values
         manual_start_date = datetime(2020, 4, 5, 13, 42, 7)
         manual_end_date = datetime(2020, 4, 12, 13, 42, 7)
 
@@ -516,14 +522,16 @@ class TestResource(common.TransactionCase):
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
+
+        # Step 2: Update project
         values = {'project': project.id,
                   'employee': employee.id,
                   'workload': 50,
                   'start_date': '2020-04-13 13:42:07',
                   'end_date': '2020-04-19 13:42:07'}
-        # Step 2: Update project
         resource.write(values)
 
+        # Step 3: Evaluate Values
         manual_start_date = datetime(2020, 4, 13, 13, 42, 7)
         manual_end_date = datetime(2020, 4, 19, 13, 42, 7)
 
@@ -558,9 +566,9 @@ class TestResource(common.TransactionCase):
                   'workload': 99,
                   'start_date': '2020-04-13 13:42:07',
                   'end_date': '2020-04-19 13:42:07'}
-        # Step 2: Update project
         resource.write(values)
 
+        # Step 3: Evaluate values
         manual_start_date = datetime(2020, 4, 13, 13, 42, 7)
         manual_end_date = datetime(2020, 4, 19, 13, 42, 7)
 
@@ -570,3 +578,66 @@ class TestResource(common.TransactionCase):
         self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-04-13 13:42:07'")
         self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-04-19 13:42:07'")
 
+    def test_write_resource_start_date_equals_end_date(self):
+        """
+        Tests if write updates the values correctly
+        (part 6, start_date equals end_date)
+
+        :return:
+        """
+
+        # Step 1: Create project
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-05 13:42:07',
+                  'end_date': '2020-04-12 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        # Step 2: Update values
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-05-03 14:12:04',
+                  'end_date': '2020-05-03 14:12:04'}
+        resource.write(values)
+
+        # Step 3: Evaluate values
+        manual_start_date = datetime(2020, 5, 3, 14, 12, 4)
+        manual_end_date = datetime(2020, 5, 3, 14, 12, 4)
+
+        self.assertEqual(resource.project.id, project.id, "project id doesn't match")
+        self.assertEqual(resource.employee.id, employee.id, "employee id doesn't match")
+        self.assertEqual(resource.workload, 50, "workload should be 50")
+        self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-05-03 14:12:04'")
+        self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-05-03 14:12:04'")
+
+    def test_create_resource_exception_start_after_end_date_1(self):
+        """
+        Tests if write raises an exception if the start_date is after the end_date
+        (difference is only 1s)
+
+        :return:
+        """
+
+        # Step 1: Create project
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-05 13:42:07',
+                  'end_date': '2020-04-12 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        # Step 2: Update values
+        # Expect ValidationError
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-05-03 14:12:04',
+                  'end_date': '2020-05-03 14:12:03'}
+        with self.assertRaises(exceptions.ValidationError):
+            resource.write(values)
