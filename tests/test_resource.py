@@ -71,7 +71,7 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(week_data[1], [{'week_num': 46, 'year': 2020}], 'Result is only one week (46)')
 
-# -------------------------------------------------------------------------------------------------------------------- #
+    # -------------------------------------------------------------------------------------------------------------------- #
 
     def test_add_weeks_object_normal(self):
         """
@@ -115,7 +115,7 @@ class TestResource(common.TransactionCase):
         self.assertEqual(week.week_num, 1, 'Week number is 1')
         self.assertEqual(week.year, 3000, 'Year is 3000')
 
-# -------------------------------------------------------------------------------------------------------------------- #
+    # -------------------------------------------------------------------------------------------------------------------- #
 
     def test_create_resource_normal(self):
         """
@@ -253,7 +253,64 @@ class TestResource(common.TransactionCase):
         with self.assertRaises(exceptions.ValidationError):
             self.env['resource.model'].create(values)
 
-# -------------------------------------------------------------------------------------------------------------------- #
+    def test_create_resource_exception_no_start_date(self):
+        """
+                Tests if create raises an exception if the start_date is not filled out
+        """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 100,
+                  'start_date': False,
+                  'end_date': '2018-04-19 14:12:04'}
+
+        with self.assertRaises(exceptions.ValidationError)as error:
+            self.env['resource.model'].create(values)
+
+        self.assertEqual(error.exception.name,
+                         "Both dates must be filled out", "Should raise exception if start_date"
+                                                          "is not filled out")
+
+    def test_create_resource_exception_no_end_date(self):
+        """
+                Tests if create raises an exception if the end_date is not filled out
+        """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 100,
+                  'start_date': '2018-04-19 14:12:04',
+                  'end_date': False}
+
+        with self.assertRaises(exceptions.ValidationError)as error:
+            self.env['resource.model'].create(values)
+
+        self.assertEqual(error.exception.name,
+                         "Both dates must be filled out", "Should raise exception if end_date"
+                                                          "is not filled out")
+
+    def test_create_resource_exception_no_start_no_end_date(self):
+        """
+                Tests if create raises an exception if the end_date is not filled out
+        """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 100,
+                  'start_date': False,
+                  'end_date': False}
+
+        with self.assertRaises(exceptions.ValidationError)as error:
+            self.env['resource.model'].create(values)
+
+        self.assertEqual(error.exception.name,
+                         "Both dates must be filled out", "Should raise exception if start and"
+                                                          "end dates are not filled out")
+
+    # -------------------------------------------------------------------------------------------------------------------- #
 
     def test_verify_workload_warning_1(self):
         """
@@ -398,7 +455,7 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(resource.verify_workload(), None, 'Warning is not shown (1%)')
 
-# -------------------------------------------------------------------------------------------------------------------- #
+    # -------------------------------------------------------------------------------------------------------------------- #
     def test_write_resource_project(self):
         """
         Tests if write stores the values (project, employee, workload, start_date, end_dat) correctly
@@ -432,6 +489,3 @@ class TestResource(common.TransactionCase):
         self.assertEqual(resource.workload, 50, "workload should be 50")
         self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-04-05 13:42:07'")
         self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-04-12 13:42:07'")
-
-
-

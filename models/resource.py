@@ -24,6 +24,7 @@ class Resource(models.Model):
     :param workload: an integer representing the workload in percent (from 0 to 100), is required
     :param start_date: the date on which the assignment begins, is required
     :param end_date: the date on which the assignment end, is required
+    :param next_week: boolean if start_date and end_date are next Monday and Friday
     start_date has to be before the end_date
     """
     _name = "resource.model"
@@ -33,6 +34,40 @@ class Resource(models.Model):
     workload = fields.Integer(string='Workload', required=True)
     start_date = fields.Datetime(string='Start Date')
     end_date = fields.Datetime(string='End Date')
+    next_week = fields.Boolean(string='Next Week')
+
+    @api.onchange('next_week')
+    def set_dates(self):
+        """
+              sets start and end date to coming monday and friday if next_week box is ticked
+              :returns dates for start_date and end_date that will be set
+        """
+        if self.next_week:
+            today = datetime.datetime.today()
+            for day in range(1, 8):
+                print(day)
+                if today.isoweekday() != 1:
+                    today = today + datetime.timedelta(days=day)
+                elif today.isoweekday() == 1:
+                    self.start_date = today
+                    self.end_date = today + datetime.timedelta(days=4)
+                    print(self.start_date)
+
+    @api.constrains('start_date', 'end_date')
+    def verify_start_and_end_dates(self):
+        """
+        Checks if start date is before or at the same date as end date
+        makes sure both dates are filled out
+
+        :raises:
+            :exception ValidationError: if start_date > end_date
+            :exception ValidationError: if start_date == False or end_date == False
+        :return: no return value
+        """
+        if self.start_date == False or self.end_date == False:
+            raise exceptions.ValidationError("Both dates must be filled out")
+        if self.start_date > self.end_date:
+            raise exceptions.ValidationError("Start date must be before end date")
 
 
     @api.constrains('start_date', 'end_date')
