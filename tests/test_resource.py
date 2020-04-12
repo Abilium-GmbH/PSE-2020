@@ -648,8 +648,8 @@ class TestResource(common.TransactionCase):
 # -------------------------------------------------------------------------------------------------------------------- #
     def test_create_single_week(self):
         """
-        Tests whether the correct WeeklyResource models are correct
-        (resource during 1 week)
+        Tests whether the correct WeeklyResource models are created by create
+        (part 1, resource during 1 week)
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -669,8 +669,8 @@ class TestResource(common.TransactionCase):
 
     def test_create_multiple_weeks(self):
         """
-        Tests whether the correct WeeklyResource models are correct
-        (resource during 3 weeks)
+        Tests whether the correct WeeklyResource models are created by create
+        (part 2, resource during 3 weeks)
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -688,4 +688,66 @@ class TestResource(common.TransactionCase):
                 self.assertEqual(model.year, 2020, "Wrong year")
                 self.assertEqual(model.week_num, week, "Wrong week_num")
                 self.assertEqual(model.week_string, "2020, W16", "Wrong week_string")
-            week = week + 1
+                week = week + 1
+
+    def test_write_single_to_multiple_weeks(self):
+        """
+        Tests whether the correct WeeklyResource models are created by write
+        (part 1, update timespan from 1 week to 2 weeks)
+        """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-06 13:42:07',
+                  'end_date': '2020-04-10 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-06 13:42:07',
+                  'end_date': '2020-04-17 13:42:07'}
+        resource.write(values)
+
+        weekly_model = self.env['weekly_resource.model']
+        for model in weekly_model:
+            week = 16
+            if model.resource_id == resource.id:
+                self.assertEqual(model.year, 2020, "Wrong year")
+                self.assertEqual(model.week_num, week, "Wrong week_num")
+                week = week + 1
+
+    def test_write_multiple_to_single_week(self):
+        """
+        Tests whether the correct WeeklyResource models are created by write
+        (part 2, update timespan from 4 weeks to 1 week)
+        """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-06 13:42:07',
+                  'end_date': '2020-05-01 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-06 13:42:07',
+                  'end_date': '2020-04-10 13:42:07'}
+        resource.write(values)
+
+        weekly_model = self.env['weekly_resource.model']
+        for model in weekly_model:
+            week = 16
+            if model.resource_id == resource.id:
+                self.assertEqual(model.year, 2020, "Wrong year")
+                self.assertEqual(model.week_num, week, "Wrong week_num")
+                self.assertNotEqual(model.week_num, 17, "Old WeeklyResource still exists")
+                self.assertNotEqual(model.week_num, 18, "Old WeeklyResource still exists")
+                self.assertNotEqual(model.week_num, 19, "Old WeeklyResource still exists")
+
+
