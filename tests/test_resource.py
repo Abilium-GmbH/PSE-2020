@@ -692,7 +692,7 @@ class TestResource(common.TransactionCase):
 
     def test_write_single_to_multiple_weeks(self):
         """
-        Tests whether the correct WeeklyResource models are created by write
+        Tests whether the WeeklyResource models are updated correctly by write
         (part 1, update timespan from 1 week to 2 weeks)
         """
         project = self.env['project.project'].create({'name': 'p1'})
@@ -749,5 +749,34 @@ class TestResource(common.TransactionCase):
                 self.assertNotEqual(model.week_num, 17, "Old WeeklyResource still exists")
                 self.assertNotEqual(model.week_num, 18, "Old WeeklyResource still exists")
                 self.assertNotEqual(model.week_num, 19, "Old WeeklyResource still exists")
+
+    def test_write_delay_resource(self):
+        """
+        Tests whether the WeeklyResource models are updated correctly by write
+        (part 3, delay resource)
+        """
+
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-06 13:42:07',
+                  'end_date': '2020-04-10 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-20 13:42:07',
+                  'end_date': '2020-04-24 13:42:07'}
+        resource.write(values)
+
+        weekly_model = self.env['weekly_resource.model']
+        for model in weekly_model:
+            if model.resource_id == resource.id:
+                self.assertEqual(model.year, 2020, "Wrong year")
+                self.assertEqual(model.week_num, 18, "Wrong week_num")
+                self.assertNotEqual(model.week_num, 16, "Old WeeklyResource still exists")
 
 
