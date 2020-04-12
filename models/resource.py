@@ -79,7 +79,26 @@ class Resource(models.Model):
         rec.create_corresponding_models(rec)
         return rec
 
-    @api.model_create_multi
+    def write(self, values):
+        """
+        Overriding default write method
+        Delete old weekly_resource.models an creating new ones
+
+        :param values,the values to be overwritten
+        :return: rec
+        :rtype: bool
+        """
+        rec = super(Resource, self).write(values)
+        # Delete "old" weekly_resource.model
+        old = self.env['weekly_resource.model'].search([['resource_id', '=', self.id]])
+        if old:
+            for model in old:
+                model.unlink()
+
+        # (Re-)Create "new" week.models or weekly_resource.models
+        self.create_corresponding_models(self)
+        return rec
+
     def create_corresponding_models(self, rec):
         """
         Creates corresponding week.models (if missing) and weekly_resource.models
@@ -102,27 +121,6 @@ class Resource(models.Model):
             values = {'week_id': week_model.id, 'resource_id': rec.id}
             rec.add_weekly_resource(values)
         return
-
-    def write(self, values):
-        """
-        Overriding default write method
-        Delete old weekly_resource.models an creating new ones
-
-
-        :param values,the values to be overwritten
-        :return: rec
-        :rtype: bool
-        """
-        rec = super(Resource, self).write(values)
-        # Delete "old" weekly_resource.model
-        old = self.env['weekly_resource.model'].search([['resource_id', '=', self.id]])
-        if old:
-            for model in old:
-                model.unlink()
-
-        # (Re-)Create "new" week.models or weekly_resource.models
-        self.create_corresponding_models(self)
-        return rec
 
     @api.model_create_multi
     def add_weeks_object(self, week):
