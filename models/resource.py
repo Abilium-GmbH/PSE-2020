@@ -34,6 +34,7 @@ class Resource(models.Model):
     start_date = fields.Datetime(string='Start Date')
     end_date = fields.Datetime(string='End Date')
 
+
     @api.constrains('start_date', 'end_date')
     def check_start_date_before_end_date(self):
         """
