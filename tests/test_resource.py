@@ -617,7 +617,7 @@ class TestResource(common.TransactionCase):
         self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-05-03 14:12:04'")
         self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-05-03 14:12:04'")
 
-    def test_create_resource_exception_start_after_end_date_1(self):
+    def test_write_resource_start_after_end_date(self):
         """
         Tests if write raises an exception if the start_date is after the end_date
         (difference is only 1s)
@@ -644,3 +644,48 @@ class TestResource(common.TransactionCase):
                   'end_date': '2020-05-03 14:12:03'}
         with self.assertRaises(exceptions.ValidationError):
             resource.write(values)
+
+# -------------------------------------------------------------------------------------------------------------------- #
+    def test_create_single_week(self):
+        """
+        Tests whether the correct WeeklyResource models are correct
+        (resource during 1 week)
+        """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-06 13:42:07',
+                  'end_date': '2020-04-10 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        weekly_model = self.env['weekly_resource.model']
+        for model in weekly_model:
+            if model.resource_id == resource.id:
+                self.assertEqual(model.year, 2020, "Wrong year")
+                self.assertEqual(model.week_num, 16, "Wrong week_num")
+                self.assertEqual(model.week_string, "2020, W16", "Wrong week_string")
+
+    def test_create_multiple_weeks(self):
+        """
+        Tests whether the correct WeeklyResource models are correct
+        (resource during 3 weeks)
+        """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-06 13:42:07',
+                  'end_date': '2020-04-24 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        weekly_model = self.env['weekly_resource.model']
+        for model in weekly_model:
+            week = 16
+            if model.resource_id == resource.id:
+                self.assertEqual(model.year, 2020, "Wrong year")
+                self.assertEqual(model.week_num, week, "Wrong week_num")
+                self.assertEqual(model.week_string, "2020, W16", "Wrong week_string")
+            week = week + 1
