@@ -10,7 +10,7 @@
             <field name="arch" type="xml">
                 <tree string="Employees">
                     <field name="name"/>
-                    <field name="total_workload_planed"/>
+                    <field name="resources"/>
                 </tree>
             </field>
         </record>

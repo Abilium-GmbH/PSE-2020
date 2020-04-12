@@ -71,7 +71,7 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(week_data[1], [{'week_num': 46, 'year': 2020}], 'Result is only one week (46)')
 
-    # -------------------------------------------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------------------------------------------- #
 
     def test_add_weeks_object_normal(self):
         """
@@ -104,6 +104,7 @@ class TestResource(common.TransactionCase):
         week = self.env['resource.model'].add_weeks_object({'week_num': 50, 'year': 1900})
         self.assertEqual(week.week_num, 50, 'Week number is 50')
         self.assertEqual(week.year, 1900, 'Year is 1900')
+        self.assertEqual(week.week_string, "1900, W50", "Invalid week_string")
 
     def test_add_weeks_object_future_year(self):
         """
@@ -114,8 +115,9 @@ class TestResource(common.TransactionCase):
         week = self.env['resource.model'].add_weeks_object({'week_num': 1, 'year': 3000})
         self.assertEqual(week.week_num, 1, 'Week number is 1')
         self.assertEqual(week.year, 3000, 'Year is 3000')
+        self.assertEqual(week.week_string, "3000, W01", "Invalid week_string")
 
-    # -------------------------------------------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------------------------------------------- #
 
     def test_create_resource_normal(self):
         """
@@ -455,7 +457,7 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(resource.verify_workload(), None, 'Warning is not shown (1%)')
 
-    # -------------------------------------------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------------------------------------------- #
     def test_write_resource_project(self):
         """
         Tests if write stores the values (project, employee, workload, start_date, end_dat) correctly
@@ -472,6 +474,8 @@ class TestResource(common.TransactionCase):
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
+
+        # Step 2: Update project
         project2 = self.env['project.project'].create({'name': 'p2'})
         values = {'project': project2.id,
                   'employee': employee.id,
@@ -481,6 +485,7 @@ class TestResource(common.TransactionCase):
         # Step 2: Update project
         resource.write(values)
 
+        # Step 3: Evaluate Values
         manual_start_date = datetime(2020, 4, 5, 13, 42, 7)
         manual_end_date = datetime(2020, 4, 12, 13, 42, 7)
 
@@ -489,3 +494,346 @@ class TestResource(common.TransactionCase):
         self.assertEqual(resource.workload, 50, "workload should be 50")
         self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-04-05 13:42:07'")
         self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-04-12 13:42:07'")
+
+    def test_write_resource_employee(self):
+        """
+        Tests if write updates the values correctly
+        (part 2, update employee)
+
+        :return:
+        """
+        # Step 1: Create project
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-05 13:42:07',
+                  'end_date': '2020-04-12 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        # Step 2: Update project
+        employee2 = self.env['hr.employee'].create({'name': 'e2'})
+        values = {'project': project.id,
+                  'employee': employee2.id,
+                  'workload': 50,
+                  'start_date': '2020-04-05 13:42:07',
+                  'end_date': '2020-04-12 13:42:07'}
+        resource.write(values)
+
+        #Step 3: Evaluate values
+        manual_start_date = datetime(2020, 4, 5, 13, 42, 7)
+        manual_end_date = datetime(2020, 4, 12, 13, 42, 7)
+
+        self.assertEqual(resource.project.id, project.id, "project id doesn't match")
+        self.assertEqual(resource.employee.id, employee2.id, "employee id doesn't match")
+        self.assertEqual(resource.workload, 50, "workload should be 50")
+        self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-04-05 13:42:07'")
+        self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-04-12 13:42:07'")
+
+    def test_write_resource_workload(self):
+        """
+        Tests if write updates the values correctly
+        (part 3, update workload)
+
+        :return:
+        """
+        # Step 1: Create project
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-05 13:42:07',
+                  'end_date': '2020-04-12 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        # Step 2: Update project
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 99,
+                  'start_date': '2020-04-05 13:42:07',
+                  'end_date': '2020-04-12 13:42:07'}
+        resource.write(values)
+
+        # Step 3: Evaluate Values
+        manual_start_date = datetime(2020, 4, 5, 13, 42, 7)
+        manual_end_date = datetime(2020, 4, 12, 13, 42, 7)
+
+        self.assertEqual(resource.project.id, project.id, "project id doesn't match")
+        self.assertEqual(resource.employee.id, employee.id, "employee id doesn't match")
+        self.assertEqual(resource.workload, 99, "workload should be 99")
+        self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-04-05 13:42:07'")
+        self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-04-12 13:42:07'")
+
+    def test_write_resource_dates(self):
+        """
+        Tests if write updates the values correctly
+        (part 4, update start_date and end_date)
+
+        :return:
+        """
+        # Step 1: Create project
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-05 13:42:07',
+                  'end_date': '2020-04-12 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        # Step 2: Update project
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-13 13:42:07',
+                  'end_date': '2020-04-19 13:42:07'}
+        resource.write(values)
+
+        # Step 3: Evaluate Values
+        manual_start_date = datetime(2020, 4, 13, 13, 42, 7)
+        manual_end_date = datetime(2020, 4, 19, 13, 42, 7)
+
+        self.assertEqual(resource.project.id, project.id, "project id doesn't match")
+        self.assertEqual(resource.employee.id, employee.id, "employee id doesn't match")
+        self.assertEqual(resource.workload, 50, "workload should be 50")
+        self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-04-13 13:42:07'")
+        self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-04-19 13:42:07'")
+
+    def test_write_resource_all(self):
+        """
+        Tests if write updates the values correctly
+        (part 5, overwrite all values)
+
+        :return:
+        """
+        # Step 1: Create Resource
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-05 13:42:07',
+                  'end_date': '2020-04-12 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        # Step 2: Update Resource
+        project2 = self.env['project.project'].create({'name': 'p2'})
+        employee2 = self.env['hr.employee'].create({'name': 'e2'})
+        values = {'project': project2.id,
+                  'employee': employee2.id,
+                  'workload': 99,
+                  'start_date': '2020-04-13 13:42:07',
+                  'end_date': '2020-04-19 13:42:07'}
+        resource.write(values)
+
+        # Step 3: Evaluate values
+        manual_start_date = datetime(2020, 4, 13, 13, 42, 7)
+        manual_end_date = datetime(2020, 4, 19, 13, 42, 7)
+
+        self.assertEqual(resource.project.id, project2.id, "project id doesn't match")
+        self.assertEqual(resource.employee.id, employee2.id, "employee id doesn't match")
+        self.assertEqual(resource.workload, 99, "workload should be 99")
+        self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-04-13 13:42:07'")
+        self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-04-19 13:42:07'")
+
+    def test_write_resource_start_date_equals_end_date(self):
+        """
+        Tests if write updates the values correctly
+        (part 6, start_date equals end_date)
+
+        :return:
+        """
+
+        # Step 1: Create project
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-05 13:42:07',
+                  'end_date': '2020-04-12 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        # Step 2: Update values
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-05-03 14:12:04',
+                  'end_date': '2020-05-03 14:12:04'}
+        resource.write(values)
+
+        # Step 3: Evaluate values
+        manual_start_date = datetime(2020, 5, 3, 14, 12, 4)
+        manual_end_date = datetime(2020, 5, 3, 14, 12, 4)
+
+        self.assertEqual(resource.project.id, project.id, "project id doesn't match")
+        self.assertEqual(resource.employee.id, employee.id, "employee id doesn't match")
+        self.assertEqual(resource.workload, 50, "workload should be 50")
+        self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-05-03 14:12:04'")
+        self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-05-03 14:12:04'")
+
+    def test_write_resource_start_after_end_date(self):
+        """
+        Tests if write raises an exception if the start_date is after the end_date
+        (difference is only 1s)
+
+        :return:
+        """
+
+        # Step 1: Create project
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-05 13:42:07',
+                  'end_date': '2020-04-12 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        # Step 2: Update values
+        # Expect ValidationError
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-05-03 14:12:04',
+                  'end_date': '2020-05-03 14:12:03'}
+        with self.assertRaises(exceptions.ValidationError):
+            resource.write(values)
+
+# -------------------------------------------------------------------------------------------------------------------- #
+    def test_create_single_week(self):
+        """
+        Tests whether the correct WeeklyResource models are created by create
+        (part 1, resource during 1 week)
+        """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-06 13:42:07',
+                  'end_date': '2020-04-10 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        weekly_model = self.env['weekly_resource.model']
+        for model in weekly_model:
+            if model.resource_id == resource.id:
+                self.assertEqual(model.year, 2020, "Wrong year")
+                self.assertEqual(model.week_num, 16, "Wrong week_num")
+                self.assertEqual(model.week_string, "2020, W16", "Wrong week_string")
+
+    def test_create_multiple_weeks(self):
+        """
+        Tests whether the correct WeeklyResource models are created by create
+        (part 2, resource during 3 weeks)
+        """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-06 13:42:07',
+                  'end_date': '2020-04-24 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        weekly_model = self.env['weekly_resource.model']
+        for model in weekly_model:
+            week = 16
+            if model.resource_id == resource.id:
+                self.assertEqual(model.year, 2020, "Wrong year")
+                self.assertEqual(model.week_num, week, "Wrong week_num")
+                self.assertEqual(model.week_string, "2020, W16", "Wrong week_string")
+                week = week + 1
+
+    def test_write_single_to_multiple_weeks(self):
+        """
+        Tests whether the WeeklyResource models are updated correctly by write
+        (part 1, update timespan from 1 week to 2 weeks)
+        """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-06 13:42:07',
+                  'end_date': '2020-04-10 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-06 13:42:07',
+                  'end_date': '2020-04-17 13:42:07'}
+        resource.write(values)
+
+        weekly_model = self.env['weekly_resource.model']
+        for model in weekly_model:
+            week = 16
+            if model.resource_id == resource.id:
+                self.assertEqual(model.year, 2020, "Wrong year")
+                self.assertEqual(model.week_num, week, "Wrong week_num")
+                week = week + 1
+
+    def test_write_multiple_to_single_week(self):
+        """
+        Tests whether the correct WeeklyResource models are created by write
+        (part 2, update timespan from 4 weeks to 1 week)
+        """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-06 13:42:07',
+                  'end_date': '2020-05-01 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-06 13:42:07',
+                  'end_date': '2020-04-10 13:42:07'}
+        resource.write(values)
+
+        weekly_model = self.env['weekly_resource.model']
+        for model in weekly_model:
+            week = 16
+            if model.resource_id == resource.id:
+                self.assertEqual(model.year, 2020, "Wrong year")
+                self.assertEqual(model.week_num, week, "Wrong week_num")
+                self.assertNotEqual(model.week_num, 17, "Old WeeklyResource still exists")
+                self.assertNotEqual(model.week_num, 18, "Old WeeklyResource still exists")
+                self.assertNotEqual(model.week_num, 19, "Old WeeklyResource still exists")
+
+    def test_write_delay_resource(self):
+        """
+        Tests whether the WeeklyResource models are updated correctly by write
+        (part 3, delay resource)
+        """
+
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-06 13:42:07',
+                  'end_date': '2020-04-10 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 50,
+                  'start_date': '2020-04-20 13:42:07',
+                  'end_date': '2020-04-24 13:42:07'}
+        resource.write(values)
+
+        weekly_model = self.env['weekly_resource.model']
+        for model in weekly_model:
+            if model.resource_id == resource.id:
+                self.assertEqual(model.year, 2020, "Wrong year")
+                self.assertEqual(model.week_num, 18, "Wrong week_num")
+                self.assertNotEqual(model.week_num, 16, "Old WeeklyResource still exists")
+
+
