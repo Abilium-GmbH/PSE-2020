@@ -76,7 +76,16 @@ class Resource(models.Model):
         :rtype: resource
         """
         rec = super(Resource, self).create(values)
+        rec.create_corresponding_models(rec)
+        return rec
 
+    @api.model_create_multi
+    def create_corresponding_models(self, rec):
+        """
+        Creates corresponding week.models (if missing) and weekly_resource.models
+        :param rec: the resource.model requiring the other models
+        :return: None
+        """
         # Create week.model
         week_data = rec.get_weeks(rec.start_date, rec.end_date)
         week_array = week_data[0]
@@ -92,6 +101,27 @@ class Resource(models.Model):
                 [['week_num', '=', week['week_num']], ['year', '=', week['year']]])
             values = {'week_id': week_model.id, 'resource_id': rec.id}
             rec.add_weekly_resource(values)
+        return
+
+    def write(self, values):
+        """
+        Overriding default write method
+        Delete old weekly_resource.models an creating new ones
+
+
+        :param values,the values to be overwritten
+        :return: rec
+        :rtype: bool
+        """
+        rec = super(Resource, self).write(values)
+        # Delete "old" weekly_resource.model
+        old = self.env['weekly_resource.model'].search([['resource_id', '=', self.id]])
+        if old:
+            for model in old:
+                model.unlink()
+
+        # (Re-)Create "new" week.models or weekly_resource.models
+        self.create_corresponding_models(self)
         return rec
 
     @api.model_create_multi
