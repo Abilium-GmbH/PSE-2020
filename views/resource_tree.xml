@@ -18,18 +18,23 @@
         </record>
         <!-- Form for creating new Resources -->
         <record id="view_resource_form" model="ir.ui.view">
-            <field name="name">resource.model.form</field>
+            <field name="name">resource.form</field>
             <field name="model">resource.model</field>
-            <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <form string="Resource">
+
                     <sheet>
                         <notebook colspan="4">
                             <page name="add_resource" string="Resource">
-                                <group col="4" colspan="4" name="resource_detail">
+                                <group colspan="2" col="2">
+                                    <separator string="Details" colspan="2"/>
                                     <field name="project" widget="selection"/>
                                     <field name="employee" widget="selection"/>
                                     <field name="workload"/>
+                                </group>
+                                <group colspan="2" col="2">
+                                    <separator string="Dates" colspan="2"/>
+
                                     <field name="start_date"/>
                                     <field name="end_date"/>
                                 </group>
@@ -45,10 +50,10 @@
             <field name="res_model">resource.model</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
-            <field name="help" type="html">
-                <p class="oe_view_nocontent_create">Create/Edit</p>
-            </field>
-            <field name="view_id" ref="view_resource_tree"/>
+<!--            <field name="help" type="html">-->
+<!--                <p class="oe_view_nocontent_create">Create/Edit</p>-->
+<!--            </field>-->
+<!--            <field name="view_id" ref="view_resource_tree"/>-->
         </record>
 
         <menuitem id="menu_resource" name="Resource Planning"/>
