@@ -15,7 +15,7 @@
         </record>
 
         <record model="ir.actions.act_window" id="action_view_weekly_p">
-            <field name="name">Weekly Resources</field>
+            <field name="name">Project Centred</field>
             <field name="res_model">weekly_resource.model</field>
             <field name="view_mode">pivot</field>
             <field name="domain">[]</field>
