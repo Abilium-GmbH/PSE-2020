@@ -36,6 +36,8 @@ class Resource(models.Model):
     end_date = fields.Datetime(string='End Date')
     next_week = fields.Boolean(string='Next Week')
 
+
+
     @api.onchange('next_week')
     def set_dates(self):
         """
@@ -46,11 +48,10 @@ class Resource(models.Model):
             today = datetime.datetime.today()
             for day in range(1, 8):
                 if today.isoweekday() != 1:
-                    today = today + datetime.timedelta(days=day)
+                    today = today + datetime.timedelta(days=1)
                 elif today.isoweekday() == 1:
                     self.start_date = today
                     self.end_date = today + datetime.timedelta(days=4)
-
 
     @api.constrains('start_date', 'end_date')
     def verify_start_and_end_dates(self):
@@ -217,7 +218,7 @@ class Resource(models.Model):
             # add week to project_week_array
             if start_week <= week_i <= end_week:
                 project_week_array = project_week_array + [week_data]
-                
+
             # add one week time difference to the date
             date_i = date_i + datetime.timedelta(weeks=1)
             week_i = get_week(date_i)
