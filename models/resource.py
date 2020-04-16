@@ -25,6 +25,7 @@ class Resource(models.Model):
     :param start_date: the date on which the assignment begins, is required
     :param end_date: the date on which the assignment end, is required
     :param next_week: boolean if start_date and end_date are next Monday and Friday
+    :param add_next_week: boolean intended for quick extension of a resource to extend resource for one week
     start_date has to be before the end_date
     """
     _name = "resource.model"
@@ -35,9 +36,35 @@ class Resource(models.Model):
     start_date = fields.Datetime(string='Start Date')
     end_date = fields.Datetime(string='End Date')
     next_week = fields.Boolean(string='Next Week')
+    # add_next_week = fields.Boolean(string='Add Next Week')
     weekly_resources = fields.One2many('weekly_resource.model', 'resource_id')
 
+    #@api.onchange('add_next_week')
+    def add_next_week(self):
+        """
+              sets end date to coming friday if add_next_week box is ticked
+              leaves start date as it was
+              :returns date for end_date that will be set/updated
+                :exception ValidationError: if start_date > end_date
+                :exception ValidationError: if start_date == False
+        """
+        # if self.add_next_week:
+        today = datetime.datetime.today()
 
+        if self.start_date != False:
+            for day in range(1, 8):
+                if today.isoweekday() != 1:
+                    today = today + datetime.timedelta(days=1)
+
+                elif today.isoweekday() == 1:
+                    if self.start_date <= today:
+                        self.end_date = today + datetime.timedelta(days=4)
+                    else:
+                        raise exceptions.ValidationError(
+                            "Please make sure that the end date is after the start date")
+
+        else:
+            raise exceptions.ValidationError("Please fill out start date or use next week box")
 
     @api.onchange('next_week')
     def set_dates(self):
@@ -69,8 +96,6 @@ class Resource(models.Model):
             raise exceptions.ValidationError("Both dates must be filled out")
         if self.start_date > self.end_date:
             raise exceptions.ValidationError("Start date must be before end date")
-
-
 
     @api.constrains('workload')
     def verify_workload(self):

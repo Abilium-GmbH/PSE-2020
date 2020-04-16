@@ -32,10 +32,17 @@
                                     <field name="workload"/>
                                 </group>
                                 <group colspan="2" col="2">
-                                    <separator string="Dates" colspan="2"/>
-                                    <field name="next_week"/>
-                                    <field name="start_date"/>
-                                    <field name="end_date"/>
+                                <separator string="Dates" colspan="2"/>
+                                <field name="next_week"/>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                                </group>
+                            </page>
+                            <page name="update" string="Update only">
+                                <group colspan="2" col="2">
+                                    <separator string="Update only" colspan="2"/>
+<!--                                    <field name="add_next_week"/>-->
+                                    <button name="add_next_week" string="Add next week to current resource" class="oe_highlight" type="object"/>
                                 </group>
                             </page>
                         </notebook>
