@@ -2,6 +2,7 @@
 
 <!-- View for the Weeks model -->
 <!-- Lists the Weeks in the database -->
+<!-- Currently not active -->
 <!-- may be erased in future iterations -->
 <odoo>
     <data>
