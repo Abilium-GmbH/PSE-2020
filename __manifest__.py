@@ -33,7 +33,8 @@
         'security/security.xml',
         'security/ir.model.access.csv',
         'views/resource_tree.xml',
-        'views/weekly_resource.xml'
+        'views/weekly_resource.xml',
+        'views/weekly_resource_project.xml'
     ],
     # only loaded in demonstration mode
     'demo': [],

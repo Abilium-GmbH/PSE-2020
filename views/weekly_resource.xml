@@ -38,8 +38,8 @@
             <field name="domain">[]</field>
         </record>
 
-         <menuitem id="menu_weekly" name="Overview" parent="menu_resource"
-                  action="action_view_weekly"/>
+        <menuitem id="menu_weekly" name="Overview" parent="menu_resource"/>
+        <menuitem id="menu_weekly_employee" name="Employee" parent="menu_weekly" action="action_view_weekly"/>
 
     </data>
 </odoo>
