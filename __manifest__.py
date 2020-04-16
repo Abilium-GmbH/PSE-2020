@@ -33,7 +33,6 @@
         'security/security.xml',
         'security/ir.model.access.csv',
         'views/resource_tree.xml',
-        'views/weeks.xml',
         'views/weekly_resource.xml'
     ],
     # only loaded in demonstration mode
