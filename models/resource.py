@@ -35,6 +35,7 @@ class Resource(models.Model):
     start_date = fields.Datetime(string='Start Date')
     end_date = fields.Datetime(string='End Date')
     next_week = fields.Boolean(string='Next Week')
+    weekly_resources = fields.One2many('weekly_resource.model', 'resource_id')
 
 
 
@@ -69,19 +70,7 @@ class Resource(models.Model):
         if self.start_date > self.end_date:
             raise exceptions.ValidationError("Start date must be before end date")
 
-    weekly_resources = fields.One2many('weekly_resource.model', 'resource_id')
 
-    @api.constrains('start_date', 'end_date')
-    def check_start_date_before_end_date(self):
-        """
-        Checks if start date is before or at the same date as end date
-
-        :raises:
-            :exception ValidationError: if start_date > end_date
-        :return: no return value
-        """
-        if self.start_date > self.end_date:
-            raise exceptions.ValidationError("Start date must be before end date")
 
     @api.constrains('workload')
     def verify_workload(self):
