@@ -107,7 +107,7 @@ class Resource(models.Model):
         :return: no return value
         """
         if self.workload > 100:
-            raise exceptions.ValidationError("The given workload can't larger than 100")
+            raise exceptions.ValidationError("The given workload can't be larger than 100")
         elif self.workload <= 0:
             raise exceptions.ValidationError("The given workload can't be equal or smaller than 0")
 

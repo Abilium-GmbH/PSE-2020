@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from odoo import exceptions
 from odoo.tests import common
 from psycopg2 import errors
@@ -368,7 +368,7 @@ class TestResource(common.TransactionCase):
             self.env['resource.model'].create(values)
 
         self.assertEqual(e.exception.name,
-                         "The given workload can't larger than 100",
+                         "The given workload can't be larger than 100",
                          "Should raise exception for workload being to high")
 
     def test_verify_workload_warning_2(self):
@@ -390,7 +390,7 @@ class TestResource(common.TransactionCase):
             self.env['resource.model'].create(values)
 
         self.assertEqual(e.exception.name,
-                         "The given workload can't larger than 100",
+                         "The given workload can't be larger than 100",
                          "Should raise exception for workload being to high")
 
     def test_verify_workload_warning_3(self):
@@ -412,7 +412,7 @@ class TestResource(common.TransactionCase):
             self.env['resource.model'].create(values)
 
         self.assertEqual(e.exception.name,
-                         "The given workload can't larger than 100",
+                         "The given workload can't be larger than 100",
                          "Should raise exception for workload being to high")
 
     def test_verify_workload_warning_4(self):
@@ -871,4 +871,60 @@ class TestResource(common.TransactionCase):
                 self.assertEqual(model.week_num, 18, "Wrong week_num")
                 self.assertNotEqual(model.week_num, 16, "Old WeeklyResource still exists")
 
+# -------------------------------------------------------------------------------------------------------------------- #
 
+    def test_add_next_week_normal(self):
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 1,
+                  'start_date': '2020-04-05 13:42:07',
+                  'end_date': '2020-04-12 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        resource.add_next_week()
+        today = datetime.today()
+        current_end_date = today + timedelta(days=5)
+        manual_start_date = datetime(2020, 4, 5, 13, 42, 7)
+        timedifference = resource.end_date - current_end_date
+        self.assertTrue(timedifference.seconds > 3, 'The timedifference is less than 3 seconds')
+        self.assertEqual(resource.start_date, manual_start_date, 'Start date got not changed')
+
+    def test_add_next_week_end_date_before_start_date(self):
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 1,
+                  'start_date': '2020-05-05 13:42:07',
+                  'end_date': '2020-05-12 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        today = datetime.today()
+        current_end_date = today + timedelta(days=5)
+
+        timedifference = resource.end_date - current_end_date
+        with self.assertRaises(exceptions.ValidationError) as e:
+            resource.add_next_week()
+
+        self.assertEqual(e.exception.name,
+                         "Please make sure that the end date is after the start date",
+                         "Should raise exception if start_date is after end_date")
+        self.assertTrue(timedifference.seconds > 3, 'The timedifference is less than 3 seconds')
+
+    def test_add_next_week_start_date_normal_2(self):
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'workload': 1,
+                  'start_date': '2020-04-12 13:42:07',
+                  'end_date': '2020-04-12 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+        today = datetime.today()
+        current_end_date = today + timedelta(days=5)
+        manual_start_date = datetime(2020, 4, 12, 13, 42, 7)
+        timedifference = resource.end_date - current_end_date
+        self.assertTrue(timedifference.seconds > 3, 'The timedifference is less than 3 seconds')
+        self.assertEqual(resource.start_date, manual_start_date, 'Start date got not changed')
