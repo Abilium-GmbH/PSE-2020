@@ -883,37 +883,16 @@ class TestResource(common.TransactionCase):
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
 
-        resource.add_next_week()
-        today = datetime.today()
-        current_end_date = today + timedelta(days=5)
+        resource.plus_one_week()
+
+        current_end_date = datetime.strptime('2020-04-12 13:42:07', '%Y-%m-%d %H:%M:%S') + timedelta(days=7)
         manual_start_date = datetime(2020, 4, 5, 13, 42, 7)
-        timedifference = resource.end_date - current_end_date
-        self.assertTrue(timedifference.seconds > 3, 'The timedifference is less than 3 seconds')
+        print(resource.end_date)
+
+        self.assertEqual(current_end_date, resource.end_date, 'The resource was extended by 1 weeks')
         self.assertEqual(resource.start_date, manual_start_date, 'Start date got not changed')
 
-    def test_add_next_week_end_date_before_start_date(self):
-        project = self.env['project.project'].create({'name': 'p1'})
-        employee = self.env['hr.employee'].create({'name': 'e1'})
-        values = {'project': project.id,
-                  'employee': employee.id,
-                  'workload': 1,
-                  'start_date': '2020-05-05 13:42:07',
-                  'end_date': '2020-05-12 13:42:07'}
-        resource = self.env['resource.model'].create(values)
-
-        today = datetime.today()
-        current_end_date = today + timedelta(days=5)
-
-        timedifference = resource.end_date - current_end_date
-        with self.assertRaises(exceptions.ValidationError) as e:
-            resource.add_next_week()
-
-        self.assertEqual(e.exception.name,
-                         "Please make sure that the end date is after the start date",
-                         "Should raise exception if start_date is after end_date")
-        self.assertTrue(timedifference.seconds > 3, 'The timedifference is less than 3 seconds')
-
-    def test_add_next_week_start_date_normal_2(self):
+    def test_add_next_week_start_date_normal_push_button_twice(self):
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
@@ -922,9 +901,12 @@ class TestResource(common.TransactionCase):
                   'start_date': '2020-04-12 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
-        today = datetime.today()
-        current_end_date = today + timedelta(days=5)
+
+        resource.plus_one_week()
+        resource.plus_one_week()
+
+        current_end_date = datetime.strptime('2020-04-19 13:42:07', '%Y-%m-%d %H:%M:%S') + timedelta(days=7)
         manual_start_date = datetime(2020, 4, 12, 13, 42, 7)
-        timedifference = resource.end_date - current_end_date
-        self.assertTrue(timedifference.seconds > 3, 'The timedifference is less than 3 seconds')
+
+        self.assertEqual(current_end_date, resource.end_date, 'The resource was extended by 2 weeks')
         self.assertEqual(resource.start_date, manual_start_date, 'Start date got not changed')
