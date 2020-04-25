@@ -32,21 +32,20 @@ class Resource(models.Model):
     _rec_name = 'project'
     project = fields.Many2one('project.project', 'Project', required=True)
     employee = fields.Many2one('hr.employee', 'Employee', required=True)
-    workload = fields.Integer(string='Workload', required=True)
+    workload = fields.Integer(string='Workload in %', required=True, help='Workload per week in percentage')
     start_date = fields.Datetime(string='Start Date')
     end_date = fields.Datetime(string='End Date')
     next_week = fields.Boolean(string='Next Week')
     # add_next_week = fields.Boolean(string='Add Next Week')
     weekly_resources = fields.One2many('weekly_resource.model', 'resource_id')
 
-    #@api.onchange('add_next_week')
+    # @api.onchange('add_next_week')
     def add_next_week(self):
         """
               sets end date to coming friday if add_next_week box is ticked
               leaves start date as it was
               :returns date for end_date that will be set/updated
                 :exception ValidationError: if start_date > end_date
-                :exception ValidationError: if start_date == False
         """
         # if self.add_next_week:
         today = datetime.datetime.today()
@@ -62,9 +61,6 @@ class Resource(models.Model):
                     else:
                         raise exceptions.ValidationError(
                             "Please make sure that the end date is after the start date")
-
-        else:
-            raise exceptions.ValidationError("Please fill out start date or use next week box")
 
     @api.onchange('next_week')
     def set_dates(self):
