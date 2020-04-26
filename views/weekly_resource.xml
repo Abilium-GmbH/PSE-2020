@@ -26,7 +26,7 @@
                 <search string="Resource">
                     <field name="project"/>
                     <field name="employee"/>
-                    <field name="workload"/>
+                    <field name="base_workload"/>
                     <field name="start_date"/>
                     <field name="end_date"/>
                     <filter name='week_name' string="2 Months" domain="[('week_bool', '=', True)]"/>

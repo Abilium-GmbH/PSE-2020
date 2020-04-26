@@ -18,7 +18,7 @@ class Weeks(models.Model):
     week_bool = fields.Boolean(compute="is_week_in_next_2_months", string="is week in next two Months", store=True)
     week_num_in_two_months = fields.Integer(compute="get_week_num_in_two_months", string="Week number in 2 Months")
 
-    @api.depends('week_num_next_month')
+    @api.depends('week_num_in_two_months')
     def get_week_num_in_two_months(self):
         """
         gets week number which is 2 months in the future
