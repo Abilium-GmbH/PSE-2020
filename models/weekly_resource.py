@@ -15,3 +15,4 @@ class WeeklyResource(models.Model):
 
     week_id = fields.Many2one('week.model', 'Week Id', ondelete="cascade")
     resource_id = fields.Many2one('resource.model', 'Resource Id', ondelete="cascade")
+    weekly_workload = fields.Integer(string='Workload in %')

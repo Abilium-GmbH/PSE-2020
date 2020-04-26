@@ -24,7 +24,7 @@
             <field name="arch" type="xml">
                 <pivot string="Resource Pivot">
                     <field name="week_string" type="col"/>
-                    <field name="base_workload" type="measure"/>
+                    <field name="weekly_workload" type="measure"/>
                     <field name="employee" type="row"/>
                     <field name="project" type="row"/>
                 </pivot>

@@ -169,7 +169,7 @@ class Resource(models.Model):
             if rec.employee.get_total_workload(week_model) + rec.base_workload > 100:
                 raise exceptions.ValidationError("The workload in week " + week_model.week_string + " is too high")
 
-            values = {'week_id': week_model.id, 'resource_id': rec.id}
+            values = {'week_id': week_model.id, 'resource_id': rec.id, 'weekly_workload': rec.base_workload}
             rec.add_weekly_resource(values)
         return
 
