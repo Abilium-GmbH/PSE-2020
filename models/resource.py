@@ -143,6 +143,7 @@ class Resource(models.Model):
 
         # (Re-)Create "new" week.models or weekly_resource.models
         self.create_corresponding_models(self)
+        self.env['week.model'].is_week_in_next_2_months()
         return rec
 
     def create_corresponding_models(self, rec):
