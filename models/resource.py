@@ -21,7 +21,7 @@ class Resource(models.Model):
 
     :param project: refers to an existing project from the project model, is required
     :param employee: refers to an existing employee from the employee model, is required
-    :param workload: an integer representing the workload in percent (from 0 to 100), is required
+    :param base_workload: an integer representing the workload in percent (from 0 to 100), is required
     :param start_date: the date on which the assignment begins, is required
     :param end_date: the date on which the assignment end, is required
     :param next_week: boolean if start_date and end_date are next Monday and Friday
@@ -32,7 +32,7 @@ class Resource(models.Model):
     _rec_name = 'project'
     project = fields.Many2one('project.project', 'Project', required=True)
     employee = fields.Many2one('hr.employee', 'Employee', required=True)
-    workload = fields.Integer(string='Workload in %', required=True, help='Workload per week in percentage')
+    base_workload = fields.Integer(string='Workload in %', required=True, help='Workload per week in percentage')
     start_date = fields.Datetime(string='Start Date')
     end_date = fields.Datetime(string='End Date')
     next_week = fields.Boolean(string='Next Week')
@@ -93,19 +93,19 @@ class Resource(models.Model):
         if self.start_date > self.end_date:
             raise exceptions.ValidationError("Start date must be before end date")
 
-    @api.constrains('workload')
+    @api.constrains('base_workload')
     def verify_workload(self):
         """
         Checks if workload is between 1 and 100
 
         :raises:
-            :exception ValidationError: if workload <= 0 or workload > 100
+            :exception ValidationError: if workload < 0 or workload > 100
         :return: no return value
         """
-        if self.workload > 100:
+        if self.base_workload > 100:
             raise exceptions.ValidationError("The given workload can't be larger than 100")
-        elif self.workload <= 0:
-            raise exceptions.ValidationError("The given workload can't be equal or smaller than 0")
+        elif self.base_workload < 0:
+            raise exceptions.ValidationError("The given workload can't be smaller than 0")
 
     @api.model
     def create(self, values):
@@ -166,7 +166,7 @@ class Resource(models.Model):
             week_model = self.env['week.model'].search(
                 [['week_num', '=', week['week_num']], ['year', '=', week['year']]])
 
-            if rec.employee.get_total_workload(week_model) + rec.workload > 100:
+            if rec.employee.get_total_workload(week_model) + rec.base_workload > 100:
                 raise exceptions.ValidationError("The workload in week " + week_model.week_string + " is too high")
 
             values = {'week_id': week_model.id, 'resource_id': rec.id}
