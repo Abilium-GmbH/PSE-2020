@@ -17,7 +17,6 @@ class Employee(models.Model):
         :return: total workload in that week
         """
         total_workload = 0
-
         for resource in self.resources:
             for weekly_resource in resource.weekly_resources:
                 if weekly_resource.week_id == week:
