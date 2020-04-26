@@ -1060,13 +1060,13 @@ class TestResource(common.TransactionCase):
                   'employee': employee.id,
                   'base_workload': 1,
                   'start_date': '2020-12-05 13:42:07',
-                  'end_date': '2020-01-12 13:42:07'}
+                  'end_date': '2021-01-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
 
         resource.minus_one_week()
         resource.minus_one_week()
 
-        current_end_date = datetime.strptime('2020-04-12 13:42:07', '%Y-%m-%d %H:%M:%S') - timedelta(days=14)
+        current_end_date = datetime.strptime('2021-01-12 13:42:07', '%Y-%m-%d %H:%M:%S') - timedelta(days=14)
         manual_start_date = datetime(2020, 12, 5, 13, 42, 7)
 
         self.assertEqual(current_end_date, resource.end_date,
