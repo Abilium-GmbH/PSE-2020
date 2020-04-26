@@ -21,6 +21,6 @@ class Employee(models.Model):
         for resource in self.resources:
             for weekly_resource in resource.weekly_resources:
                 if weekly_resource.week_id == week:
-                    total_workload += resource.workload
+                    total_workload += weekly_resource.weekly_workload
 
         return total_workload
