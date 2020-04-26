@@ -23,14 +23,14 @@ class TestWorkload(common.SavepointCase):
         """
         values = {'project': TestWorkload.project.id,
                   'employee': TestWorkload.employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-06 13:42:07',
                   'end_date': '2020-04-10 13:42:07'}
         resource = self.env['resource.model'].create(values)
 
         values = {'project': TestWorkload.project.id,
                   'employee': TestWorkload.employee.id,
-                  'workload': 60,
+                  'base_workload': 60,
                   'start_date': '2020-04-06 13:42:07',
                   'end_date': '2020-04-10 13:42:07'}
 
@@ -49,21 +49,21 @@ class TestWorkload(common.SavepointCase):
         """
         values = {'project': TestWorkload.project.id,
                   'employee': TestWorkload.employee.id,
-                  'workload': 40,
+                  'base_workload': 40,
                   'start_date': '2020-04-13 13:42:07',
                   'end_date': '2020-04-22 13:42:07'}
         resource = self.env['resource.model'].create(values)
 
         values = {'project': TestWorkload.project.id,
                   'employee': TestWorkload.employee.id,
-                  'workload': 60,
+                  'base_workload': 60,
                   'start_date': '2020-04-21 13:42:07',
                   'end_date': '2020-04-30 13:42:07'}
         resource = self.env['resource.model'].create(values)
 
         values = {'project': TestWorkload.project.id,
                   'employee': TestWorkload.employee.id,
-                  'workload': 20,
+                  'base_workload': 20,
                   'start_date': '2020-04-02 13:42:07',
                   'end_date': '2020-04-24 13:42:07'}
 
@@ -82,21 +82,21 @@ class TestWorkload(common.SavepointCase):
         """
         values = {'project': TestWorkload.project.id,
                   'employee': TestWorkload.employee.id,
-                  'workload': 40,
+                  'base_workload': 40,
                   'start_date': '2020-05-05 13:42:07',
                   'end_date': '2020-05-08 13:42:07'}
         resource = self.env['resource.model'].create(values)
 
         values = {'project': TestWorkload.project.id,
                   'employee': TestWorkload.employee.id,
-                  'workload': 60,
+                  'base_workload': 60,
                   'start_date': '2020-05-18 13:42:07',
                   'end_date': '2020-05-29 13:42:07'}
         resource = self.env['resource.model'].create(values)
 
         values = {'project': TestWorkload.project.id,
                   'employee': TestWorkload.employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-05-04 13:42:07',
                   'end_date': '2020-05-22 13:42:07'}
 

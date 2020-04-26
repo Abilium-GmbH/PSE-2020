@@ -131,7 +131,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
@@ -141,7 +141,7 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(resource.project.id, project.id, "project id doesn't match")
         self.assertEqual(resource.employee.id, employee.id, "employee id doesn't match")
-        self.assertEqual(resource.workload, 50, "workload should be 50")
+        self.assertEqual(resource.base_workload, 50, "workload should be 50")
         self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-04-05 13:42:07'")
         self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-04-12 13:42:07'")
 
@@ -156,7 +156,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 90,
+                  'base_workload': 90,
                   'start_date': '2020-04-13 13:59:40',
                   'end_date': '2020-05-22 13:59:40'}
         resource = self.env['resource.model'].create(values)
@@ -166,7 +166,7 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(resource.project.id, project.id, "project id doesn't match")
         self.assertEqual(resource.employee.id, employee.id, "employee id doesn't match")
-        self.assertEqual(resource.workload, 90, "workload should be 90")
+        self.assertEqual(resource.base_workload, 90, "workload should be 90")
         self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-04-13 13:59:40'")
         self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-05-22 13:59:40'")
 
@@ -181,7 +181,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 100,
+                  'base_workload': 100,
                   'start_date': '2020-04-19 14:12:04',
                   'end_date': '2020-05-03 14:12:04'}
         resource = self.env['resource.model'].create(values)
@@ -191,7 +191,7 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(resource.project.id, project.id, "project id doesn't match")
         self.assertEqual(resource.employee.id, employee.id, "employee id doesn't match")
-        self.assertEqual(resource.workload, 100, "workload should be 100")
+        self.assertEqual(resource.base_workload, 100, "workload should be 100")
         self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-04-19 14:12:04'")
         self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-05-03 14:12:04'")
 
@@ -206,7 +206,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 100,
+                  'base_workload': 100,
                   'start_date': '2020-05-03 14:12:04',
                   'end_date': '2020-05-03 14:12:04'}
         resource = self.env['resource.model'].create(values)
@@ -216,7 +216,7 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(resource.project.id, project.id, "project id doesn't match")
         self.assertEqual(resource.employee.id, employee.id, "employee id doesn't match")
-        self.assertEqual(resource.workload, 100, "workload should be 100")
+        self.assertEqual(resource.base_workload, 100, "workload should be 100")
         self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-05-03 14:12:04'")
         self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-05-03 14:12:04'")
 
@@ -231,7 +231,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 100,
+                  'base_workload': 100,
                   'start_date': '2020-05-03 14:12:04',
                   'end_date': '2020-04-19 14:12:04'}
 
@@ -249,7 +249,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 100,
+                  'base_workload': 100,
                   'start_date': '2019-05-03 14:12:04',
                   'end_date': '2018-04-19 14:12:04'}
 
@@ -264,7 +264,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 100,
+                  'base_workload': 100,
                   'start_date': False,
                   'end_date': '2018-04-19 14:12:04'}
 
@@ -283,7 +283,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 100,
+                  'base_workload': 100,
                   'start_date': '2018-04-19 14:12:04',
                   'end_date': False}
 
@@ -302,7 +302,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 100,
+                  'base_workload': 100,
                   'start_date': False,
                   'end_date': False}
 
@@ -323,7 +323,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': '',
                   'employee': employee.id,
-                  'workload': 100,
+                  'base_workload': 100,
                   'start_date': '2020-05-03 14:12:04',
                   'end_date': '2020-04-19 14:12:04'}
 
@@ -340,7 +340,7 @@ class TestResource(common.TransactionCase):
         project = self.env['project.project'].create({'name': 'p1'})
         values = {'project': project.id,
                   'employee': '',
-                  'workload': 100,
+                  'base_workload': 100,
                   'start_date': '2020-05-03 14:12:04',
                   'end_date': '2020-04-19 14:12:04'}
 
@@ -360,7 +360,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 101,
+                  'base_workload': 101,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
 
@@ -382,7 +382,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 1000,
+                  'base_workload': 1000,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
 
@@ -404,7 +404,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 3243200,
+                  'base_workload': 3243200,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
 
@@ -425,7 +425,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': -10,
+                  'base_workload': -10,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
 
@@ -433,12 +433,12 @@ class TestResource(common.TransactionCase):
             self.env['resource.model'].create(values)
 
         self.assertEqual(e.exception.name,
-                         "The given workload can't be equal or smaller than 0",
+                         "The given workload can't be smaller than 0",
                          "Should raise exception for workload being to low")
 
-    def test_verify_workload_warning_5(self):
+    def test_verify_no_workload_warning_1(self):
         """
-        Tests if an exception is raised if workload is exactly 0
+        Tests if no exception is raised if workload is exactly 0
 
         :return:
         """
@@ -446,18 +446,15 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 0,
+                  'base_workload': 0,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
 
-        with self.assertRaises(exceptions.ValidationError) as e:
-            self.env['resource.model'].create(values)
+        resource = self.env['resource.model'].create(values)
 
-        self.assertEqual(e.exception.name,
-                         "The given workload can't be equal or smaller than 0",
-                         "Should raise exception for workload being to low")
+        self.assertEqual(resource.verify_workload(), None, 'Warning is not shown (0%)')
 
-    def test_verify_workload_no_warning_1(self):
+    def test_verify_workload_no_warning_2(self):
         """
         Tests if no exception is raised if workload is exactly 100
 
@@ -467,7 +464,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 100,
+                  'base_workload': 100,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
 
@@ -475,7 +472,7 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(resource.verify_workload(), None, 'Warning is not shown (100%)')
 
-    def test_verify_workload_no_warning_2(self):
+    def test_verify_workload_no_warning_3(self):
         """
         Tests if no exception is raised if workload is exactly 1
 
@@ -485,7 +482,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 1,
+                  'base_workload': 1,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
@@ -505,7 +502,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
@@ -514,7 +511,7 @@ class TestResource(common.TransactionCase):
         project2 = self.env['project.project'].create({'name': 'p2'})
         values = {'project': project2.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         # Step 2: Update project
@@ -526,7 +523,7 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(resource.project.id, project2.id, "project id doesn't match")
         self.assertEqual(resource.employee.id, employee.id, "employee id doesn't match")
-        self.assertEqual(resource.workload, 50, "workload should be 50")
+        self.assertEqual(resource.base_workload, 50, "workload should be 50")
         self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-04-05 13:42:07'")
         self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-04-12 13:42:07'")
 
@@ -542,7 +539,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
@@ -551,7 +548,7 @@ class TestResource(common.TransactionCase):
         employee2 = self.env['hr.employee'].create({'name': 'e2'})
         values = {'project': project.id,
                   'employee': employee2.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource.write(values)
@@ -562,7 +559,7 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(resource.project.id, project.id, "project id doesn't match")
         self.assertEqual(resource.employee.id, employee2.id, "employee id doesn't match")
-        self.assertEqual(resource.workload, 50, "workload should be 50")
+        self.assertEqual(resource.base_workload, 50, "workload should be 50")
         self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-04-05 13:42:07'")
         self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-04-12 13:42:07'")
 
@@ -578,7 +575,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
@@ -586,7 +583,7 @@ class TestResource(common.TransactionCase):
         # Step 2: Update project
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 99,
+                  'base_workload': 99,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource.write(values)
@@ -597,7 +594,7 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(resource.project.id, project.id, "project id doesn't match")
         self.assertEqual(resource.employee.id, employee.id, "employee id doesn't match")
-        self.assertEqual(resource.workload, 99, "workload should be 99")
+        self.assertEqual(resource.base_workload, 99, "workload should be 99")
         self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-04-05 13:42:07'")
         self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-04-12 13:42:07'")
 
@@ -613,7 +610,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
@@ -621,7 +618,7 @@ class TestResource(common.TransactionCase):
         # Step 2: Update project
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-13 13:42:07',
                   'end_date': '2020-04-19 13:42:07'}
         resource.write(values)
@@ -632,7 +629,7 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(resource.project.id, project.id, "project id doesn't match")
         self.assertEqual(resource.employee.id, employee.id, "employee id doesn't match")
-        self.assertEqual(resource.workload, 50, "workload should be 50")
+        self.assertEqual(resource.base_workload, 50, "workload should be 50")
         self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-04-13 13:42:07'")
         self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-04-19 13:42:07'")
 
@@ -648,7 +645,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
@@ -658,7 +655,7 @@ class TestResource(common.TransactionCase):
         employee2 = self.env['hr.employee'].create({'name': 'e2'})
         values = {'project': project2.id,
                   'employee': employee2.id,
-                  'workload': 99,
+                  'base_workload': 99,
                   'start_date': '2020-04-13 13:42:07',
                   'end_date': '2020-04-19 13:42:07'}
         resource.write(values)
@@ -669,7 +666,7 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(resource.project.id, project2.id, "project id doesn't match")
         self.assertEqual(resource.employee.id, employee2.id, "employee id doesn't match")
-        self.assertEqual(resource.workload, 99, "workload should be 99")
+        self.assertEqual(resource.base_workload, 99, "workload should be 99")
         self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-04-13 13:42:07'")
         self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-04-19 13:42:07'")
 
@@ -686,7 +683,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
@@ -694,7 +691,7 @@ class TestResource(common.TransactionCase):
         # Step 2: Update values
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-05-03 14:12:04',
                   'end_date': '2020-05-03 14:12:04'}
         resource.write(values)
@@ -705,7 +702,7 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(resource.project.id, project.id, "project id doesn't match")
         self.assertEqual(resource.employee.id, employee.id, "employee id doesn't match")
-        self.assertEqual(resource.workload, 50, "workload should be 50")
+        self.assertEqual(resource.base_workload, 50, "workload should be 50")
         self.assertEqual(resource.start_date, manual_start_date, "start_date should be '2020-05-03 14:12:04'")
         self.assertEqual(resource.end_date, manual_end_date, "end_date should be '2020-05-03 14:12:04'")
 
@@ -722,7 +719,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
@@ -731,7 +728,7 @@ class TestResource(common.TransactionCase):
         # Expect ValidationError
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-05-03 14:12:04',
                   'end_date': '2020-05-03 14:12:03'}
         with self.assertRaises(exceptions.ValidationError):
@@ -747,7 +744,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-06 13:42:07',
                   'end_date': '2020-04-10 13:42:07'}
         resource = self.env['resource.model'].create(values)
@@ -758,6 +755,7 @@ class TestResource(common.TransactionCase):
                 self.assertEqual(model.year, 2020, "Wrong year")
                 self.assertEqual(model.week_num, 16, "Wrong week_num")
                 self.assertEqual(model.week_string, "2020, W16", "Wrong week_string")
+                self.assertEqual(model.weekly_workload, 50, 'Workload should be 50')
 
     def test_create_multiple_weeks(self):
         """
@@ -768,7 +766,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-06 13:42:07',
                   'end_date': '2020-04-24 13:42:07'}
         resource = self.env['resource.model'].create(values)
@@ -780,6 +778,7 @@ class TestResource(common.TransactionCase):
                 self.assertEqual(model.year, 2020, "Wrong year")
                 self.assertEqual(model.week_num, week, "Wrong week_num")
                 self.assertEqual(model.week_string, "2020, W16", "Wrong week_string")
+                self.assertEqual(model.weekly_workload, 50, "Workload should be 50")
                 week = week + 1
 
     def test_write_single_to_multiple_weeks(self):
@@ -791,14 +790,14 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-06 13:42:07',
                   'end_date': '2020-04-10 13:42:07'}
         resource = self.env['resource.model'].create(values)
 
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-06 13:42:07',
                   'end_date': '2020-04-17 13:42:07'}
         resource.write(values)
@@ -809,6 +808,7 @@ class TestResource(common.TransactionCase):
             if model.resource_id == resource.id:
                 self.assertEqual(model.year, 2020, "Wrong year")
                 self.assertEqual(model.week_num, week, "Wrong week_num")
+                self.assertEqual(model.weekly_workload, 50, "Workload should be 50")
                 week = week + 1
 
     def test_write_multiple_to_single_week(self):
@@ -820,14 +820,14 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-06 13:42:07',
                   'end_date': '2020-05-01 13:42:07'}
         resource = self.env['resource.model'].create(values)
 
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-06 13:42:07',
                   'end_date': '2020-04-10 13:42:07'}
         resource.write(values)
@@ -852,14 +852,14 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-06 13:42:07',
                   'end_date': '2020-04-10 13:42:07'}
         resource = self.env['resource.model'].create(values)
 
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-20 13:42:07',
                   'end_date': '2020-04-24 13:42:07'}
         resource.write(values)
@@ -878,7 +878,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 1,
+                  'base_workload': 1,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
@@ -896,7 +896,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 1,
+                  'base_workload': 1,
                   'start_date': '2020-05-05 13:42:07',
                   'end_date': '2020-05-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
@@ -918,7 +918,7 @@ class TestResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 1,
+                  'base_workload': 1,
                   'start_date': '2020-04-12 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
