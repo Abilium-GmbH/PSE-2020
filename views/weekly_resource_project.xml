@@ -7,7 +7,7 @@
             <field name="arch" type="xml">
                 <pivot string="Project">
                     <field name="week_string" type="col"/>
-                    <field name="workload" type="measure"/>
+                    <field name="weekly_workload" type="measure"/>
                     <field name="project" type="row"/>
                     <field name="employee" type="row"/>
                 </pivot>

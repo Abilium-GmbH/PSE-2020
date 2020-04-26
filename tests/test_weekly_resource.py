@@ -18,7 +18,7 @@ class TestWeeklyResource(common.TransactionCase):
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
                   'employee': employee.id,
-                  'workload': 50,
+                  'base_workload': 50,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
@@ -34,9 +34,10 @@ class TestWeeklyResource(common.TransactionCase):
         week = self.env['week.model'].create({'week_num': 30, 'year': 2020})
         resource = self.create_resource()
         weekly_resource = self.env['resource.model'].add_weekly_resource(
-            {'week_id': week.id, 'resource_id': resource.id})
+            {'week_id': week.id, 'resource_id': resource.id, 'weekly_workload': 50})
         self.assertEqual(weekly_resource.week_id.id, week.id, "week id doesn't match")
         self.assertEqual(weekly_resource.resource_id.id, resource.id, "resource id doesn't match")
+        self.assertEqual(weekly_resource.weekly_workload, 50, "Workload doesn't match")
 
     def test_create_weekly_resource_normal_2(self):
         """
@@ -48,7 +49,7 @@ class TestWeeklyResource(common.TransactionCase):
         week = self.env['week.model'].create({'week_num': 30, 'year': 2020})
         resource = self.create_resource()
         weekly_resource = self.env['resource.model'].add_weekly_resource(
-            {'week_id': week.id, 'resource_id': resource.id})
+            {'week_id': week.id, 'resource_id': resource.id, 'weekly_workload': 50})
         self.assertNotEqual(weekly_resource.week_id.id, week.id + 1, "week id doesn't match")
         self.assertNotEqual(weekly_resource.resource_id.id, resource.id + 1, "resource id doesn't match")
 
@@ -62,6 +63,6 @@ class TestWeeklyResource(common.TransactionCase):
         week = self.env['week.model'].create({'week_num': 30, 'year': 2020})
         resource = self.create_resource()
         weekly_resource = self.env['resource.model'].add_weekly_resource(
-            {'week_id': week.id, 'resource_id': resource.id})
+            {'week_id': week.id, 'resource_id': resource.id, 'weekly_workload': 50})
         self.assertNotEqual(weekly_resource.week_id.id, week.id - 1, "week id doesn't match")
         self.assertNotEqual(weekly_resource.resource_id.id, resource.id - 1, "resource id doesn't match")
