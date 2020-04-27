@@ -4,20 +4,6 @@
 <!-- Adds up the workload per employee per project per week in a pivot view -->
 <odoo>
     <data>
-<!--        <record id="view_weekly_tree" model="ir.ui.view">-->
-<!--            <field name="name">weekly_resource.tree</field>-->
-<!--            <field name="model">weekly_resource.model</field>-->
-<!--            <field name="priority" eval="8"/>-->
-<!--            <field name="arch" type="xml">-->
-<!--                <tree string="Resource">-->
-<!--                    <field name="week"/>-->
-<!--                    <field name="resource_id"/>-->
-<!--                    <field name="employee"/>-->
-<!--                    <field name="project"/>-->
-<!--                    <field name="workload"/>-->
-<!--                </tree>-->
-<!--            </field>-->
-<!--        </record>-->
         <record id="view_weekly_pivot" model="ir.ui.view">
             <field name="name">weekly_resource.pivot</field>
             <field name="model">weekly_resource.model</field>
@@ -28,6 +14,24 @@
                     <field name="employee" type="row"/>
                     <field name="project" type="row"/>
                 </pivot>
+            </field>
+        </record>
+        <record id="view_weekly_form" model="ir.ui.view">
+            <field name="name">weekly_resource.form</field>
+            <field name="model">weekly_resource.model</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group colspan="2" col="2">
+                            <field name="week_string" readonly="1"/>
+                            <field name="employee" readonly="1"/>
+                            <field name="project" readonly="1"/>
+                        </group>
+                        <group colspan="2" col="2">
+                            <field name="weekly_workload"/>
+                        </group>
+                    </sheet>
+                </form>
             </field>
         </record>
 
