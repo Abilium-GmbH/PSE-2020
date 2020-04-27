@@ -4,6 +4,7 @@
 <!-- Adds up the workload per employee per project per week in a pivot view -->
 <odoo>
     <data>
+
         <record id="view_weekly_search" model="ir.ui.view">
             <field name="name">weekly_resource.search</field>
             <field name="model">weekly_resource.model</field>
