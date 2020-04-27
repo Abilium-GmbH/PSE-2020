@@ -235,8 +235,12 @@ class TestResource(common.TransactionCase):
                   'start_date': '2020-05-03 14:12:04',
                   'end_date': '2020-04-19 14:12:04'}
 
-        with self.assertRaises(exceptions.ValidationError):
+        with self.assertRaises(exceptions.ValidationError)as error:
             self.env['resource.model'].create(values)
+
+        self.assertEqual(error.exception.name,
+                         "Start date must be before end date", "Should raise exception if start is after"
+                                                               "end dates")
 
     def test_create_resource_exception_start_after_end_date_2(self):
         """
@@ -253,8 +257,12 @@ class TestResource(common.TransactionCase):
                   'start_date': '2019-05-03 14:12:04',
                   'end_date': '2018-04-19 14:12:04'}
 
-        with self.assertRaises(exceptions.ValidationError):
+        with self.assertRaises(exceptions.ValidationError)as error:
             self.env['resource.model'].create(values)
+
+        self.assertEqual(error.exception.name,
+                         "Start date must be before end date", "Should raise exception if start is after"
+                                                               "end dates")
 
     def test_create_resource_exception_no_start_date(self):
         """
@@ -315,10 +323,8 @@ class TestResource(common.TransactionCase):
 
     def test_create_resource_no_project(self):
         """
-        Tests if create raises an exception if the start_date is after the end_date
-        (part 1, same year)
-
-        :return:
+          Tests if create raises an exception if the employee is not given
+          :return:
         """
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': '',
@@ -332,10 +338,8 @@ class TestResource(common.TransactionCase):
 
     def test_create_resource_no_employee(self):
         """
-        Tests if create raises an exception if the start_date is after the end_date
-        (part 1, same year)
-
-        :return:
+            Tests if create raises an exception if the employee is not given
+            :return:
         """
         project = self.env['project.project'].create({'name': 'p1'})
         values = {'project': project.id,
@@ -873,7 +877,11 @@ class TestResource(common.TransactionCase):
 
 # -------------------------------------------------------------------------------------------------------------------- #
 
-    def test_add_next_week_normal(self):
+    def test_plus_one_week_normal(self):
+        """
+        Tests plus one week method whether it adds one week to the end date
+        (part 1 same year)
+         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
@@ -883,37 +891,20 @@ class TestResource(common.TransactionCase):
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
 
-        resource.add_next_week()
-        today = datetime.today()
-        current_end_date = today + timedelta(days=5)
+        resource.plus_one_week()
+
+        current_end_date = datetime.strptime('2020-04-12 13:42:07', '%Y-%m-%d %H:%M:%S') + timedelta(days=7)
         manual_start_date = datetime(2020, 4, 5, 13, 42, 7)
-        timedifference = resource.end_date - current_end_date
-        self.assertTrue(timedifference.seconds > 3, 'The timedifference is less than 3 seconds')
+
+        self.assertEqual(current_end_date, resource.end_date, 'The resource was extended by 1 weeks')
         self.assertEqual(resource.start_date, manual_start_date, 'Start date got not changed')
 
-    def test_add_next_week_end_date_before_start_date(self):
-        project = self.env['project.project'].create({'name': 'p1'})
-        employee = self.env['hr.employee'].create({'name': 'e1'})
-        values = {'project': project.id,
-                  'employee': employee.id,
-                  'base_workload': 1,
-                  'start_date': '2020-05-05 13:42:07',
-                  'end_date': '2020-05-12 13:42:07'}
-        resource = self.env['resource.model'].create(values)
-
-        today = datetime.today()
-        current_end_date = today + timedelta(days=5)
-
-        timedifference = resource.end_date - current_end_date
-        with self.assertRaises(exceptions.ValidationError) as e:
-            resource.add_next_week()
-
-        self.assertEqual(e.exception.name,
-                         "Please make sure that the end date is after the start date",
-                         "Should raise exception if start_date is after end_date")
-        self.assertTrue(timedifference.seconds > 3, 'The timedifference is less than 3 seconds')
-
-    def test_add_next_week_start_date_normal_2(self):
+    def test_plus_one_week_normal_push_button_twice(self):
+        """
+            Tests plus one week method whether it adds one week to the enddate
+            "button" pressed twice (method called twice)
+             (part 1 same year)
+        """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
@@ -922,9 +913,183 @@ class TestResource(common.TransactionCase):
                   'start_date': '2020-04-12 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
         resource = self.env['resource.model'].create(values)
-        today = datetime.today()
-        current_end_date = today + timedelta(days=5)
+
+        resource.plus_one_week()
+        resource.plus_one_week()
+
+        current_end_date = datetime.strptime('2020-04-12 13:42:07', '%Y-%m-%d %H:%M:%S') + timedelta(days=14)
         manual_start_date = datetime(2020, 4, 12, 13, 42, 7)
-        timedifference = resource.end_date - current_end_date
-        self.assertTrue(timedifference.seconds > 3, 'The timedifference is less than 3 seconds')
+
+        self.assertEqual(current_end_date, resource.end_date, 'The resource was extended by 2 weeks')
         self.assertEqual(resource.start_date, manual_start_date, 'Start date got not changed')
+
+    def test_plus_one_week_normal_over_year_bound(self):
+        """
+        Tests plus one week method whether it adds one week to the end date
+         (part 2 different year)
+         """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'base_workload': 1,
+                  'start_date': '2020-12-23 13:42:07',
+                  'end_date': '2020-12-30 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        resource.plus_one_week()
+
+        current_end_date = datetime.strptime('2020-12-30 13:42:07', '%Y-%m-%d %H:%M:%S') + timedelta(days=7)
+        manual_start_date = datetime(2020, 12, 23, 13, 42, 7)
+
+        self.assertEqual(current_end_date, resource.end_date,
+                         'The resource was extended by 1 weeks over the year bound')
+        self.assertEqual(resource.start_date, manual_start_date, 'Start date got not changed')
+
+    def test_plus_minus_week_mix_normal(self):
+        """
+        Tests plus/minus one week method whether it subtracts and adds one week to/from the end date
+        (part 1 same year)
+         """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'base_workload': 1,
+                  'start_date': '2020-04-05 13:42:07',
+                  'end_date': '2020-04-06 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        resource.plus_one_week()
+        resource.plus_one_week()
+        resource.minus_one_week()
+        resource.plus_one_week()
+        resource.minus_one_week()
+        resource.minus_one_week()
+
+        current_end_date = datetime.strptime('2020-04-06 13:42:07', '%Y-%m-%d %H:%M:%S')
+        manual_start_date = datetime(2020, 4, 5, 13, 42, 7)
+
+        self.assertEqual(current_end_date, resource.end_date, 'The end date stayed the same')
+        self.assertEqual(resource.start_date, manual_start_date, 'Start date got not changed')
+
+    def test_plus_minus_one_week_mix_normal_over_year_bound(self):
+        """
+        Tests plus/minus one week method whether it adds and subtracts one week to/from the end date
+         (part 2 different year)
+         """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'base_workload': 1,
+                  'start_date': '2020-12-23 13:42:07',
+                  'end_date': '2020-12-30 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        resource.minus_one_week()
+        resource.plus_one_week()
+        resource.plus_one_week()
+        resource.minus_one_week()
+        resource.plus_one_week()
+        resource.plus_one_week()
+        resource.plus_one_week()
+
+        current_end_date = datetime.strptime('2020-12-30 13:42:07', '%Y-%m-%d %H:%M:%S') + timedelta(days=21)
+        manual_start_date = datetime(2020, 12, 23, 13, 42, 7)
+
+        self.assertEqual(current_end_date, resource.end_date,
+                         'The resource was extended by 1 weeks over the year bound')
+        self.assertEqual(resource.start_date, manual_start_date, 'Start date got not changed')
+
+        # ---------------------------------------------------------------------------------------------------------
+
+    def test_minus_one_week_normal(self):
+        """
+         Tests minus one week method whether it subtracts one week from the enddate
+        """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'base_workload': 1,
+                  'start_date': '2020-03-05 13:42:07',
+                  'end_date': '2020-04-12 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        resource.minus_one_week()
+
+        current_end_date = datetime.strptime('2020-04-05 13:42:07', '%Y-%m-%d %H:%M:%S')
+        manual_start_date = datetime(2020, 3, 5, 13, 42, 7)
+
+        self.assertEqual(current_end_date, resource.end_date, 'The resource was reduced by 1 weeks')
+        self.assertEqual(resource.start_date, manual_start_date, 'Start date got not changed')
+
+    def test_minus_one_normal_button_pushed_three_times(self):
+        """
+            Tests minus one week method whether it subtracts one week from the enddate
+            "button" pushed 3 times (method called 3 times)
+        """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'base_workload': 1,
+                  'start_date': '2020-03-05 13:42:07',
+                  'end_date': '2020-04-12 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        resource.minus_one_week()
+        resource.minus_one_week()
+        resource.minus_one_week()
+
+        current_end_date = datetime.strptime('2020-04-12 13:42:07', '%Y-%m-%d %H:%M:%S') - timedelta(days=21)
+        manual_start_date = datetime(2020, 3, 5, 13, 42, 7)
+
+        self.assertEqual(current_end_date, resource.end_date, 'The resource was reduced by 3 weeks')
+        self.assertEqual(resource.start_date, manual_start_date, 'Start date got not changed')
+
+    def test_minus_one_normal_over_year_bound(self):
+        """
+            Tests minus one week method whether it subtracts one week from the enddate
+            (part 2 different years
+        """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'base_workload': 1,
+                  'start_date': '2020-12-05 13:42:07',
+                  'end_date': '2021-01-12 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        resource.minus_one_week()
+        resource.minus_one_week()
+
+        current_end_date = datetime.strptime('2021-01-12 13:42:07', '%Y-%m-%d %H:%M:%S') - timedelta(days=14)
+        manual_start_date = datetime(2020, 12, 5, 13, 42, 7)
+
+        self.assertEqual(current_end_date, resource.end_date,
+                         'The resource was reduced by 2 weeks over the year bounds')
+        self.assertEqual(resource.start_date, manual_start_date, 'Start date got not changed')
+
+    def test_minus_week_exception(self):
+        """
+        Tests minus one week method whether it subtracts one week from the enddate
+        :raises exception that the start date mustn't be after the end date
+         """
+        project = self.env['project.project'].create({'name': 'p1'})
+        employee = self.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'base_workload': 1,
+                  'start_date': '2020-04-05 13:42:07',
+                  'end_date': '2020-04-06 13:42:07'}
+        resource = self.env['resource.model'].create(values)
+
+        with self.assertRaises(exceptions.ValidationError)as error:
+            resource.minus_one_week()
+
+        self.assertEqual(error.exception.name,
+                         "Start date must be before end date", "Should raise exception if start is after"
+                                                               "end dates")

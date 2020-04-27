@@ -4,6 +4,22 @@
 <!-- Adds up the workload per employee per project per week in a pivot view -->
 <odoo>
     <data>
+        <record id="view_weekly_search" model="ir.ui.view">
+            <field name="name">weekly_resource.search</field>
+            <field name="model">weekly_resource.model</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <search string="Resource">
+                    <field name="project"/>
+                    <field name="employee"/>
+                    <field name="base_workload"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <filter name='week_name' string="2 Months" domain="[('week_bool', '=', True)]"/>
+                </search>
+            </field>
+        </record>
+
         <record id="view_weekly_pivot" model="ir.ui.view">
             <field name="name">weekly_resource.pivot</field>
             <field name="model">weekly_resource.model</field>
@@ -16,6 +32,7 @@
                 </pivot>
             </field>
         </record>
+
         <record id="view_weekly_form" model="ir.ui.view">
             <field name="name">weekly_resource.form</field>
             <field name="model">weekly_resource.model</field>

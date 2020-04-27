@@ -32,17 +32,28 @@
                                     <field name="base_workload"/>
                                 </group>
                                 <group colspan="2" col="2">
-                                <separator string="Dates" colspan="2"/>
-                                <field name="next_week"/>
-                                <field name="start_date"/>
-                                <field name="end_date"/>
+                                    <separator string="Dates" colspan="2"/>
+                                    <field name="next_week"/>
+                                    <field name="start_date"/>
+                                    <field name="end_date"/>
                                 </group>
                             </page>
                             <page name="update" string="Update only">
+                                <group>
+                                    <separator string="Add or subtract weeks" colspan="2"/>
+                                    <div style="text-align:center">
+                                        <button name="minus_one_week" icon="fa-minus" class="oe_highlight"
+                                                type="object"/>
+                                        <field name="weeks_to_be_added" class="oe_inline"
+                                               style="margin-left:50px; margin-right:50px"/>
+                                        <button name="plus_one_week" icon="fa-plus" class="oe_highlight"
+                                                type="object"/>
+                                    </div>
+                                </group>
                                 <group colspan="2" col="2">
-                                    <separator string="Update only" colspan="2"/>
-<!--                                    <field name="add_next_week"/>-->
-                                    <button name="add_next_week" string="Add next week to current resource" class="oe_highlight" type="object"/>
+                                    <separator string="New Dates" colspan="2"/>
+                                    <field name="start_date"/>
+                                    <field name="end_date"/>
                                 </group>
                             </page>
                         </notebook>

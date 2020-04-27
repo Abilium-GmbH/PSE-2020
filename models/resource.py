@@ -25,7 +25,7 @@ class Resource(models.Model):
     :param start_date: the date on which the assignment begins, is required
     :param end_date: the date on which the assignment end, is required
     :param next_week: boolean if start_date and end_date are next Monday and Friday
-    :param add_next_week: boolean intended for quick extension of a resource to extend resource for one week
+    :param weeks_to_be_added Integer read only tells user how many weeks will get added to current enddate
     start_date has to be before the end_date
     """
     _name = "resource.model"
@@ -36,31 +36,30 @@ class Resource(models.Model):
     start_date = fields.Datetime(string='Start Date')
     end_date = fields.Datetime(string='End Date')
     next_week = fields.Boolean(string='Next Week')
-    # add_next_week = fields.Boolean(string='Add Next Week')
     weekly_resources = fields.One2many('weekly_resource.model', 'resource_id')
+    weeks_to_be_added = fields.Integer(default=0, readonly="1",
+                                       help='Weeks to be added or subtracted to/from current resource, changing the end date')
 
-    # @api.onchange('add_next_week')
-    def add_next_week(self):
+    @api.depends('weeks_to_be_added')
+    def plus_one_week(self):
         """
-              sets end date to coming friday if add_next_week box is ticked
+              sets end date one week later
               leaves start date as it was
               :returns date for end_date that will be set/updated
-                :exception ValidationError: if start_date > end_date
         """
-        # if self.add_next_week:
-        today = datetime.datetime.today()
+        self.end_date = self.end_date + datetime.timedelta(days=7)
+        self.weeks_to_be_added = self.weeks_to_be_added + 1
 
-        if self.start_date != False:
-            for day in range(1, 8):
-                if today.isoweekday() != 1:
-                    today = today + datetime.timedelta(days=1)
+    @api.depends('weeks_to_be_added')
+    def minus_one_week(self):
+        """
+                     sets end date one week earlier
+                     leaves start date as it was
+                     :returns date for end_date that will be set/updated
+               """
 
-                elif today.isoweekday() == 1:
-                    if self.start_date <= today:
-                        self.end_date = today + datetime.timedelta(days=4)
-                    else:
-                        raise exceptions.ValidationError(
-                            "Please make sure that the end date is after the start date")
+        self.end_date = self.end_date - datetime.timedelta(days=7)
+        self.weeks_to_be_added = self.weeks_to_be_added - 1
 
     @api.onchange('next_week')
     def set_dates(self):
@@ -144,6 +143,7 @@ class Resource(models.Model):
 
         # (Re-)Create "new" week.models or weekly_resource.models
         self.create_corresponding_models(self)
+        self.env['week.model'].is_week_in_next_2_months()
         return rec
 
     def create_corresponding_models(self, rec):
