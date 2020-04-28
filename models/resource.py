@@ -128,27 +128,26 @@ class Resource(models.Model):
     def write(self, values):
         """
         Overriding default write method
-        Delete old weekly_resource.models an creating new ones
+        Calls create_corresponding_models method to delete spare and
+        create new weekly_resources.
 
         :param values,the values to be overwritten
         :return: rec
         :rtype: bool
         """
         rec = super(Resource, self).write(values)
-        # Delete "old" weekly_resource.model
-        old = self.env['weekly_resource.model'].search([['resource_id', '=', self.id]])
-        if old:
-            for model in old:
-                model.unlink()
 
-        # (Re-)Create "new" week.models or weekly_resource.models
         self.create_corresponding_models(self)
-        self.env['week.model'].is_week_in_next_2_months()
+
         return rec
 
     def create_corresponding_models(self, rec):
         """
-        Creates corresponding week.models (if missing) and weekly_resource.models
+        Creates corresponding week.models (if missing).
+        Creates corresponding weekly_resource.models (if missing) and
+        deletes weekly_resource.models which are not within the start_date
+        and end_date anymore.
+
         :param rec: the resource.model requiring the other models
         :return: None
         """
@@ -162,16 +161,49 @@ class Resource(models.Model):
 
         # Create weekly_resource.model
         project_week_data = week_data[1]
+        rec.add_missing_weekly_resources(project_week_data)
+        rec.delete_spare_weekly_resources(project_week_data)
+
+    def add_missing_weekly_resources(self, project_week_data):
+        """
+        Creates a new weekly_resource for all weeks in project_week_date,
+        for which there is no existing one.
+
+        :param project_week_data: all weeks of the resource
+        :return:
+        """
         for week in project_week_data:
-            week_model = self.env['week.model'].search(
-                [['week_num', '=', week['week_num']], ['year', '=', week['year']]])
+            exists = self.env['weekly_resource.model'].search([['resource_id', '=', self.id],
+                                                               ['week_id.week_num', '=', week['week_num']],
+                                                               ['week_id.year', '=', week['year']]])
+            if not exists:
+                week_model = self.env['week.model'].search([['week_num', '=', week['week_num']],
+                                                        ['year', '=', week['year']]])
 
-            if rec.employee.get_total_workload(week_model) + rec.base_workload > 100:
-                raise exceptions.ValidationError("The workload in week " + week_model.week_string + " is too high")
+                if self.employee.get_total_workload(week_model) + self.base_workload > 100:
+                    raise exceptions.ValidationError("The workload in week " + week_model.week_string + " is too high")
 
-            values = {'week_id': week_model.id, 'resource_id': rec.id, 'weekly_workload': rec.base_workload}
-            rec.add_weekly_resource(values)
-        return
+                values = {'week_id': week_model.id, 'resource_id': self.id, 'weekly_workload': self.base_workload}
+                self.add_weekly_resource(values)
+
+    def delete_spare_weekly_resources(self, project_week_data):
+        """
+        Deletes all weekly_resources of this resource, where the week
+        is not in the project_week_array.
+
+        :param project_week_data: all weeks of the resource
+        :return:
+        """
+        weekly_resources = self.env['weekly_resource.model'].search([['resource_id', '=', self.id]])
+        for weekly_resource in weekly_resources:
+            exists = False
+            for week in project_week_data:
+                if week['week_num'] == weekly_resource.week_id.week_num and \
+                        week['year'] == weekly_resource.week_id.year:
+                    exists = True
+
+            if not exists:
+                weekly_resource.unlink()
 
     @api.model_create_multi
     def add_weeks_object(self, week):
