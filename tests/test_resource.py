@@ -351,7 +351,7 @@ class TestResource(common.TransactionCase):
         with self.assertRaises(errors.NotNullViolation):
             self.env['resource.model'].create(values)
 
-    # -------------------------------------------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------------------------------------------- #
 
     def test_verify_workload_warning_1(self):
         """
@@ -1002,7 +1002,7 @@ class TestResource(common.TransactionCase):
                          'The resource was extended by 1 weeks over the year bound')
         self.assertEqual(resource.start_date, manual_start_date, 'Start date got not changed')
 
-        # ---------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------------- #
 
     def test_minus_one_week_normal(self):
         """
@@ -1093,6 +1093,8 @@ class TestResource(common.TransactionCase):
         self.assertEqual(error.exception.name,
                          "Start date must be before end date", "Should raise exception if start is after"
                                                                "end dates")
+
+# -------------------------------------------------------------------------------------------------------------------- #
 
 
 class TestWorkload(common.SavepointCase):
@@ -1199,3 +1201,243 @@ class TestWorkload(common.SavepointCase):
 
         self.assertEqual(error.exception.name,
                          "The workload in week 2020, W21 is too high", "Should raise exception for Workload too high")
+
+# -------------------------------------------------------------------------------------------------------------------- #
+
+
+class TestAddDelete(common.SavepointCase):
+    """
+    Class to test the add_missing_weekly_resources and
+    delete_spare_weekly_resources methods in the Resource class.
+    """
+    resource = None
+    start_date = None
+    end_date = None
+
+    @classmethod
+    def setUpClass(cls):
+        """
+        Set up the test class by creating a resource with one
+        weekly_resource in week 16, year 2020.
+
+        :return:
+        """
+        super(TestAddDelete, cls).setUpClass()
+        project = cls.env['project.project'].create({'name': 'p1'})
+        employee = cls.env['hr.employee'].create({'name': 'e1'})
+        values = {'project': project.id,
+                  'employee': employee.id,
+                  'base_workload': 50,
+                  'start_date': '2020-04-13 13:42:07',
+                  'end_date': '2020-04-17 13:42:07'}
+        cls.resource = cls.env['resource.model'].create(values)
+
+        cls.start_date = datetime(2020, 4, 5, 13, 42, 7)
+        cls.end_date = datetime(2020, 4, 12, 13, 42, 7)
+
+    def test_setup(self):
+        """
+        Test if the resource created in setUpClass is correct.
+
+        :return:
+        """
+        weekly_resources = self.resource.weekly_resources
+        self.assertEqual(len(weekly_resources), 1, 'resource should contain 1 weekly_resources')
+
+        self.assertEqual(weekly_resources[0].week_id.week_num, 16, 'week_num should be 16')
+        self.assertEqual(weekly_resources[0].week_id.year, 2020, 'year should be 2020')
+        self.assertEqual(weekly_resources[0].weekly_workload, 50, 'weekly_workload should be 50')
+
+    def test_add_weeks_1(self):
+        """
+        Test if adding one week adds one weekly_resource to the resource.
+
+        :return:
+        """
+        project_week_data = [{'week_num': 17, 'year': 2020}]
+        TestAddDelete.resource.add_missing_weekly_resources(project_week_data)
+
+        weekly_resources = TestAddDelete.resource.weekly_resources
+        self.assertEqual(len(weekly_resources), 2, 'resource should contain 2 weekly_resources')
+
+        week_nums = []
+        years = []
+        weekly_workloads = []
+        for weekly_resource in weekly_resources:
+            week_nums.append(weekly_resource.week_id.week_num)
+            years.append(weekly_resource.week_id.year)
+            weekly_workloads.append(weekly_resource.weekly_workload)
+
+        self.assertEqual(len(week_nums), 2, 'should contain 2 weeks')
+        self.assertEqual(len(years), 2, 'should contain 2 years')
+
+        self.assertNotIn(15, week_nums, 'week_num 15 should not be in week_nums')
+        self.assertIn(16, week_nums, 'week_num 16 should be in week_nums')
+        self.assertIn(17, week_nums, 'week_num 17 should be in week_nums')
+        self.assertNotIn(18, week_nums, 'week_num 18 should not be in week_nums')
+        self.assertIn(2020, years, 'year 2020 should be in years')
+        self.assertNotIn(2021, years, 'year 2021 should not be in years')
+
+        week1 = [i for i in weekly_resources if (i.week_id.week_num == 16 and
+                                                 i.week_id.year == 2020)]
+        self.assertIsNotNone(week1, 'week1 should not be empty')
+        self.assertEqual(len(week1), 1, 'week1 should contain 1 weekly_resource')
+        self.assertEqual(week1[0].weekly_workload, 50, 'weekly_workload of week1 should be 50')
+
+        week2 = [i for i in weekly_resources if (i.week_id.week_num == 17 and
+                                                 i.week_id.year == 2020)]
+        self.assertIsNotNone(week2, 'week2 should not be empty')
+        self.assertEqual(len(week2), 1, 'week2 should contain 1 weekly_resource')
+        self.assertEqual(week2[0].weekly_workload, 50, 'weekly_workload of week2 should be 50')
+
+        self.assertNotEqual(week1, week2, 'week1 and week2 should not be the same')
+
+    def test_add_weeks_2(self):
+        """
+        Test if adding a week for which already a weekly_workload exists doesn't
+        change the existing weekly_resources workload.
+
+        :return:
+        """
+        TestAddDelete.resource.weekly_resources[0].weekly_workload = 20
+        self.assertEqual(TestAddDelete.resource.weekly_resources[0].weekly_workload, 20)
+        project_week_data = [{'week_num': 16, 'year': 2020},
+                             {'week_num': 17, 'year': 2020}]
+        TestAddDelete.resource.add_missing_weekly_resources(project_week_data)
+
+        weekly_resources = TestAddDelete.resource.weekly_resources
+        self.assertEqual(len(weekly_resources), 2, 'resource should contain 2 weekly_resources')
+
+        week_nums = []
+        years = []
+        weekly_workloads = []
+        for weekly_resource in weekly_resources:
+            week_nums.append(weekly_resource.week_id.week_num)
+            years.append(weekly_resource.week_id.year)
+            weekly_workloads.append(weekly_resource.weekly_workload)
+
+        self.assertEqual(len(week_nums), 2, 'should contain 2 weeks')
+        self.assertEqual(len(years), 2, 'should contain 2 years')
+
+        self.assertNotIn(15, week_nums, 'week_num 15 should not be in week_nums')
+        self.assertIn(16, week_nums, 'week_num 16 should be in week_nums')
+        self.assertIn(17, week_nums, 'week_num 17 should be in week_nums')
+        self.assertNotIn(18, week_nums, 'week_num 18 should not be in week_nums')
+        self.assertIn(2020, years, 'year 2020 should be in years')
+        self.assertNotIn(2021, years, 'year 2021 should not be in years')
+
+        week1 = [i for i in weekly_resources if (i.week_id.week_num == 16 and
+                                                 i.week_id.year == 2020)]
+        self.assertIsNotNone(week1, 'week1 should not be empty')
+        self.assertEqual(len(week1), 1, 'week1 should contain 1 weekly_resource')
+        self.assertEqual(week1[0].weekly_workload, 20, 'weekly_workload of week1 should be 20')
+
+        week2 = [i for i in weekly_resources if (i.week_id.week_num == 17 and
+                                                 i.week_id.year == 2020)]
+        self.assertIsNotNone(week2, 'week2 should not be empty')
+        self.assertEqual(len(week2), 1, 'week2 should contain 1 weekly_resource')
+        self.assertEqual(week2[0].weekly_workload, 50, 'weekly_workload of week2 should be 50')
+
+        self.assertNotEqual(week1, week2, 'week1 and week2 should not be the same')
+
+    def test_add_delete_week_1(self):
+        """
+        Test if calling delete_spare_weekly_resources with empty project_week_data
+        array deletes all weekly_resources of the resource.
+
+        :return:
+        """
+        project_week_data = [{'week_num': 17, 'year': 2020}]
+        TestAddDelete.resource.add_missing_weekly_resources(project_week_data)
+        TestAddDelete.resource.delete_spare_weekly_resources([])
+
+        weekly_resources = TestAddDelete.resource.weekly_resources
+        self.assertEqual(len(weekly_resources), 0, 'resource should contain 0 weekly_resources')
+
+    def test_add_delete_week_2(self):
+        """
+        Test if adding and deleting weekly_resources to / from resource results
+        in the correct weekly_resources existing.
+
+        :return:
+        """
+        project_week_data_add = [{'week_num': 17, 'year': 2020},
+                                 {'week_num': 18, 'year': 2020},
+                                 {'week_num': 19, 'year': 2020}]
+        project_week_data_delete = [{'week_num': 17, 'year': 2020},
+                                    {'week_num': 18, 'year': 2020}]
+        TestAddDelete.resource.add_missing_weekly_resources(project_week_data_add)
+        TestAddDelete.resource.delete_spare_weekly_resources(project_week_data_delete)
+
+        weekly_resources = TestAddDelete.resource.weekly_resources
+        self.assertEqual(len(weekly_resources), 2, 'resource should contain 2 weekly_resources')
+
+        week_nums = []
+        years = []
+        weekly_workloads = []
+        for weekly_resource in weekly_resources:
+            week_nums.append(weekly_resource.week_id.week_num)
+            years.append(weekly_resource.week_id.year)
+            weekly_workloads.append(weekly_resource.weekly_workload)
+
+        self.assertEqual(len(week_nums), 2, 'should contain 2 weeks')
+        self.assertEqual(len(years), 2, 'should contain 2 years')
+
+        self.assertNotIn(16, week_nums, 'week_num 15 should not be in week_nums')
+        self.assertIn(17, week_nums, 'week_num 16 should be in week_nums')
+        self.assertIn(18, week_nums, 'week_num 17 should be in week_nums')
+        self.assertNotIn(19, week_nums, 'week_num 18 should not be in week_nums')
+        self.assertIn(2020, years, 'year 2020 should be in years')
+        self.assertNotIn(2021, years, 'year 2021 should not be in years')
+
+        week1 = [i for i in weekly_resources if (i.week_id.week_num == 17 and
+                                                 i.week_id.year == 2020)]
+        self.assertIsNotNone(week1, 'week1 should not be empty')
+        self.assertEqual(len(week1), 1, 'week1 should contain 1 weekly_resource')
+        self.assertEqual(week1[0].weekly_workload, 50, 'weekly_workload of week1 should be 50')
+
+        week2 = [i for i in weekly_resources if (i.week_id.week_num == 18 and
+                                                 i.week_id.year == 2020)]
+        self.assertIsNotNone(week2, 'week2 should not be empty')
+        self.assertEqual(len(week2), 1, 'week2 should contain 1 weekly_resource')
+        self.assertEqual(week2[0].weekly_workload, 50, 'weekly_workload of week2 should be 50')
+
+        self.assertNotEqual(week1, week2, 'week1 and week2 should not be the same')
+
+    def test_delete_week_1(self):
+        """
+        Test if calling delete_spare_weekly_resources with existing weekly_resource and additional
+        non existing weekly_resource doesn't create or delete any weekly_resources.
+
+        :return:
+        """
+        project_week_data = [{'week_num': 16, 'year': 2020},
+                             {'week_num': 17, 'year': 2020}]
+        TestAddDelete.resource.delete_spare_weekly_resources(project_week_data)
+
+        weekly_resources = TestAddDelete.resource.weekly_resources
+        self.assertEqual(len(weekly_resources), 1, 'resource should contain 1 weekly_resources')
+
+        self.assertEqual(weekly_resources[0].week_id.week_num, 16, 'week_num should be 16')
+        self.assertEqual(weekly_resources[0].week_id.year, 2020, 'year should be 2020')
+        self.assertEqual(weekly_resources[0].weekly_workload, 50, 'weekly_workload should be 50')
+
+    def test_delete_week_1(self):
+        """
+        Test if calling delete_spare_weekly_resources with existing weekly_resource
+        doesn't change its weekly_workload.
+
+        :return:
+        """
+        TestAddDelete.resource.weekly_resources[0].weekly_workload = 70
+        self.assertEqual(TestAddDelete.resource.weekly_resources[0].weekly_workload, 70)
+        project_week_data = [{'week_num': 16, 'year': 2020},
+                             {'week_num': 17, 'year': 2020}]
+        TestAddDelete.resource.delete_spare_weekly_resources(project_week_data)
+
+        weekly_resources = TestAddDelete.resource.weekly_resources
+        self.assertEqual(len(weekly_resources), 1, 'resource should contain 1 weekly_resources')
+
+        self.assertEqual(weekly_resources[0].week_id.week_num, 16, 'week_num should be 16')
+        self.assertEqual(weekly_resources[0].week_id.year, 2020, 'year should be 2020')
+        self.assertEqual(weekly_resources[0].weekly_workload, 70, 'weekly_workload should be 70')
