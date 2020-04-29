@@ -10,9 +10,10 @@ class WeeklyResource(models.Model):
     :param resource_id: refers to an existing resource from the resource model
     """
     _name = "weekly_resource.model"
+    _description = "Weekly Resource"
     _inherits = {'resource.model': 'resource_id',
                  'week.model': 'week_id'}
 
-    week_id = fields.Many2one('week.model', 'Week Id', ondelete="cascade")
-    resource_id = fields.Many2one('resource.model', 'Resource Id', ondelete="cascade")
-    weekly_workload = fields.Integer(string='Workload in %')
+    week_id = fields.Many2one('week.model', 'Week Id', required=True, ondelete="cascade")
+    resource_id = fields.Many2one('resource.model', 'Resource Id', required=True, ondelete="cascade")
+    weekly_workload = fields.Integer(string='Workload %')

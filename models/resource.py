@@ -29,6 +29,7 @@ class Resource(models.Model):
     start_date has to be before the end_date
     """
     _name = "resource.model"
+    _description = "Resource"
     _rec_name = 'project'
     project = fields.Many2one('project.project', 'Project', required=True)
     employee = fields.Many2one('hr.employee', 'Employee', required=True)
