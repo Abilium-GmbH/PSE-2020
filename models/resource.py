@@ -44,9 +44,9 @@ class Resource(models.Model):
     @api.depends('weeks_to_be_added')
     def plus_one_week(self):
         """
-              sets end date one week later
-              leaves start date as it was
-              :returns date for end_date that will be set/updated
+        Sets end date one week later leaves start date as it was
+
+        :returns date for end_date that will be set/updated
         """
         self.end_date = self.end_date + datetime.timedelta(days=7)
         self.weeks_to_be_added = self.weeks_to_be_added + 1
@@ -54,19 +54,19 @@ class Resource(models.Model):
     @api.depends('weeks_to_be_added')
     def minus_one_week(self):
         """
-                     sets end date one week earlier
-                     leaves start date as it was
-                     :returns date for end_date that will be set/updated
-               """
+        Sets end date one week earlier leaves start date as it was
 
+        :returns date for end_date that will be set/updated
+        """
         self.end_date = self.end_date - datetime.timedelta(days=7)
         self.weeks_to_be_added = self.weeks_to_be_added - 1
 
     @api.onchange('next_week')
     def set_dates(self):
         """
-              sets start and end date to coming monday and friday if next_week box is ticked
-              :returns dates for start_date and end_date that will be set
+        Sets start and end date to coming monday and friday if next_week box is ticked
+
+        :returns dates for start_date and end_date that will be set
         """
         if self.next_week:
             today = datetime.datetime.today()
@@ -88,7 +88,7 @@ class Resource(models.Model):
             :exception ValidationError: if start_date == False or end_date == False
         :return: no return value
         """
-        if self.start_date == False or self.end_date == False:
+        if self.start_date is False or self.end_date is False:
             raise exceptions.ValidationError("Both dates must be filled out")
         if self.start_date > self.end_date:
             raise exceptions.ValidationError("Start date must be before end date")

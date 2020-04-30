@@ -494,6 +494,7 @@ class TestResource(common.TransactionCase):
         self.assertEqual(resource.verify_workload(), None, 'Warning is not shown (1%)')
 
 # -------------------------------------------------------------------------------------------------------------------- #
+
     def test_write_resource_project(self):
         """
         Tests if write stores the values (project, employee, workload, start_date, end_dat) correctly
@@ -739,6 +740,7 @@ class TestResource(common.TransactionCase):
             resource.write(values)
 
 # -------------------------------------------------------------------------------------------------------------------- #
+
     def test_create_single_week(self):
         """
         Tests whether the correct WeeklyResource models are created by create
@@ -1422,7 +1424,7 @@ class TestAddDelete(common.SavepointCase):
         self.assertEqual(weekly_resources[0].week_id.year, 2020, 'year should be 2020')
         self.assertEqual(weekly_resources[0].weekly_workload, 50, 'weekly_workload should be 50')
 
-    def test_delete_week_1(self):
+    def test_delete_week_2(self):
         """
         Test if calling delete_spare_weekly_resources with existing weekly_resource
         doesn't change its weekly_workload.
