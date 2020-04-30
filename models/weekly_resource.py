@@ -1,5 +1,5 @@
 
-from odoo import models, fields, api
+from odoo import models, fields, api, exceptions
 
 
 class WeeklyResource(models.Model):
@@ -31,7 +31,5 @@ class WeeklyResource(models.Model):
         elif self.base_workload < 0:
             raise exceptions.ValidationError("The given workload can't be smaller than 0")
 
-        else:
-            planned_workload = self.employee.get_total_workload(self.week_id)
-            if planned_workload + self.weekly_workload > 100:
-                raise exceptions.ValidationError("The workload in week " + self.week_string + " is too high.")
+        elif self.employee.get_total_workload(self.week_id) > 100:
+            raise exceptions.ValidationError("The workload in week " + self.week_string + " is too high.")
