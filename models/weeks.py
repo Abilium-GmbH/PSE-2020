@@ -12,6 +12,7 @@ class Weeks(models.Model):
     :param week_num_in_two_months: week number in two months current week number + 8 weeks
     """
     _name = "week.model"
+    _description = "Week"
     week_num = fields.Integer(string='Week', required=True)
     year = fields.Integer(string="Year", required=True)
     week_string = fields.Char(string="Week String", compute='get_week_string', store=True)
