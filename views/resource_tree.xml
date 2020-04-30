@@ -9,7 +9,7 @@
                 <tree string="Resource">
                     <field name="project"/>
                     <field name="employee"/>
-                    <!--<field name="base_workload"/>-->
+                    <field name="base_workload"/>
                     <field name="start_date"/>
                     <field name="end_date"/>
                 </tree>
@@ -29,7 +29,7 @@
                                     <separator string="Details" colspan="2"/>
                                     <field name="project" widget="selection"/>
                                     <field name="employee" widget="selection"/>
-                                    <!--<field name="base_workload"/>-->
+                                    <field name="base_workload"/>
                                 </group>
                                 <group colspan="2" col="2">
                                     <separator string="Dates" colspan="2"/>
