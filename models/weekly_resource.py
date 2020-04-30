@@ -1,5 +1,5 @@
 
-from odoo import models, fields, api
+from odoo import models, fields, api, exceptions
 
 
 class WeeklyResource(models.Model):
@@ -16,3 +16,17 @@ class WeeklyResource(models.Model):
     week_id = fields.Many2one('week.model', 'Week Id', ondelete="cascade")
     resource_id = fields.Many2one('resource.model', 'Resource Id', ondelete="cascade")
     weekly_workload = fields.Integer(string='Workload in %')
+
+    @api.constrains('weekly_workload')
+    def verify_workload(self):
+        """
+        Checks if workload is between 1 and 100
+
+        :raises:
+            :exception ValidationError: if workload < 0 or workload > 100
+        :return: no return value
+        """
+        if self.weekly_workload > 100:
+            raise exceptions.ValidationError("The given workload can't be larger than 100")
+        elif self.base_workload < 0:
+            raise exceptions.ValidationError("The given workload can't be smaller than 0")
