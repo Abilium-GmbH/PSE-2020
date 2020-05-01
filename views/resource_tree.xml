@@ -2,7 +2,7 @@
 <odoo>
     <data>
         <record id="view_resource_tree" model="ir.ui.view">
-            <field name="name">resource.model.search</field>
+            <field name="name">resource.model.tree</field>
             <field name="model">resource.model</field>
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
