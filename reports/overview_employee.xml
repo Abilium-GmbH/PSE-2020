@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-    <template id="report_overview">
+   <template id="report_overview">
         <t t-call="web.html_container">
             <div class="page">
                 <table style="border: 2px solid black;">
@@ -12,30 +12,55 @@
                             Project
                         </th>
                         <t t-foreach="docs" t-as="o">
-                            <th>
-                                <span t-field="o.week_string"/>
-                            </th>
+
+                            <div>
+                                <t t-if="o_index &lt; 8">
+
+                                    <th>
+                                        <span t-field="o.week_string"/>
+
+                                    </th>
+                                </t>
+                            </div>
                         </t>
                     </tr>
+                    <t t-set="counter" t-value="0"/>
                     <t t-foreach="docs" t-as="doc">
-                        <tr>
-                            <td>
-                                <span t-field="doc.employee"/>
-                            </td>
-                             <td>
-                                    <span t-field="doc.project"/>
-                                </td>
-                            <div t-if="doc.end_date>=doc.today">
 
+                    <tr>
+                        <td>
+                            <span t-field="doc.employee"/>
+                        </td>
+
+
+                        <td>
+                            <span t-field="doc.project"/>
+                        </td>
+
+
+                    </tr>
+                    </t>
+             <tr>
+                    <t t-foreach="docs" t-as="doc">
+
+                            <div t-if="doc.week_num>=(doc.today+ counter)">
+
+                                <t t-set="counter" t-value="counter+1"/>
                                 <td>
                                     <span t-field="doc.weekly_workload"/>
                                 </td>
+                            </div>
 
+                            <div t-else="">
+                                <t t-set="empty" t-value="0"/>
+                                <td>
+                                    <t t-esc="empty"/>
+                                </td>
                             </div>
 
 
-                        </tr>
                     </t>
+                     </tr>
                 </table>
             </div>
         </t>
