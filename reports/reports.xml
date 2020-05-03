@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <report
+            id="report_overview_employee"
+            string="Print current pivot view"
+            model="weekly_resource.model"
+            report_type="qweb-pdf"
+            name="PSE-2020-master.report_overview"
+            file="PSE-2020-master.report_overview"
+            print_report_name="'Purchase Com - %s' % (object.id)"
+    />
+</odoo>
