@@ -24,7 +24,7 @@
                             </div>
                         </t>
                     </tr>
-                    <t t-set="counter" t-value="0"/>
+                    <t t-set="counter" t-value=""/>
                     <t t-foreach="docs" t-as="doc">
 
                     <tr>
