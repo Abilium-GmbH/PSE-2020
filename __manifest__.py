@@ -37,6 +37,7 @@
         'views/weekly_resource_project.xml',
         'reports/report.xml',
         'reports/overview_employee.xml'
+        'reports/report_wizard'
     ],
     # only loaded in demonstration mode
     'demo': [],
