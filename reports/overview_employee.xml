@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-    <template id="report_overview">
+   <template id="report_overview">
         <t t-call="web.html_container">
             <div class="page">
-                <table style="border: 2px solid black;">
+                <table style="border: 2px solid black; text-align:center">
                     <tr style="font-weight:bold;">
                         <th>
                             Employee
@@ -37,11 +37,31 @@
                                 </td>
                                 <t t-set="resource_id" t-value="doc.resource_id"/>
                                 <t t-set="counter2" t-value="counter2+1"/>
+                                <t t-set="empty" t-value=""/>
+                                <tr>
+                                    <td> <t t-esc="empty"/></td>
+                                     <td>  <t t-esc="empty"/></td>
+                                    <t t-foreach="docs" t-as="doc">
 
+                                        <div t-if="doc.week_num>=(doc.today+ counter)">
+
+                                            <t t-set="counter" t-value="counter+1"/>
+                                            <td>
+                                                <span t-field="doc.weekly_workload"/>
+                                            </td>
+                                        </div>
+
+                                        <div t-else="">
+
+                                            <td>
+                                                <t t-esc="empty"/>
+                                            </td>
+                                        </div>
+
+                                    </t>
+                                </tr>
                             </div>
                             <div t-if="resource_id!=doc.resource_id">
-
-
                                 <td>
                                     <span t-field="doc.employee"/>
                                 </td>
@@ -50,28 +70,31 @@
                                 </td>
                                 <t t-set="resource_id" t-value="doc.resource_id"/>
                                 <t t-set="counter2" t-value="counter2+1"/>
+                                <tr>
+                                    <t t-foreach="docs" t-as="doc">
+
+                                        <div t-if="doc.week_num>=(doc.today+ counter)">
+
+                                            <t t-set="counter" t-value="counter+1"/>
+                                            <td>
+                                                <span t-field="doc.weekly_workload"/>
+                                            </td>
+                                        </div>
+
+                                        <div t-else="">
+                                            <t t-set="empty" t-value=""/>
+                                            <td>
+                                                <t t-esc="empty"/>
+                                            </td>
+                                        </div>
+
+
+                                    </t>
+                                </tr>
                             </div>
                         </tr>
-
                     </t>
-                    <tr>
-                        <t t-foreach="docs" t-as="doc">
 
-                            <div t-if="doc.week_num>=(doc.today+ counter)">
-
-                                <t t-set="counter" t-value="counter+1"/>
-                                <td>
-                                    <span t-field="doc.weekly_workload"/>
-                                </td>
-                            </div>
-                            <div t-else="">
-                                <t t-set="empty" t-value=""/>
-                                <td>
-                                    <t t-esc="empty"/>
-                                </td>
-                            </div>
-                        </t>
-                    </tr>
                 </table>
             </div>
         </t>
