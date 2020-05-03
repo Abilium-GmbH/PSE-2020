@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="report_wizard" model="ir.ui.view" >
+            <field name="name">Resource Report</field>
+            <field name="model">resource_planning.report.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Resource Planning Report">
+                    <group>
+                        <field name="start_week" widget="selection"/>
+                        <field name="end_week" widget="selection"/>
+                    </group>
+                    <footer>
+                        <button name="get_report" string="Get Report" type="object" class="oe_highlight"/>
+                        <button string="Cancel" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="paperformat_resource_planning_report" model="report.paperformat">
+            <field name="name">Resource Planning Report</field>
+            <field name="default" eval="False"/>
+            <field name="format">A4</field>
+            <field name="page_width">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">30</field>
+            <field name="margin_bottom">30</field>
+            <field name="margin_right">10</field>
+            <field name="margin_left">10</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">15</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <report id="pse2020_resource_planning_report"
+                model="resource_planning.report.wizard"
+                string="Resource Planning Report"
+                report_type="qweb-pdf"
+                name="resource_planning_report"
+                paperformat="paperformat_resource_planning_report"
+                menu="False"/>
+
+        <template id="resource_planning_report_view">
+            <t t-call="web.html_container">
+                <div class="header" style="border-bottom: 1px solid black;">
+                    <h3 class="text-center">Resource Planning Report
+                        <span style="font-size: 14px;"><strong>From</strong>:
+                             <t t-esc="start_week.week_string"/> <strong>To</strong>:
+                            <t t-esc="end_week.week_string"/></span>
+                    </h3>
+                </div>
+
+                <div class="article mt0 o_report_layout_standard">
+                    <table class="table table-condensed table-bordered">
+                        <thead>
+                            <th class="text-center" style="width: 15%">Project</th>
+                            <th class="text-center" style="width: 15%">Employee</th>
+                            <t t-foreach="weeks" t-as="week">
+                                <th class="text-center" style="width: 15%"><t t-esc="week.week_string"/> </th>
+                            </t>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="docs" t-as="doc">
+                                <tr>
+                                    <td><span t-esc="doc['employee']"/></td>
+                                    <td><span t-esc="doc['project']"/></td>
+                                    <t t-foreach="weeks" t-as="week">
+                                        <td t-if="week.week_string == doc['week']">
+                                            <span t-esc="doc['workload']"/>
+                                        </td>
+                                        <td t-else="">
+                                            <p> </p>
+                                        </td>
+                                    </t>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </template>
+
+
+        <record model="ir.actions.act_window" id="action_view_report_wizard">
+            <field name="name">Resource Planning Report</field>
+            <field name="res_model">resource_planning.report.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_resource_report" name="Report" parent="menu_resource"
+                  action="action_view_report_wizard"/>
+    </data>
+</odoo>

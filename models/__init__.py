@@ -4,4 +4,3 @@ from . import employee
 from . import resource
 from . import weeks
 from . import weekly_resource
-from . import project
