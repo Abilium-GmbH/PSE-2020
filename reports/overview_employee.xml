@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-   <template id="report_overview">
+    <template id="report_overview">
         <t t-call="web.html_container">
             <div class="page">
                 <table style="border: 2px solid black;">
@@ -24,24 +24,38 @@
                             </div>
                         </t>
                     </tr>
-                    <t t-set="counter" t-value=""/>
+                    <t t-set="counter" t-value="0"/>
+                    <t t-set="counter2" t-value="0"/>
                     <t t-foreach="docs" t-as="doc">
+                        <tr>
+                            <div t-if="counter2==0">
+                                <td>
+                                    <span t-field="doc.employee"/>
+                                </td>
+                                <td>
+                                    <span t-field="doc.project"/>
+                                </td>
+                                <t t-set="resource_id" t-value="doc.resource_id"/>
+                                <t t-set="counter2" t-value="counter2+1"/>
 
-                    <tr>
-                        <td>
-                            <span t-field="doc.employee"/>
-                        </td>
+                            </div>
+                            <div t-if="resource_id!=doc.resource_id">
 
 
-                        <td>
-                            <span t-field="doc.project"/>
-                        </td>
+                                <td>
+                                    <span t-field="doc.employee"/>
+                                </td>
+                                <td>
+                                    <span t-field="doc.project"/>
+                                </td>
+                                <t t-set="resource_id" t-value="doc.resource_id"/>
+                                <t t-set="counter2" t-value="counter2+1"/>
+                            </div>
+                        </tr>
 
-
-                    </tr>
                     </t>
-             <tr>
-                    <t t-foreach="docs" t-as="doc">
+                    <tr>
+                        <t t-foreach="docs" t-as="doc">
 
                             <div t-if="doc.week_num>=(doc.today+ counter)">
 
@@ -50,20 +64,19 @@
                                     <span t-field="doc.weekly_workload"/>
                                 </td>
                             </div>
-
                             <div t-else="">
-                                <t t-set="empty" t-value="0"/>
+                                <t t-set="empty" t-value=""/>
                                 <td>
                                     <t t-esc="empty"/>
                                 </td>
                             </div>
-
-
-                    </t>
-                     </tr>
+                        </t>
+                    </tr>
                 </table>
             </div>
         </t>
 
     </template>
+
+
 </odoo>
