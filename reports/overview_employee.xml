@@ -81,15 +81,14 @@
                                         <t t-set="employee" t-value="doc.employee"/>
                                         <tr>
                                             <t t-foreach="docs" t-as="doc">
+                                                <t t-set="week_counter" t-value="0"/>
+                                                <div t-if="doc.week_num>=(doc.today+ week_counter)">
 
-                                                <div t-if="doc.week_num>=(doc.today+ counter)">
-
-                                                    <t t-set="counter" t-value="counter+1"/>
+                                                    <t t-set="week_counter" t-value="week_counter+1"/>
                                                     <td>
                                                         <span t-field="doc.weekly_workload"/>
                                                     </td>
                                                 </div>
-
                                                 <div t-else="">
                                                     <t t-set="empty" t-value=""/>
                                                     <td>
