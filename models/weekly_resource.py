@@ -17,6 +17,7 @@ class WeeklyResource(models.Model):
     week_id = fields.Many2one('week.model', 'Week Id', required=True, ondelete="cascade")
     resource_id = fields.Many2one('resource.model', 'Resource Id', required=True, ondelete="cascade")
     weekly_workload = fields.Integer(string='Workload %')
+    today = fields.datetime.today().isocalendar()[1]
 
     @api.constrains('weekly_workload')
     def verify_workload(self):
