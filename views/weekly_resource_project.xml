@@ -14,10 +14,22 @@
             </field>
         </record>
 
+        <record id="view_weekly_graph_p" model="ir.ui.view">
+            <field name="name">weekly_resource.graph_p</field>
+            <field name="model">weekly_resource.model</field>
+            <field name="arch" type="xml">
+                <graph string="Resource Graph" type="bar" stacked="False">
+                    <field name="week_string" type="row"/>
+                    <field name="project" type="row"/>
+                    <field name="weekly_workload" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
         <record model="ir.actions.act_window" id="action_view_weekly_p">
             <field name="name">Project centred</field>
             <field name="res_model">weekly_resource.model</field>
-            <field name="view_mode">pivot</field>
+            <field name="view_mode">pivot,graph</field>
             <field name="domain">[]</field>
             <field name="view_id" ref="view_weekly_pivot_p"/>
         </record>
