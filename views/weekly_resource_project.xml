@@ -31,7 +31,18 @@
             <field name="res_model">weekly_resource.model</field>
             <field name="view_mode">pivot,graph</field>
             <field name="domain">[]</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_view_weekly_pivot_view_p">
+            <field name="view_mode">pivot</field>
             <field name="view_id" ref="view_weekly_pivot_p"/>
+            <field name="act_window_id" ref="action_view_weekly_p"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_view_weekly_graph_view_p">
+            <field name="view_mode">graph</field>
+            <field name="view_id" ref="view_weekly_graph_p"/>
+            <field name="act_window_id" ref="action_view_weekly_p"/>
         </record>
 
         <menuitem id="menu_weekly_project" name="Project" parent="menu_weekly" action="action_view_weekly_p"/>
