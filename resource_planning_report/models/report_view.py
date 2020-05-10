@@ -8,6 +8,7 @@ class ReportView(models.AbstractModel):
         Abstract Model for report template.
     """
     _name = 'report.resource_planning_report.planning_report_view'
+    _description='Report View'
 
     @api.model
     def _get_report_values(self, docids, data=None):

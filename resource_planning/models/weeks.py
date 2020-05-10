@@ -21,6 +21,13 @@ class Weeks(models.Model):
     week_bool = fields.Boolean(compute="is_week_in_period", string="is week in the weeks definded by settings", store=True)
     week_delta = fields.Integer(default=8)
 
+    def name_get(self):
+        result = []
+        for record in self:
+            record_name = 'Week' + '   ' + str(record.week_num)
+            result.append((record.id, record_name))
+        return result
+
     @api.depends('week_delta')
     def is_week_in_period(self):
         """

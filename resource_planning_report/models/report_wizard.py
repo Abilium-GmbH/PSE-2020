@@ -9,6 +9,7 @@ class ReportWizard(models.TransientModel):
 
     """
     _name = 'resource.planning.report.wizard'
+    _description='Wizard to create Report'
 
     # TODO: week_string soll im Form angezeigt werden
     start_week = fields.Many2one('week.model', 'Start Week', required=True)
