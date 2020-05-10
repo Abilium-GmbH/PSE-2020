@@ -24,7 +24,7 @@ class Weeks(models.Model):
     def name_get(self):
         result = []
         for record in self:
-            record_name = 'Week' + '   ' + str(record.week_num)
+            record_name = 'Week' + ' ' + str(record.week_num) + ' ' + str(record.year)
             result.append((record.id, record_name))
         return result
 
