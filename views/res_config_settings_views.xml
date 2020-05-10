@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.resource</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="50"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data-string="Resource" string="Resource Planning" data-key="resource_planning">
+
+                    <h2>Filter Options</h2>
+                    <div class="row mt16 o_settings_container" name="resource_option">
+                        <div class="col-12 col-lg-6 o_setting_box" name="resource_option">
+                            <div class="o_setting_left_pane">
+                                <field name="filter_weeks"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="filter_weeks"/>
+                                <div class="text-muted" name="filter_weeks_msg">
+                                    Here you can adjust the number of weeks to be shown when the filter in the "Overview" tab is activated.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="resource_config_settings_action" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module' : 'resource_planning'}</field>
+    </record>
+
+    <menuitem id="resource_settings_menu" name="Settings" parent="menu_resource" action="resource_config_settings_action"/>
+
+
+
+
+
+
+</odoo>

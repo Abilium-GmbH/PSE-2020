@@ -4,5 +4,4 @@ from . import employee
 from . import resource
 from . import weeks
 from . import weekly_resource
-#from . import report_wizard
-#from . import report_view
+from . import res_config_settings
