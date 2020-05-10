@@ -2,7 +2,7 @@
 #
 
 {
-    'name': "Resource Planning",
+    'name': "resource_planning",
 
     'summary': """
         This module can be used to allocate human resources to projects""",
