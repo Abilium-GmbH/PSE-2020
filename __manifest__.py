@@ -34,7 +34,8 @@
         'security/ir.model.access.csv',
         'views/resource_tree.xml',
         'views/weekly_resource.xml',
-        'views/weekly_resource_project.xml'
+        'views/weekly_resource_project.xml',
+        'views/res_config_settings_views.xml'
     ],
     # only loaded in demonstration mode
     'demo': [],
