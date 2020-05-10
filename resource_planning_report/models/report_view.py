@@ -7,7 +7,7 @@ class ReportView(models.AbstractModel):
     """
         Abstract Model for report template.
     """
-    _name = 'report.resource_planning.resource_planning_report'
+    _name = 'report.resource_planning_report.planning_report_view'
 
     @api.model
     def _get_report_values(self, docids, data=None):
@@ -66,20 +66,16 @@ class ReportView(models.AbstractModel):
                      'employee': 'Total',
                      'weekly_data': week_array
                      })
+        print('Weeks')
+        print(str(weeks))
 
-        return {
+        result = {
             'doc_ids': data['ids'],
             'doc_model': data['model'],
             'weeks': weeks,
             'docs': docs,
         }
 
-    # def _get_start_week(self, data):
-    #     start_week_string = str(data['form']['start_week']).split('(')[1]
-    #     start_week_id = int(start_week_string.split(',')[0])
-    #     return self.env['week.model'].search([['id', '=', start_week_id]])
-    #
-    # def _get_end_week(self, data):
-    #     end_week_string = str(data['form']['end_week']).split('(')[1]
-    #     end_week_id = int(end_week_string.split(',')[0])
-    #     return self.env['week.model'].search([['id', '=', end_week_id]])
+        print(str(result))
+
+        return result

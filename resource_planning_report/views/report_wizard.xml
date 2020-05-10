@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
     <data>
-        <record id="report_wizard" model="ir.ui.view" >
+        <record id="planning_report_wizard" model="ir.ui.view" >
             <field name="name">Resource Report</field>
             <field name="model">resource.planning.report.wizard</field>
             <field name="type">form</field>
@@ -19,10 +19,11 @@
             </field>
         </record>
 
-        <record id="resource_planning.paperformat_resource_planning_report" model="report.paperformat">
-            <field name="name">Resource Planning Report</field>
+        <record id="paperformat_planning_report" model="report.paperformat">
+            <field name="name">Resource Planning</field>
             <field name="default" eval="False"/>
             <field name="format">A4</field>
+            <field name="page_width">0</field>
             <field name="page_width">0</field>
             <field name="orientation">Landscape</field>
             <field name="margin_top">30</field>
@@ -34,15 +35,15 @@
             <field name="dpi">90</field>
         </record>
 
-        <report id="resource_planning.resource_planning_report"
+        <report id="planning_report"
                 model="resource.planning.report.wizard"
                 string="Resource Planning Report"
                 report_type="qweb-pdf"
-                name="resource_planning.resource_planning_report"
-                paperformat="resource_planning.paperformat_resource_planning_report"
+                name="resource_planning_report.planning_report_view"
+                paperformat="paperformat_planning_report"
                 menu="False"/>
 
-        <template id="resource_planning_report">
+        <template id="planning_report_view">
             <t t-call="web.html_container">
                 <div class="header" style="border-bottom: 1px solid black;">
                     <h3 class="text-center">Resource Planning Report</h3>
@@ -60,12 +61,12 @@
                         <tbody>
                             <t t-foreach="docs" t-as="doc">
                                 <tr>
-                                    <td><span t-field="doc['project']"/></td>
-                                    <td><span t-field="doc['employee']"/></td>
+                                    <td><span t-esc="doc['project']"/></td>
+                                    <td><span t-esc="doc['employee']"/></td>
                                      <t t-foreach="weeks" t-as="week">
                                          <t t-foreach="doc['weekly_data']" t-as="data">
                                             <t t-if="week == data['week']">
-                                                <td class="text-center"> <span t-field="data['workload']"/></td>
+                                                <td class="text-center"> <span t-esc="data['workload']"/></td>
                                             </t>
                                         </t>
                                     </t>
@@ -85,7 +86,7 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_resource_report" name="Report" parent="menu_resource"
+        <menuitem id="menu_resource_report" name="Report" parent="resource_planning.menu_resource"
                   action="action_view_report_wizard"/>
     </data>
 </odoo>

@@ -11,7 +11,6 @@ class ReportWizard(models.TransientModel):
     _name = 'resource.planning.report.wizard'
 
     # TODO: week_string soll im Form angezeigt werden
-    # TODO: evtl. weitere Filterkriterien?
     start_week = fields.Many2one('week.model', 'Start Week', required=True)
     end_week = fields.Many2one('week.model', 'End Week', required=True)
 
@@ -28,7 +27,7 @@ class ReportWizard(models.TransientModel):
             },
         }
 
-        return self.env.ref('resource_planning.resource_planning_report').report_action(self, data)
+        return self.env.ref('resource_planning_report.planning_report').report_action(self, data)
 
     @api.constrains
     def start_week_before_end_week(self):
