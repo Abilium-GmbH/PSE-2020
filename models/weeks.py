@@ -1,3 +1,5 @@
+from datetime import timedelta, date
+
 from odoo import models, fields, api, exceptions
 
 
@@ -9,39 +11,61 @@ class Weeks(models.Model):
     :param year: the year, is required
     :param week_string: the representation of week and year for the view
     :param week_bool: is True if the week number is within the next two months otherwise False
-    :param week_num_in_two_months: week number in two months current week number + 8 weeks
+     :param week_delta: given by the user how many weeks he wants to see
     """
     _name = "week.model"
     _description = "Week"
     week_num = fields.Integer(string='Week', required=True)
     year = fields.Integer(string="Year", required=True)
     week_string = fields.Char(string="Week String", compute='get_week_string', store=True)
-    week_bool = fields.Boolean(compute="is_week_in_next_2_months", string="is week in next two Months", store=True)
-    week_num_in_two_months = fields.Integer(compute="get_week_num_in_two_months", string="Week number in 2 Months")
+    week_bool = fields.Boolean(compute="is_week_in_period", string="is week in next two Months", store=True)
+    week_delta = fields.Integer(default=8)
 
-    @api.depends('week_num_in_two_months')
-    def get_week_num_in_two_months(self):
-        """
-        gets week number which is 2 months in the future
-        :returns assigns result directly to week_num_in_two_months
-                """
-        self.week_num_in_two_months = fields.Date.today().isocalendar()[1] + 8
 
-    @api.depends('week_num', 'week_bool')
-    def is_week_in_next_2_months(self):
+    @api.depends('week_delta')
+    def get_start_of_current_week(self):
         """
-            calculates for every week whether it is in the next 2 months starting from
-            this week
-            :returns sets week_bool to TRUE or FALSE
-         """
+        gets the start date of the current week
+        :return: start
+        """
+        today = date.today()
+        start = today - timedelta(today.weekday())
+        return start
+
+    @api.depends('week_delta')
+    def is_week_in_period(self):
+        """
+        sets week_bool whether the week is in the period the user wants or not (true or false)
+        :returns week_bool
+        :param week_delta is needed to find the last week
+        """
+
         for week in self:
-            if fields.Date.today().isocalendar()[1] + 8 - week.week_num >= 0:
-                if fields.Date.today().isocalendar()[1] - week.week_num <= 0:
+            year = week.year
+            temp = date(year, 1, 1)
+            temp = temp - timedelta(temp.weekday())
+            delta = timedelta(days=(week.week_num - 1) * 7)
+            start_date_of_week = temp + delta
+
+            this_week = self.get_start_of_current_week()
+
+            if week.week_delta >= 0:
+
+                if this_week + timedelta(
+                        weeks=week.week_delta) >= start_date_of_week and this_week <= start_date_of_week:
+
+                    week.week_bool = True
+                else:
+
+                    week.week_bool = False
+            else:
+
+                if this_week + timedelta(
+                        weeks=week.week_delta) <= start_date_of_week and this_week >= start_date_of_week:
+
                     week.week_bool = True
                 else:
                     week.week_bool = False
-            else:
-                week.week_bool = False
 
     @api.depends('year', 'week_num')
     def get_week_string(self):
