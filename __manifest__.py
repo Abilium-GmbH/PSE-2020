@@ -2,7 +2,7 @@
 #
 
 {
-    'name': "Resource Planning",
+    'name': "resource_planning",
 
     'summary': """
         This module can be used to allocate human resources to projects""",
@@ -34,7 +34,8 @@
         'security/ir.model.access.csv',
         'views/resource_tree.xml',
         'views/weekly_resource.xml',
-        'views/weekly_resource_project.xml'
+        'views/weekly_resource_project.xml',
+        # 'report/report_wizard.xml'
     ],
     # only loaded in demonstration mode
     'demo': [],
