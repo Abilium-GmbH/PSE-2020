@@ -11,16 +11,24 @@
 
                     <h2>Filter Options</h2>
                     <div class="row mt16 o_settings_container" name="resource_option">
-                        <div class="col-12 col-lg-6 o_setting_box" name="resource_option">
-                            <div class="o_setting_left_pane">
-                                <field name="filter_weeks"/>
-                            </div>
-                            <div class="o_setting_right_pane">
-                                <label for="filter_weeks"/>
-                                <div class="text-muted" name="filter_weeks_msg">
-                                    Here you can adjust the number of weeks to be shown when the filter in the "Overview" tab is activated.
-                                </div>
-                            </div>
+                        <div class="col-5 col-lg-6 o_setting_box" name="resource_option">
+                            <table>
+                                <tr>
+                                    <th>
+                                        <div class="o_setting_left_pane" width="50">
+                                            <field name="filter_weeks"/>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="o_setting_right_pane">
+                                            <label for="filter_weeks"/>
+                                            <div class="text-muted" name="filter_weeks_msg">
+                                                Here you can adjust the number of weeks to be shown when the filter in the "Overview" tab is activated.
+                                            </div>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                 </div>

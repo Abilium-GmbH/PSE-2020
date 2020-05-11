@@ -11,7 +11,7 @@ class Weeks(models.Model):
     :param year: the year, is required
     :param week_string: the representation of week and year for the view
     :param week_bool: is True if the week number is within the next two months otherwise False
-     :param week_delta: given by the user how many weeks he wants to see
+    :param week_delta: given by the user how many weeks he wants to see
     """
     _name = "week.model"
     _description = "Week"
@@ -19,7 +19,6 @@ class Weeks(models.Model):
     year = fields.Integer(string="Year", required=True)
     week_string = fields.Char(string="Week String", compute='get_week_string', store=True)
     week_bool = fields.Boolean(compute="is_week_in_period", string="is week in the weeks definded by settings", store=True)
-    week_delta = fields.Integer(default=8)
 
     def name_get(self):
         result = []
@@ -28,18 +27,19 @@ class Weeks(models.Model):
             result.append((record.id, record_name))
         return result
 
-    @api.depends('week_delta')
+
     def is_week_in_period(self):
         """
               calculates current week and calls set_is_week_in_period
               :param week_delta is needed for set_is_week_in_period
         """
         today = date.today()
+        week_delta = int(self.env['ir.config_parameter'].sudo().get_param('resource_planning.filter_weeks'))
         this_week = today - timedelta(today.weekday())
-        self.set_is_week_in_period(this_week)
+        self.set_is_week_in_period(this_week, week_delta)
 
-    @api.depends('week_delta')
-    def set_is_week_in_period(self, this_week):
+
+    def set_is_week_in_period(self, this_week, week_delta):
         """
         sets week_bool whether the week is in the period the user wants or not (true or false)
         :returns week_bool
@@ -54,15 +54,15 @@ class Weeks(models.Model):
             delta = timedelta(days=(week.week_num - 1) * 7)
             start_date_of_week = temp + delta
 
-            if week.week_delta >= 0:
+            if week_delta >= 0:
                 if this_week + timedelta(
-                        weeks=week.week_delta) >= start_date_of_week and this_week <= start_date_of_week:
+                        weeks=week_delta) >= start_date_of_week and this_week <= start_date_of_week:
                     week.week_bool = True
                 else:
                     week.week_bool = False
             else:
                 if this_week + timedelta(
-                        weeks=week.week_delta) <= start_date_of_week and this_week >= start_date_of_week:
+                        weeks=week_delta) <= start_date_of_week and this_week >= start_date_of_week:
                     week.week_bool = True
                 else:
                     week.week_bool = False
