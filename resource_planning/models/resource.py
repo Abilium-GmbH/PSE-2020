@@ -177,6 +177,10 @@ class Resource(models.Model):
             exists = self.env['weekly_resource.model'].search([['resource_id', '=', self.id],
                                                                ['week_id.week_num', '=', week['week_num']],
                                                                ['week_id.year', '=', week['year']]])
+
+            if exists and not(exists.manually_changed):
+                exists.weekly_workload = self.base_workload
+
             if not exists:
                 week_model = self.env['week.model'].search([['week_num', '=', week['week_num']],
                                                         ['year', '=', week['year']]])
@@ -186,6 +190,7 @@ class Resource(models.Model):
 
                 values = {'week_id': week_model.id, 'resource_id': self.id, 'weekly_workload': self.base_workload}
                 self.add_weekly_resource(values)
+
 
     def delete_spare_weekly_resources(self, project_week_data):
         """

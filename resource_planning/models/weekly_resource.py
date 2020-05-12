@@ -17,6 +17,7 @@ class WeeklyResource(models.Model):
     week_id = fields.Many2one('week.model', 'Week Id', required=True, ondelete="cascade")
     resource_id = fields.Many2one('resource.model', 'Resource Id', required=True, ondelete="cascade")
     weekly_workload = fields.Integer(string='Workload %')
+    manually_changed = fields.Boolean(string='Manual change', default=False)
 
     @api.constrains('weekly_workload')
     def verify_workload(self):
@@ -33,3 +34,18 @@ class WeeklyResource(models.Model):
 
         elif self.employee.get_total_workload(self.week_id) > 100:
             raise exceptions.ValidationError("The workload in week " + self.week_string + " is too high.")
+
+
+
+    @api.constrains('weekly_workload')
+    def check_if_changed(self):
+        """
+        Checks if the weekly_workload was manually changed. If yes it sets manually_changed to true.
+
+        :return:
+        """
+        if self.weekly_workload != self.resource_id.base_workload:
+            self.manually_changed = True
+
+        else:
+            self.manually_changed = False
