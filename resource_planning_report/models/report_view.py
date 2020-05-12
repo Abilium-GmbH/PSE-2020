@@ -55,7 +55,7 @@ class ReportView(models.AbstractModel):
                             is_set = True
 
                 # add valid data to docs
-                if self.is_valid(week_array):
+                if self.is_relevant(week_array):
                     docs.append({'project': project.name,
                                  'employee': employee.name,
                                  'weekly_data': week_array
@@ -85,7 +85,7 @@ class ReportView(models.AbstractModel):
             'docs': docs,
         }
 
-    def is_valid(self, week_array):
+    def is_relevant(self, week_array):
         """
         Checks whether the data in a week_array is relevant for the report
         (if there is a workload != 0)
