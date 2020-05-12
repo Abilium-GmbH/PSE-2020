@@ -50,12 +50,12 @@ class ReportView(models.AbstractModel):
                             is_set = True
                         # else: set up resource with workload 0 and add it to the week_array
                         elif not is_set:
-                           week_array.append({'week': weeks[i],
+                            week_array.append({'week': weeks[i],
                                                'workload': 0})
-                           is_set = True
+                            is_set = True
 
-                # add data to docs
-                if week_array:
+                # add valid data to docs
+                if self.is_valid(week_array):
                     docs.append({'project': project.name,
                                  'employee': employee.name,
                                  'weekly_data': week_array
@@ -84,3 +84,15 @@ class ReportView(models.AbstractModel):
             'weeks': weeks,
             'docs': docs,
         }
+
+    def is_valid(self, week_array):
+        """
+        Checks whether the data in a week_array is relevant for the report
+        (if there is a workload != 0)
+        :return: boolean, indicating whether the data is relevant or not
+        """
+        for week in week_array:
+            if week['workload'] != 0:
+                return True
+
+        return False
