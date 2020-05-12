@@ -107,6 +107,10 @@ class TestWeeks(common.TransactionCase):
 # -----------------------------------------------------------------------------------------------------------------------
 
     def test_set_is_week_in_period_week_bool_false(self):
+        """
+                tests if week_bool is set to false with a
+                week_delta of 8
+        """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': project.id,
@@ -117,12 +121,16 @@ class TestWeeks(common.TransactionCase):
         self.resource = self.env['resource.model'].create(values)
         today = datetime(2020, 5, 10, 13, 42, 7)
         this_week = today - timedelta(today.weekday())
-        self.env['week.model'].set_is_week_in_period(this_week)
+        self.env['week.model'].set_is_week_in_period(this_week,8)
         if self.env['week.model'].week_num == 14:
             week = self.env['week.model']
             self.assertFalse(week.week_bool, "Week_bool is false therefore week is before this week")
 
     def test_set_is_week_in_period_week_bool_true(self):
+        """
+                    tests if week_bool is set to true with a
+                    week_delta of 8
+        """
         today = datetime(2020, 5, 10, 13, 42, 7)
         this_week = today - timedelta(today.weekday())
         self.env['week.model'].create({
@@ -134,12 +142,16 @@ class TestWeeks(common.TransactionCase):
             'year': 2020
         })
 
-        self.env['week.model'].set_is_week_in_period(this_week)
+        self.env['week.model'].set_is_week_in_period(this_week,8)
 
         for week in self.env['week.model']:
             self.assertEqual(week.week_bool, True, "Week_bool is true therefore week is after this week")
 
     def test_set_is_week_in_period_week_bool_mixed(self):
+        """
+            tests if week_bool is set to false for week 18 and true for week 19 with a
+            week_delta of 8
+        """
         today = datetime(2020, 5, 10, 13, 42, 7)
         this_week = today - timedelta(today.weekday())
         self.env['week.model'].create({
@@ -150,7 +162,7 @@ class TestWeeks(common.TransactionCase):
             'week_num': 19,
             'year': 2020
         })
-        self.env['week.model'].set_is_week_in_period(this_week)
+        self.env['week.model'].set_is_week_in_period(this_week,8)
 
         for week in self.env['week.model']:
             if week.week_num == 18:
@@ -160,6 +172,10 @@ class TestWeeks(common.TransactionCase):
                                  "Week_bool is true therefore week is after this week")
 
     def test_set_is_week_in_period_week_bool_false_over_year_bound(self):
+        """
+                   tests if week_bool is set to false with a
+                   week_delta of 8 and whether it works of the year bound
+        """
         today = datetime(2021, 12, 23, 13, 42, 7)
         this_week = today - timedelta(today.weekday())
         self.env['week.model'].create({
@@ -170,11 +186,15 @@ class TestWeeks(common.TransactionCase):
             'week_num': 1,
             'year': 2020
         })
-        self.env['week.model'].set_is_week_in_period(this_week)
+        self.env['week.model'].set_is_week_in_period(this_week,8)
         for week in self.env['week.model']:
             self.assertEqual(week.week_bool, False, "Week_bool is false therefore week is before this week")
 
     def test_set_is_week_in_period_week_bool_true_over_year_bound(self):
+        """
+                tests if week_bool is set to true with a
+                week_delta of 8 and whether it works of the year bound
+        """
         today = datetime(2020, 12, 23, 13, 42, 7)
         this_week = today - timedelta(today.weekday())
         self.env['week.model'].create({
@@ -185,7 +205,7 @@ class TestWeeks(common.TransactionCase):
             'week_num': 1,
             'year': 2021
         })
-        self.env['week.model'].set_is_week_in_period(this_week)
+        self.env['week.model'].set_is_week_in_period(this_week,8)
         for week in self.env['week.model']:
             self.assertEqual(week.week_bool, True, "Week_bool is true therefore week is after this week")
 

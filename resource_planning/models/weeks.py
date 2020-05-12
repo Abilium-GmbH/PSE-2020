@@ -1,3 +1,4 @@
+import datetime
 from datetime import timedelta, date
 
 from odoo import models, fields, api, exceptions
@@ -11,61 +12,66 @@ class Weeks(models.Model):
     :param year: the year, is required
     :param week_string: the representation of week and year for the view
     :param week_bool: is True if the week number is within the next two months otherwise False
-    :param week_delta: given by the user how many weeks he wants to see
     """
     _name = "week.model"
     _description = "Week"
     week_num = fields.Integer(string='Week', required=True)
     year = fields.Integer(string="Year", required=True)
     week_string = fields.Char(string="Week String", compute='get_week_string', store=True)
-    week_bool = fields.Boolean(compute="is_week_in_period", string="is week in the weeks definded by settings", store=True)
+    week_bool = fields.Boolean(compute="is_week_in_period", string="is week in the weeks definded by settings",
+                               store=True)
 
     def name_get(self):
+        """
+         creates a Week String which is used for the report view
+         """
         result = []
         for record in self:
             record_name = 'Week' + ' ' + str(record.week_num) + ' ' + str(record.year)
             result.append((record.id, record_name))
         return result
 
-
     def is_week_in_period(self):
         """
-              calculates current week and calls set_is_week_in_period
-              :param week_delta is needed for set_is_week_in_period
+        calculates current week and calls set_is_week_in_period
+        gets week_delta (number of weeks one would like to see in the filter) from ir.config_parameter
+        gets called once per day so filter is up to date
+        :return week_delta
         """
         today = date.today()
         week_delta = int(self.env['ir.config_parameter'].sudo().get_param('resource_planning.filter_weeks'))
         this_week = today - timedelta(today.weekday())
         self.set_is_week_in_period(this_week, week_delta)
-
+        return week_delta
 
     def set_is_week_in_period(self, this_week, week_delta):
         """
         sets week_bool whether the week is in the period the user wants or not (true or false)
+        gets called once per day so filter is up to date
         :returns week_bool
-        :param week_delta is needed to find the last week
         :param this_week which is the current week number
         """
 
         for week in self:
             year = week.year
-            temp = date(year, 1, 1)
-            temp = temp - timedelta(temp.weekday())
-            delta = timedelta(days=(week.week_num - 1) * 7)
+            temp = datetime.datetime(year, 1, 1)
+            temp = temp - datetime.timedelta(temp.weekday())
+            delta = datetime.timedelta(days=(week.week_num - 1) * 7)
             start_date_of_week = temp + delta
 
             if week_delta >= 0:
-                if this_week + timedelta(
+                if this_week + datetime.timedelta(
                         weeks=week_delta) >= start_date_of_week and this_week <= start_date_of_week:
                     week.week_bool = True
                 else:
                     week.week_bool = False
             else:
-                if this_week + timedelta(
-                        weeks=week_delta) <= start_date_of_week and this_week >= start_date_of_week:
+                if this_week + datetime.timedelta(
+                        weeks=week_delta) <= start_date_of_week and this_week > start_date_of_week:
                     week.week_bool = True
                 else:
                     week.week_bool = False
+
 
     @api.depends('year', 'week_num')
     def get_week_string(self):

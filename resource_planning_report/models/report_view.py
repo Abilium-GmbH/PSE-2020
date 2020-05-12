@@ -9,6 +9,7 @@ class ReportView(models.AbstractModel):
         Calculates the data to be passed on to the report.
     """
     _name = 'report.resource_planning_report.planning_report_view'
+    _description = 'gets values for the report view'
 
     @api.model
     def _get_report_values(self, docids, data=None):
