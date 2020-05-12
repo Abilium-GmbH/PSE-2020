@@ -54,7 +54,7 @@ class ReportView(models.AbstractModel):
                                                'workload': 0})
                             is_set = True
 
-                # add valid data to docs
+                # add relevant data to docs
                 if self.is_relevant(week_array):
                     docs.append({'project': project.name,
                                  'employee': employee.name,
