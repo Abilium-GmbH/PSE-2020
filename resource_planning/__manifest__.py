@@ -35,7 +35,8 @@
         'views/resource_tree.xml',
         'views/weekly_resource.xml',
         'views/weekly_resource_project.xml',
-        'views/res_config_settings_views.xml'
+        'views/res_config_settings_views.xml',
+        'views/assets.xml'
     ],
     # only loaded in demonstration mode
     'demo': [],

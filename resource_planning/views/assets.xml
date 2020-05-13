@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets_backend_1" name="tour_test_create" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/resource_planning/static/src/js/tour_test_create.js"></script>
+        </xpath>
+    </template>
+
+    <template id="assets_backend_2" name="tour_test_navigation" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/resource_planning/static/src/js/tour_test_navigation.js"></script>
+        </xpath>
+    </template>
+</odoo>
