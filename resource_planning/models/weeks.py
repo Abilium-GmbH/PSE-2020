@@ -38,9 +38,9 @@ class Weeks(models.Model):
         gets called once per day so filter is up to date
         :return week_delta
         """
-        today = date.today()
+        today = datetime.datetime.today()
         week_delta = int(self.env['ir.config_parameter'].sudo().get_param('resource_planning.filter_weeks'))
-        this_week = today - timedelta(today.weekday())
+        this_week = today - datetime.timedelta(today.weekday())
         self.set_is_week_in_period(this_week, week_delta)
         return week_delta
 
