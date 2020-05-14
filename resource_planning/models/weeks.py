@@ -33,23 +33,24 @@ class Weeks(models.Model):
 
     def is_week_in_period(self):
         """
-        calculates current week and calls set_is_week_in_period
-        gets week_delta (number of weeks one would like to see in the filter) from ir.config_parameter
-        gets called once per day so filter is up to date
-        :return week_delta
+                calculates current week and calls set_is_week_in_period
+                gets week_delta (number of weeks one would like to see in the filter) from ir.config_parameter
+                gets called once per day so filter is up to date
+                :return week_delta
         """
         today = datetime.datetime.today()
         week_delta = int(self.env['ir.config_parameter'].sudo().get_param('resource_planning.filter_weeks'))
         this_week = today - datetime.timedelta(today.weekday())
+
         self.set_is_week_in_period(this_week, week_delta)
         return week_delta
 
     def set_is_week_in_period(self, this_week, week_delta):
         """
-        sets week_bool whether the week is in the period the user wants or not (true or false)
-        gets called once per day so filter is up to date
-        :returns week_bool
-        :param this_week which is the current week number
+               sets week_bool whether the week is in the period the user wants or not (true or false)
+               gets called once per day so filter is up to date
+               :returns week_bool
+               :param this_week which is the current week number
         """
 
         for week in self:
@@ -65,6 +66,7 @@ class Weeks(models.Model):
                     week.week_bool = True
                 else:
                     week.week_bool = False
+
             else:
                 if this_week + datetime.timedelta(
                         weeks=week_delta) <= start_date_of_week and this_week > start_date_of_week:
