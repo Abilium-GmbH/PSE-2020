@@ -15,6 +15,7 @@ def get_week(date):
     return year * 100 + week
 
 
+
 class Resource(models.Model):
     """
     A class to assign employees a workload for a period of time in a project
