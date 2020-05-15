@@ -4,9 +4,7 @@ from odoo import models, fields, api, exceptions
 class ReportWizard(models.TransientModel):
     """
     Interacts with the user to create the desired report.
-    Asks for start_week and end_week, calculates the time span and passes on the data to the report
-
-    :param start_week, end_week: defining the timespan to be reported
+    Asks the user for start_week and end_week, calculates the time span and passes it on.
 
     """
     _name = 'resource.planning.report.wizard'
@@ -17,8 +15,9 @@ class ReportWizard(models.TransientModel):
 
     def get_report(self):
         """
-        Called when the user pushes the get-report button in the wizard
-        Passes data on to the report
+        Called when the user pushes the get-report button in the UI.
+        Computes data and passes it on.
+
         """
 
         # Calculate time span
@@ -70,11 +69,3 @@ class ReportWizard(models.TransientModel):
                     continue
             weeks.append(week.week_string)
         return weeks
-
-    def _get_week(self, week):
-        """
-        Gets a week model based on the form-data: week.model(id,)
-        """
-        week_split = str(week).split('(')[1]
-        week_id = int(week_split.split(',')[0])
-        return self.env['week.model'].search([['id', '=', week_id]])

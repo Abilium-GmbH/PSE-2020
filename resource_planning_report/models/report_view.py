@@ -6,17 +6,20 @@ from odoo import models, fields, api
 class ReportView(models.AbstractModel):
     """
         Abstract Model for report template.
-        Calculates the data to be passed on to the report.
+        Computes the required data for report.
     """
     _name = 'report.resource_planning_report.planning_report_view'
-    _description = 'gets values for the report view'
+    _description = 'Computes values for report view'
 
     @api.model
     def _get_report_values(self, docids, data=None):
         """
-        :param docids: the doc_id to be concatenated to the file name
+        Computes the data for the report by going through all weekly_resource-models,
+        trying to match them with the user-selected time span and gathering the relevant data.
+
+        :param docids: the doc_id to be concatenated to the file name, passed on from report_wizard
         :param data: passed on from the report_wizard
-        :return: the data for the report
+        :return: the required data for report
         """
         weeks = data['form']['weeks']
         length = len(weeks)
@@ -90,6 +93,7 @@ class ReportView(models.AbstractModel):
         """
         Checks whether the data in a week_array is relevant for the report
         (if there is a workload != 0)
+
         :return: boolean, indicating whether the data is relevant or not
         """
         for week in week_array:

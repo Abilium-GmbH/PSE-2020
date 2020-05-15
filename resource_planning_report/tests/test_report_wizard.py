@@ -1,7 +1,5 @@
-from datetime import datetime, timedelta
-from odoo import exceptions
 from odoo.tests import common
-from psycopg2 import errors
+
 
 
 class TestReportWizard(common.TransactionCase):
@@ -10,28 +8,6 @@ class TestReportWizard(common.TransactionCase):
 
     Method get_report cannot be tested as it leads to a report being printed.
     """
-
-    def test__get_week(self):
-        """
-        Tests whether the right week-model is returned by _get_week.
-
-        """
-        w_values = {'year': 1990,
-                    'week_num': 20}
-        week1 = self.env['week.model'].create(w_values)
-        week_id = week1.id
-        string = 'week.model(' + str(week_id) + ', )'
-
-        w_values = {'year': 1990,
-                    'week_num': 21}
-        week2 = self.env['week.model'].create(w_values)
-
-        self.assertEqual(week1, self.env['resource.planning.report.wizard']._get_week(string),
-                         'Result should be equal to week1')
-        self.assertNotEqual(week2, self.env['resource.planning.report.wizard']._get_week(string),
-                            'Result should not be equal to week2')
-
-    # ---------------------------------------------------------------------------------------------------------------- #
 
     def test_get_weeks_1(self):
         """
