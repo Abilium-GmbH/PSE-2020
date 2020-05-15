@@ -3,8 +3,11 @@ from odoo import models, fields
 
 class Employee(models.Model):
     """
-    Inherits the 'employee' model from the 'hr' App
+    Extension for hr.employee
+    Holds all required data for am employee.
+    Adds functionality to calculate the total workload of a week.
     """
+
     _inherit = 'hr.employee'
 
     resources = fields.One2many('resource.model', 'employee')
@@ -14,7 +17,7 @@ class Employee(models.Model):
         Computes the total workload assigned to the employee in a specific week
 
         :param week: week model of the desired week
-        :return: total workload in that week
+        :return: employee's total workload during that week
         """
         total_workload = 0
         for resource in self.resources:

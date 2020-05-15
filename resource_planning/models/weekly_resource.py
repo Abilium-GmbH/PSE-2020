@@ -4,10 +4,9 @@ from odoo import models, fields, api, exceptions
 
 class WeeklyResource(models.Model):
     """
-    A class that represents the mapping between a resource and a week.
+    Represents the mapping between a resource.model and a week.model. Inherits (delegates to) both models.
+    Additionally, stores data that is valid for only one week of a resource planned for several weeks.
 
-    :param week_id: refers to an existing week from the week model
-    :param resource_id: refers to an existing resource from the resource model
     """
     _name = "weekly_resource.model"
     _description = "Weekly Resource"
@@ -40,9 +39,10 @@ class WeeklyResource(models.Model):
     @api.constrains('weekly_workload')
     def check_if_changed(self):
         """
-        Checks if the weekly_workload was manually changed. If yes it sets manually_changed to true.
+        Checks if the weekly_workload was manually changed.
+        If so, manually_changed is set true.
 
-        :return:
+        :rtype: bool
         """
         if self.weekly_workload != self.resource_id.base_workload:
             self.manually_changed = True

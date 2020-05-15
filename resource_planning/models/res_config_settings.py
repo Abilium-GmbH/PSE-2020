@@ -1,21 +1,20 @@
 from odoo import fields, models, api
 
+
 class ResConfigSettings(models.TransientModel):
     """
-    This class is used to store the parameters that can be changed in the settings-page.
+    Extends res.config.settings to store module-specific parameters from settings page.
 
     :param filter_weeks: is used to change the duration of the filter "custom timespan"
     """
-
 
     _inherit = 'res.config.settings'
     filter_weeks = fields.Integer(string="Weeks Filter", default=8)
 
     def set_values(self):
         """
-
-        Store the parameters in the ir.config_parameter model where they can be easily accessed.
-        Calls the set_weekdelta_week trigger the is_week_in_period method of week.model.
+        Stores the parameters in the ir.config_parameter model where they can be easily accessed.
+        Calls the set_weekdelta_week and triggers the is_week_in_period method of week.model.
 
         :return: the created ResConfigSettings Object
         """
@@ -24,9 +23,7 @@ class ResConfigSettings(models.TransientModel):
 
         self.set_weekdelta_week()
 
-
         return res
-
 
     @api.model
     def get_values(self):
@@ -40,22 +37,18 @@ class ResConfigSettings(models.TransientModel):
         ICPSudo = self.env['ir.config_parameter'].sudo()
         filter_weeks = ICPSudo.get_param('resource_planning.filter_weeks')
         res.update(
-            filter_weeks = int(filter_weeks)
+            filter_weeks=int(filter_weeks)
         )
         return res
 
-
     def set_weekdelta_week(self):
         """
-        Triggers the is_week_in_period method of the week models. This is used to set the week_bool
-        every time the filter_weeks (duration) was changed through the settings-page.
-        :return:
+        Triggers the is_week_in_period method of the week models to (re-)set the week_bool
+        every time the filter_weeks (duration) was changed through the settings page.
+
         """
 
         weeks = self.env['week.model'].search([])
 
         for week in weeks:
             week.is_week_in_period()
-
-
-    

@@ -27,6 +27,7 @@ class Resource(models.Model):
     :param end_date: the date on which the assignment end, is required
     :param next_week: boolean if start_date and end_date are next Monday and Friday
     :param weeks_to_be_added Integer read only tells user how many weeks will get added to current enddate
+
     start_date has to be before the end_date
     """
     _name = "resource.model"

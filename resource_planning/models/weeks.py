@@ -6,7 +6,8 @@ from odoo import models, fields, api, exceptions
 
 class Weeks(models.Model):
     """
-    A class used to represent a specific week in a specific year
+    Represents a specific week in a specific year.
+    Stores also some additional information used in the module.
 
     :param week_num: the calendaric number of the week in the year, is required
     :param year: the year, is required
@@ -23,7 +24,7 @@ class Weeks(models.Model):
 
     def name_get(self):
         """
-         creates a Week String which is used for the report view
+         Creates a String representation which is used for the report view
          """
         result = []
         for record in self:
@@ -33,9 +34,9 @@ class Weeks(models.Model):
 
     def is_week_in_period(self):
         """
-                calculates current week and calls set_is_week_in_period
-                gets week_delta (number of weeks one would like to see in the filter) from ir.config_parameter
-                gets called once per day so filter is up to date
+                Calculates the current week and calls set_is_week_in_period
+                Gets week_delta (number of weeks one would like to see in the filter) from ir.config_parameter
+                Called daily so filter is up to date
                 :return week_delta
         """
         today = datetime.datetime.today()
@@ -47,10 +48,11 @@ class Weeks(models.Model):
 
     def set_is_week_in_period(self, this_week, week_delta):
         """
-               sets week_bool whether the week is in the period the user wants or not (true or false)
-               gets called once per day so filter is up to date
-               :returns week_bool
-               :param this_week which is the current week number
+               Sets week_bool whether the week is in the period the user wants or not (true or false)
+               Called daily so filter is up to date
+
+               :param this_week, the current week number
+               :param week_delta, the timespan used for filtering
         """
 
         for week in self:
@@ -79,9 +81,8 @@ class Weeks(models.Model):
     def get_week_string(self):
         """
         Builds and stores the week_string attribute
-        based on year and week_num with a 'W' prefix, seperated by a comma
+        based on year and week_num with a 'W' prefix, separated by a comma
 
-        :return: 0
         """
         for s in self:
             string = str(s.year) + ', W'
@@ -95,11 +96,10 @@ class Weeks(models.Model):
     @api.constrains('week_num')
     def _check_if_week_num_is_valid(self):
         """
-        Checks if the week_num is within the valid range from 1 to 53
+        Checks if week_num is within the valid range from 1 to 53
 
         :raises:
             :exception ValidationError: if week_num < 1 or week_num > 53
-        :return: no return value
         """
         for r in self:
             if r.week_num < 1:
