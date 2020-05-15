@@ -6,6 +6,7 @@ class TestReportView(common.TransactionCase):
     def test_is_relevant_1(self):
         """
         Tests, whether a week_array of relevant week_data's is considered relevant.
+
         """
         model = self.env['report.resource_planning_report.planning_report_view']
         week_array = []
@@ -24,6 +25,7 @@ class TestReportView(common.TransactionCase):
     def test_is_relevant_2(self):
         """
         Tests, whether a week_array of mainly relevant week_data's is considered relevant.
+
         """
 
         model = self.env['report.resource_planning_report.planning_report_view']
@@ -43,6 +45,7 @@ class TestReportView(common.TransactionCase):
     def test_is_relevant_3(self):
         """
         Tests, whether a week_array with only one relevant week_data is considered relevant.
+
         """
 
         model = self.env['report.resource_planning_report.planning_report_view']
@@ -62,6 +65,7 @@ class TestReportView(common.TransactionCase):
     def test_is_not_relevant(self):
         """
         Tests, whether a week_array with only irrelevant week_data's is considered irrelevant.
+
         """
 
         model = self.env['report.resource_planning_report.planning_report_view']
@@ -131,8 +135,8 @@ class TestReportView(common.TransactionCase):
         Tests whether _get_report_values creates the correct report data if there aren't any weekly_resources
         in the tested timespan.
 
-        If this test fails, there weekly_resource records that were planned during the
-        tested timespan (1990, W19-21) in your database.
+        If this test fails, there are weekly_resource records planned during the tested timespan (1990, W19-21)
+        in your database.
 
         """
         w_values = {'year': 1990,
