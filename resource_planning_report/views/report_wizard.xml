@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
     <data>
+        <!-- Form view for Wizard: Allows user to define timespan by entering start- and end-week -->
         <record id="planning_report_wizard" model="ir.ui.view" >
             <field name="name">Resource Report</field>
             <field name="model">resource.planning.report.wizard</field>
@@ -19,6 +20,7 @@
             </field>
         </record>
 
+        <!-- Customized paperformat for the report -->
         <record id="paperformat_planning_report" model="report.paperformat">
             <field name="name">Resource Planning</field>
             <field name="default" eval="False"/>
@@ -35,6 +37,8 @@
             <field name="dpi">90</field>
         </record>
 
+        <!-- report action -->
+        <!-- attribute name: must match model (ReportView) and template-id (.planning_report_view) -->
         <report id="planning_report"
                 model="resource.planning.report.wizard"
                 string="Resource Planning Report"
@@ -43,6 +47,8 @@
                 paperformat="paperformat_planning_report"
                 menu="False"/>
 
+        <!-- report template -->
+        <!-- id must match model (ReprotView) -->
         <template id="planning_report_view">
             <t t-call="web.html_container">
                 <div class="header" style="border-bottom: 1px solid black;">

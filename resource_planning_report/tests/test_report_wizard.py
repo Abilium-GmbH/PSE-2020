@@ -1,7 +1,6 @@
 from odoo.tests import common
 
 
-
 class TestReportWizard(common.TransactionCase):
     """
     Test class for ReportWizard.
