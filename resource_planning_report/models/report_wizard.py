@@ -53,8 +53,8 @@ class ReportWizard(models.TransientModel):
         Calculates timespan according to the user input for start_week and end_week
         :return: an array of week_string
         """
-        start = self._get_week(self.start_week)
-        end = self._get_week(self.end_week)
+        start = self.start_week
+        end = self.end_week
         weeks = []
         week_models = self.env['week.model'].search([])
 
