@@ -5,7 +5,7 @@ class Employee(models.Model):
     """
     Extension for hr.employee
     Holds all required data for am employee.
-    Adds functionality to calculate the total workload of a week.
+    Adds functionality to calculate the employee's  total workload in a week.
     """
 
     _inherit = 'hr.employee'
