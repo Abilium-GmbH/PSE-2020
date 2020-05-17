@@ -6,13 +6,13 @@ from odoo import models, fields, api, exceptions
 
 class Weeks(models.Model):
     """
-    Represents a specific week in a specific year.
-    Stores also some additional information used in the module.
+    Represents a specific week in a specific year, defined by variables week_num and year.
+    Stores also other variables used in the module:
 
-    :param week_num: the calendaric number of the week in the year, is required
-    :param year: the year, is required
-    :param week_string: the representation of week and year for the view
-    :param week_bool: is True if the week number is within the next two months otherwise False
+    # week_string to represent a week_model in the UI
+
+    # week_bool to declare whether a week is in the timespan defined by res_config_settings.
+
     """
     _name = "week.model"
     _description = "Week"
@@ -25,7 +25,8 @@ class Weeks(models.Model):
     def name_get(self):
         """
          Creates a String representation which is used for the report view
-         """
+         :return: String representation
+        """
         result = []
         for record in self:
             record_name = 'Week' + ' ' + str(record.week_num) + ' ' + str(record.year)
@@ -34,10 +35,10 @@ class Weeks(models.Model):
 
     def is_week_in_period(self):
         """
-                Calculates the current week and calls set_is_week_in_period
-                Gets week_delta (number of weeks one would like to see in the filter) from ir.config_parameter
-                Called daily so filter is up to date
-                :return week_delta
+        Calculates the current week and calls set_is_week_in_period
+        Gets week_delta (number of weeks one would like to see in the filter) from ir.config_parameter
+        Called daily so filter is up to date
+        :return: week_delta
         """
         today = datetime.datetime.today()
         week_delta = int(self.env['ir.config_parameter'].sudo().get_param('resource_planning.filter_weeks'))
@@ -48,11 +49,11 @@ class Weeks(models.Model):
 
     def set_is_week_in_period(self, this_week, week_delta):
         """
-               Sets week_bool whether the week is in the period the user wants or not (true or false)
-               Called daily so filter is up to date
+        Sets week_bool whether the week is in the period the user wants or not (true or false)
+        Called daily so filter is up to date
 
-               :param this_week, the current week number
-               :param week_delta, the timespan used for filtering
+        :param this_week: the current week number
+        :param week_delta: the timespan used for filtering
         """
 
         for week in self:

@@ -4,8 +4,8 @@ from odoo import fields, models, api
 class ResConfigSettings(models.TransientModel):
     """
     Extends res.config.settings to store module-specific parameters from settings page.
-
-    :param filter_weeks: is used to change the duration of the filter "custom timespan"
+    The variable filter_weeks is used to change the duration of the filter "custom timespan" in the Overview of
+    weekly_resource models.
     """
 
     _inherit = 'res.config.settings'
