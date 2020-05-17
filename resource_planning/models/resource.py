@@ -18,21 +18,13 @@ def get_week(date):
 
 class Resource(models.Model):
     """
-    A class to assign employees a workload for a period of time in a project
+    A class to assign employees a workload for a period of time in a project.
 
-    :param project: refers to an existing project from the project model, is required
-    :param employee: refers to an existing employee from the employee model, is required
-    :param base_workload: an integer representing the workload in percent (from 0 to 100), is required
-    :param start_date: the date on which the assignment begins, is required
-    :param end_date: the date on which the assignment end, is required
-    :param next_week: boolean if start_date and end_date are next Monday and Friday
-    :param weeks_to_be_added Integer read only tells user how many weeks will get added to current enddate
-
-    start_date has to be before the end_date
     """
     _name = "resource.model"
     _description = "Resource"
     _rec_name = 'project'
+
     project = fields.Many2one('project.project', 'Project', required=True)
     employee = fields.Many2one('hr.employee', 'Employee', required=True)
     base_workload = fields.Integer(string='Workload in %', required=True, help='Workload per week in percentage')
@@ -86,9 +78,7 @@ class Resource(models.Model):
         makes sure both dates are filled out
 
         :raises:
-            :exception ValidationError: if start_date > end_date
-            :exception ValidationError: if start_date == False or end_date == False
-        :return: no return value
+            :exception ValidationError: if start_date > end_date or one of the dates has not been entered (is False)
         """
         if self.start_date is False or self.end_date is False:
             raise exceptions.ValidationError("Both dates must be filled out")
@@ -98,11 +88,10 @@ class Resource(models.Model):
     @api.constrains('base_workload')
     def verify_workload(self):
         """
-        Checks if workload is between 1 and 100
+        Checks if workload is between 0 and 100
 
         :raises:
             :exception ValidationError: if workload < 0 or workload > 100
-        :return: no return value
         """
         if self.base_workload > 100:
             raise exceptions.ValidationError("The given workload can't be larger than 100")
@@ -113,16 +102,14 @@ class Resource(models.Model):
     def create(self, values):
         """
         Constructor
-        Initiates the creation of week.models, if missing
-        Initiates the creation of corresponding weekly_resource.models
+        Initiates the creation corresponding models (of type Week, WeeklyResource)
 
-        :param values: requires a 'Project' which refers to an existing Project object,
-            a 'Employee' which refers to an existing Employee object,
-            a 'Workload' representing the workload in percent (from 0 to 100),
-            a 'Start Date' on which the assignment begins
-            and an 'End Date' on which the assignment ends
+        :param values: the user input to create a Resource object:
+                        an employee and a project which are assigned to each other with a workload (base_workload),
+                        start_date and end_date to define the timespan of the assignment,
+                        as well as some other used for some computations on the object
+
         :return: the created Resource object
-        :rtype: resource
         """
         rec = super(Resource, self).create(values)
         rec.create_corresponding_models(rec)
@@ -130,12 +117,12 @@ class Resource(models.Model):
 
     def write(self, values):
         """
-        Overriding default write method
-        Calls create_corresponding_models method to delete spare and
-        create new weekly_resources.
+        Overriding default write method (modifying a Resource model)
+        Calls create_corresponding_models method to delete spare and create new weekly_resources.
 
-        :param values,the values to be overwritten
-        :return: rec
+        :param values: the "new" values to be stored in the database
+        :param self: the Resource model to be modified
+        :return: rec: a boolean indicating whether write has been successful or not
         :rtype: bool
         """
         rec = super(Resource, self).write(values)
@@ -149,12 +136,11 @@ class Resource(models.Model):
         Creates corresponding week.models (if missing).
         Creates corresponding weekly_resource.models (if missing) and
         deletes weekly_resource.models which are not within the start_date
-        and end_date anymore.
+        and end_date anymore (when updating a resource model).
 
-        :param rec: the resource.model requiring the other models
-        :return: None
+        :param rec: the Resource model which requires the other models
         """
-        # Create week.model
+        # Create missing week.model
         week_data = rec.get_weeks(rec.start_date, rec.end_date)
         week_array = week_data[0]
         for week in week_array:
@@ -169,11 +155,10 @@ class Resource(models.Model):
 
     def add_missing_weekly_resources(self, project_week_data):
         """
-        Creates a new weekly_resource for all weeks in project_week_date,
-        for which there is no existing one.
+        Creates a new weekly_resource for all weeks in project_week_date
+        if it does not exist yet
 
-        :param project_week_data: all weeks of the resource
-        :return:
+        :param project_week_data: all weeks (defining the timespan) of the resource
         """
         for week in project_week_data:
             exists = self.env['weekly_resource.model'].search([['resource_id', '=', self.id],
@@ -196,11 +181,10 @@ class Resource(models.Model):
 
     def delete_spare_weekly_resources(self, project_week_data):
         """
-        Deletes all weekly_resources of this resource, where the week
-        is not in the project_week_array.
+        Deletes all corresponding weekly_resources to this resource
+        if the week is not in the project_week_array (anymore).
 
-        :param project_week_data: all weeks of the resource
-        :return:
+        :param project_week_data: all weeks (defining the timespan) of the resource
         """
         weekly_resources = self.env['weekly_resource.model'].search([['resource_id', '=', self.id]])
         for weekly_resource in weekly_resources:
@@ -216,10 +200,10 @@ class Resource(models.Model):
     @api.model_create_multi
     def add_weeks_object(self, week):
         """
-        Adds a week object to the weeks database
+        Adds a week object to the database (table weeks.model)
 
-        :param week: the week which should be added to the database
-        :return: the weeks with the newly added week
+        :param week: the week to be added to the database
+        :return: the newly created week
         """
         weeks = self.env['week.model']
         return weeks.create(week)
@@ -227,11 +211,12 @@ class Resource(models.Model):
     @api.model_create_multi
     def add_weekly_resource(self, values):
         """
-        Add an WeeklyResource object to the database
+        Add an WeeklyResource model to the database (table weekly_resource.model)
 
-        :param values: requires a 'week_id' which refers to an existing Weeks object
-            and a 'resource_id' which refers to an existing Resource object
-        :return: the WeeklyResource
+        :param values: the required values to create a WeeklyResource model:
+                week_id and resource_id to link to corresponding models,
+                weekly_workload to declare the workload an employee is working on a project in this week
+        :return: the created WeeklyResource
         """
         weekly_resource = self.env['weekly_resource.model']
         return weekly_resource.create(values)
@@ -239,12 +224,14 @@ class Resource(models.Model):
     def get_weeks(self, start_date, end_date):
         """
         Computes the subsequent weeks between the earliest start_date and the latest end_date of all resources.
-        Returns two arrays. The first containing all weeks and the second containing all weeks of
-        the resource, starting on start_date and ending on end_date.
+        Computes also all weeks in the timespan of a Resource model.
+        Returns both as arrays.
+        Called when a Resource model is created or modified.
 
-        :param start_date: the start_date of the resource
-        :param end_date: the end_date of the resource
-        :return: array of all weeks and array of project weeks
+        :param start_date: the start_date of the Resource
+        :param end_date: the end_date of the Resource
+        :return: 2 arrays of week-data, one covering the timespan of all Resources, the other one only of the Resource
+
         """
         dates = self.get_first_and_last_date(start_date, end_date)
 
