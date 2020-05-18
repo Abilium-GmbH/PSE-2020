@@ -4,6 +4,7 @@
     <record id="res_config_settings_view_form" model="ir.ui.view">
         <field name="name">res.config.settings.view.form.inherit.resource</field>
         <field name="model">res.config.settings</field>
+        <field name="groups_id" eval="[(6, 0, [ref('resource_manager') ])]"/>
         <field name="priority" eval="50"/>
         <field name="inherit_id" ref="base.res_config_settings_view_form" />
         <field name="arch" type="xml">
@@ -46,7 +47,7 @@
         <field name="context">{'module' : 'resource_planning'}</field>
     </record>
 
-    <menuitem id="resource_settings_menu" name="Settings" parent="menu_resource" action="resource_config_settings_action"/>
+    <menuitem id="resource_settings_menu" name="Settings" parent="menu_resource" action="resource_config_settings_action" groups="resource_manager"/>
 
 
 

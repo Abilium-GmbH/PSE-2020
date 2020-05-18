@@ -73,7 +73,7 @@
             <!--            <field name="view_id" ref="view_resource_tree"/>-->
         </record>
 
-        <menuitem id="menu_resource" name="Resource Planning"/>
+        <menuitem id="menu_resource" name="Resource Planning" groups="resource_manager"/>
         <menuitem id="menu_resource_test" name="Create/Edit" parent="menu_resource"
                   action="action_view_resource"/>
 
