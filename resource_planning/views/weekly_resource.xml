@@ -31,7 +31,7 @@
                     <field name="end_date"/>
                     <filter name='week_name' string="custom timespan" domain="[('week_bool', '=', True)]"/>
                     <filter name='upcomming_resources' string="Future Resources" domain="[('end_date', '&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
-                    <filter name='upcomming_resources with start date before 60d from now' string="Resources ending in coming 2 months" domain="[('end_date', '&gt;=', context_today().strftime('%Y-%m-%d')), ('start_date','&lt;=', ((context_today()+datetime.timedelta(days=60)).strftime('%Y-%m-%d')))]"/>
+                    <filter name='upcomming_resources with start date before 60d from now' string="Resources ending in coming 2 months" domain="[('end_date', '&gt;=', context_today().strftime('%Y-%m-%d')), ('end_date','&lt;=', ((context_today()+datetime.timedelta(days=60)).strftime('%Y-%m-%d')))]"/>
                 </search>
             </field>
         </record>

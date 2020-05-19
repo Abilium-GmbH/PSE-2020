@@ -7,6 +7,10 @@ from odoo import exceptions
 class TestWeeks(common.TransactionCase):
     """
     Class to test the Weeks class
+
+    The method is_in_week_period() gets not tested because it uses todays date
+    and only gets the week_delta parameter. The called method set_is_week_in_period where most logic is
+    gets tested
     """
 
     def test_create_weeks_object_1(self):

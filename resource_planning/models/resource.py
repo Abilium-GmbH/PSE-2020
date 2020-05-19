@@ -94,9 +94,9 @@ class Resource(models.Model):
             :exception ValidationError: if workload < 0 or workload > 100
         """
         if self.base_workload > 100:
-            raise exceptions.ValidationError("The given workload can't be larger than 100")
+            raise exceptions.ValidationError("The given workload can't be larger than 100 %")
         elif self.base_workload < 0:
-            raise exceptions.ValidationError("The given workload can't be smaller than 0")
+            raise exceptions.ValidationError("The given workload can't be smaller than 0 %")
 
     @api.model
     def create(self, values):
