@@ -59,13 +59,7 @@ class ReportWizard(models.TransientModel):
         week_models = self.env['week.model'].search([])
 
         for week in week_models:
-            if week.year < start.year | week.year > end.year:
-                continue
-            if week.year == start.year:
-                if week.week_num < start.week_num:
-                    continue
-            if week.year == end.year:
-                if week.week_num > end.week_num:
-                    continue
-            weeks.append(week.week_string)
+            if (week.week_string >= start.week_string) & (week.week_string <= end.week_string):
+                weeks.append(week.week_string)
+
         return weeks
