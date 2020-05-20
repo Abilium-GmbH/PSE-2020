@@ -134,5 +134,5 @@ class TestWeeklyResource(common.TransactionCase):
         with self.assertRaises(exceptions.ValidationError) as error:
             weekly_resource2.write({'week_id': week.id, 'resource_id': resource.id, 'weekly_workload': 40})
 
-        self.assertEqual("The workload in week " + week.week_string + " is too high.", error.exception.name,
+        self.assertEqual("The workload in week " + week.week_string + " is too high", error.exception.name,
                          'Error does not match')

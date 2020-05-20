@@ -372,7 +372,7 @@ class TestResource(common.TransactionCase):
             self.env['resource.model'].create(values)
 
         self.assertEqual(e.exception.name,
-                         "The given workload can't be larger than 100",
+                         "The given workload can't be larger than 100 %",
                          "Should raise exception for workload being to high")
 
     def test_verify_workload_warning_2(self):
@@ -394,7 +394,7 @@ class TestResource(common.TransactionCase):
             self.env['resource.model'].create(values)
 
         self.assertEqual(e.exception.name,
-                         "The given workload can't be larger than 100",
+                         "The given workload can't be larger than 100 %",
                          "Should raise exception for workload being to high")
 
     def test_verify_workload_warning_3(self):
@@ -416,7 +416,7 @@ class TestResource(common.TransactionCase):
             self.env['resource.model'].create(values)
 
         self.assertEqual(e.exception.name,
-                         "The given workload can't be larger than 100",
+                         "The given workload can't be larger than 100 %",
                          "Should raise exception for workload being to high")
 
     def test_verify_workload_warning_4(self):
@@ -437,7 +437,7 @@ class TestResource(common.TransactionCase):
             self.env['resource.model'].create(values)
 
         self.assertEqual(e.exception.name,
-                         "The given workload can't be smaller than 0",
+                         "The given workload can't be smaller than 0 %",
                          "Should raise exception for workload being to low")
 
     def test_verify_no_workload_warning_1(self):
@@ -1237,6 +1237,13 @@ class TestAddDelete(common.SavepointCase):
         cls.start_date = datetime(2020, 4, 5, 13, 42, 7)
         cls.end_date = datetime(2020, 4, 12, 13, 42, 7)
 
+        for week_num in range(16, 20):
+            exists = cls.env['week.model'].search([['week_num', '=', week_num],
+                                                        ['year', '=', 2020]])
+
+            if not exists:
+                cls.env['week.model'].create({'week_num': week_num, 'year': 2020})
+
     def test_setup(self):
         """
         Test if the resource created in setUpClass is correct.
@@ -1350,6 +1357,7 @@ class TestAddDelete(common.SavepointCase):
         :return:
         """
         project_week_data = [{'week_num': 17, 'year': 2020}]
+
         TestAddDelete.resource.add_missing_weekly_resources(project_week_data)
         TestAddDelete.resource.delete_spare_weekly_resources([])
 
@@ -1368,6 +1376,7 @@ class TestAddDelete(common.SavepointCase):
                                  {'week_num': 19, 'year': 2020}]
         project_week_data_delete = [{'week_num': 17, 'year': 2020},
                                     {'week_num': 18, 'year': 2020}]
+
         TestAddDelete.resource.add_missing_weekly_resources(project_week_data_add)
         TestAddDelete.resource.delete_spare_weekly_resources(project_week_data_delete)
 

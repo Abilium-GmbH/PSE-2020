@@ -6,7 +6,6 @@ class WeeklyResource(models.Model):
     """
     Represents the mapping between a resource.model and a week.model. Inherits (delegates to) both models.
     Additionally, stores data that is valid for only one week of a resource planned for several weeks.
-
     """
     _name = "weekly_resource.model"
     _description = "Weekly Resource"
@@ -32,9 +31,7 @@ class WeeklyResource(models.Model):
             raise exceptions.ValidationError("The given workload can't be smaller than 0")
 
         elif self.employee.get_total_workload(self.week_id) > 100:
-            raise exceptions.ValidationError("The workload in week " + self.week_string + " is too high.")
-
-
+            raise exceptions.ValidationError("The workload in week " + self.week_string + " is too high")
 
     @api.constrains('weekly_workload')
     def check_if_changed(self):
