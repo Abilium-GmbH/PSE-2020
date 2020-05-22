@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Used to set the default values of the parameter configurable through the settings-page and stord in ir.config_parameters-->
+<odoo>
+    <data noupdate="1">
+        <!-- the default number of weeks for the custom filter -->
+        <record id="config_filter_weeks" model="ir.config_parameter">
+            <field name="key">resource_planning.filter_weeks</field>
+            <field name="value">8</field>
+        </record>
+    </data>
+</odoo>
