@@ -1,1 +1,1 @@
-# PSE-2020
+# Odoo Resource-Planning Module
