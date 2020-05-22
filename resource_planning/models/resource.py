@@ -141,7 +141,7 @@ class Resource(models.Model):
         :param rec: the Resource model which requires the other models
         """
         # Create missing week.model
-        week_data = rec.get_weeks(rec.start_date, rec.end_date)
+        week_data = rec.compute_weeks(rec.start_date, rec.end_date)
         week_array = week_data[0]
         for week in week_array:
             exists = self.env['week.model'].search([['week_num', '=', week['week_num']], ['year', '=', week['year']]])
@@ -172,7 +172,7 @@ class Resource(models.Model):
                 week_model = self.env['week.model'].search([['week_num', '=', week['week_num']],
                                                         ['year', '=', week['year']]])
 
-                if self.employee.get_total_workload(week_model) + self.base_workload > 100:
+                if self.employee.compute_total_workload(week_model) + self.base_workload > 100:
                     raise exceptions.ValidationError("The workload in week " + week_model.week_string + " is too high")
 
                 values = {'week_id': week_model.id, 'resource_id': self.id, 'weekly_workload': self.base_workload}
@@ -221,7 +221,7 @@ class Resource(models.Model):
         weekly_resource = self.env['weekly_resource.model']
         return weekly_resource.create(values)
 
-    def get_weeks(self, start_date, end_date):
+    def compute_weeks(self, start_date, end_date):
         """
         Computes the subsequent weeks between the earliest start_date and the latest end_date of all resources.
         Computes also all weeks in the timespan of a Resource model.
@@ -233,7 +233,7 @@ class Resource(models.Model):
         :return: 2 arrays of week-data, one covering the timespan of all Resources, the other one only of the Resource
 
         """
-        dates = self.get_first_and_last_date(start_date, end_date)
+        dates = self.compute_first_and_last_date(start_date, end_date)
 
         # store dates as Integers to allow comparative operations
         last_week = get_week(dates['last_date'])
@@ -262,7 +262,7 @@ class Resource(models.Model):
 
         return [week_array, project_week_array]
 
-    def get_first_and_last_date(self, start_date, end_date):
+    def compute_first_and_last_date(self, start_date, end_date):
         """
         Computes the first start_date and the last end_date of all resources
         including the parameters.

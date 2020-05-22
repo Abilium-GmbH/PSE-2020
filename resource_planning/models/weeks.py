@@ -18,7 +18,7 @@ class Weeks(models.Model):
     _description = "Week"
     week_num = fields.Integer(string='Week', required=True)
     year = fields.Integer(string="Year", required=True)
-    week_string = fields.Char(string="Week String", compute='get_week_string', store=True)
+    week_string = fields.Char(string="Week String", compute='build_week_string', store=True)
     week_bool = fields.Boolean(compute="is_week_in_period", string="is week in the weeks definded by settings",
                                store=True)
 
@@ -79,7 +79,7 @@ class Weeks(models.Model):
 
 
     @api.depends('year', 'week_num')
-    def get_week_string(self):
+    def build_week_string(self):
         """
         Builds and stores the week_string attribute
         based on year and week_num with a 'W' prefix, separated by a comma

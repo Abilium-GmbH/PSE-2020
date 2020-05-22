@@ -30,7 +30,7 @@ class WeeklyResource(models.Model):
         elif self.weekly_workload < 0:
             raise exceptions.ValidationError("The given workload can't be smaller than 0")
 
-        elif self.employee.get_total_workload(self.week_id) > 100:
+        elif self.employee.compute_total_workload(self.week_id) > 100:
             raise exceptions.ValidationError("The workload in week " + self.week_string + " is too high")
 
     @api.constrains('weekly_workload')

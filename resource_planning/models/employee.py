@@ -12,7 +12,7 @@ class Employee(models.Model):
 
     resources = fields.One2many('resource.model', 'employee')
 
-    def get_total_workload(self, week):
+    def compute_total_workload(self, week):
         """
         Computes the total workload assigned to the employee in a specific week
 
