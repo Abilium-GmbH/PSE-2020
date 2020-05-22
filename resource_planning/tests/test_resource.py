@@ -11,7 +11,7 @@ class TestResource(common.TransactionCase):
 
     def test_get_weeks_normal(self):
         """
-        Tests if the returned array from the get_weeks method contains the correct weeks
+        Tests if the returned array from the compute_weeks method contains the correct weeks
         (multiple weeks)
 
         :return:
@@ -19,7 +19,7 @@ class TestResource(common.TransactionCase):
         start_date = datetime(2020, 4, 5, 23, 55, 0)
         end_date = datetime(2020, 4, 14, 12, 42, 7)
 
-        week_data = self.env['resource.model'].get_weeks(start_date, end_date)
+        week_data = self.env['resource.model'].compute_weeks(start_date, end_date)
 
         self.assertEqual(
             week_data[1],
@@ -29,14 +29,14 @@ class TestResource(common.TransactionCase):
 
     def test_get_weeks_normal_over_year_bound(self):
         """
-        Tests if get_weeks works correctly for at a turn of the year
+        Tests if compute_weeks works correctly for at a turn of the year
 
         :return:
         """
         start_date = datetime(2019, 12, 27, 0, 0, 0)
         end_date = datetime(2020, 1, 17, 7, 30, 25)
 
-        week_data = self.env['resource.model'].get_weeks(start_date, end_date)
+        week_data = self.env['resource.model'].compute_weeks(start_date, end_date)
 
         self.assertEqual(
             week_data[1],
@@ -47,20 +47,20 @@ class TestResource(common.TransactionCase):
 
     def test_get_weeks_start_week_end_week_changed(self):
         """
-        Tests if get_weeks returns an empty array if end_date is before the start_date
+        Tests if compute_weeks returns an empty array if end_date is before the start_date
 
         :return:
         """
         start_date = datetime(2020, 1, 17, 7, 30, 25)
         end_date = datetime(2019, 12, 27, 0, 0, 0)
 
-        week_data = self.env['resource.model'].get_weeks(start_date, end_date)
+        week_data = self.env['resource.model'].compute_weeks(start_date, end_date)
 
         self.assertEqual(week_data[1], [], 'No weeks because start and end date are interchanged')
 
     def test_get_weeks_normal_result_one_week(self):
         """
-        Tests if the returned array from the get_weeks method contains the correct weeks
+        Tests if the returned array from the compute_weeks method contains the correct weeks
         (a single week)
 
         :return:
@@ -68,7 +68,7 @@ class TestResource(common.TransactionCase):
         start_date = datetime(2020, 11, 10, 20, 45, 25)
         end_date = datetime(2020, 11, 14, 4, 30, 25)
 
-        week_data = self.env['resource.model'].get_weeks(start_date, end_date)
+        week_data = self.env['resource.model'].compute_weeks(start_date, end_date)
 
         self.assertEqual(week_data[1], [{'week_num': 46, 'year': 2020}], 'Result is only one week (46)')
 
