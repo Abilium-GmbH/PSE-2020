@@ -1,3 +1,4 @@
+from odoo import exceptions
 from odoo.tests import common
 
 
@@ -61,3 +62,75 @@ class TestReportWizard(common.TransactionCase):
         self.assertEqual(wizard.get_weeks(), ['1990, W20'], 'Weeks should be 1990 W20')
         self.assertFalse('1990, W19' in wizard.get_weeks(), '1990 W19 should not be in result')
         self.assertFalse('1990, W21' in wizard.get_weeks(), '1990 W21 should not be in result')
+
+# -----------------------------------------------------------------------------------------------------------------------
+
+    def test_start_week_before_end_week_wrong_year(self):
+        """
+                Tests whether it raises an error when the start_week is after the end_week
+                here the year is causing the problem
+
+        """
+        start_week = self.env['week.model'].create({
+            'week_num': 12,
+            'year': 2021
+        })
+        end_week = self.env['week.model'].create({
+            'week_num': 12,
+            'year': 2020
+        })
+        values = {'start_week': start_week.id,
+                  'end_week': end_week.id}
+
+        with self.assertRaises(exceptions.ValidationError)as error:
+            self.env['resource.planning.report.wizard'].create(values)
+        self.assertEqual(error.exception.name,
+                         "Start week must be before end week",
+                         "Should raise exception if start_week is before end_week")
+
+    def test_start_week_before_end_week_wrong_week_number(self):
+        """
+                     Tests whether it raises an error when the start_week is after the end_week
+                     here the week number is causing the problem
+
+        """
+        start_week = self.env['week.model'].create({
+            'week_num': 34,
+            'year': 2020
+        })
+        end_week = self.env['week.model'].create({
+            'week_num': 12,
+            'year': 2020
+        })
+        values = {'start_week': start_week.id,
+                  'end_week': end_week.id}
+
+        with self.assertRaises(exceptions.ValidationError)as error:
+            self.env['resource.planning.report.wizard'].create(values)
+        self.assertEqual(error.exception.name,
+                         "Start week must be before end week",
+                         "Should raise exception if start_week is before end_week")
+
+    def test_start_week_before_end_week_wrong_week_number_2(self):
+        """
+                     Tests whether it raises an error when the start_week is after the end_week
+                     here the week number is causing the problem
+
+        """
+        start_week = self.env['week.model'].create({
+            'week_num': 13,
+            'year': 2020
+        })
+        end_week = self.env['week.model'].create({
+            'week_num': 12,
+            'year': 2020
+        })
+        values = {'start_week': start_week.id,
+                  'end_week': end_week.id}
+
+        with self.assertRaises(exceptions.ValidationError)as error:
+            self.env['resource.planning.report.wizard'].create(values)
+        self.assertEqual(error.exception.name,
+                         "Start week must be before end week",
+                         "Should raise exception if start_week is before end_week")
+

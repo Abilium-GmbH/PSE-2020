@@ -35,7 +35,7 @@ class ReportWizard(models.TransientModel):
         # Pass data to the report
         return self.env.ref('resource_planning_report.planning_report').report_action(self, data)
 
-    @api.constrains
+    @api.constrains('start_week', 'end_week')
     def start_week_before_end_week(self):
         """
         Checks, whether start_week is before end_week
@@ -45,7 +45,7 @@ class ReportWizard(models.TransientModel):
 
         if self.end_week.year < self.start_week.year:
             raise exceptions.ValidationError("Start week must be before end week")
-        elif self.start_week.year == self.end_week.year & self.start_week.week_num > self.end_week.week_num:
+        elif self.start_week.year == self.end_week.year and self.start_week.week_num > self.end_week.week_num:
             raise exceptions.ValidationError("Start week must be before end week")
 
     def get_weeks(self):
