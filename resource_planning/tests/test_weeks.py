@@ -74,7 +74,7 @@ class TestWeeks(common.TransactionCase):
             'week_num': 2,
             'year': 2020
         })
-        self.assertEqual(week.name_get()[0][1], 'Week 2 2020', "Week string should be Week 2")
+        self.assertEqual(week.name_get()[0][1], 'Week 2 2020', "Week string should be Week 2 2020")
 
     def test_name_get_2(self):
         """
@@ -84,7 +84,7 @@ class TestWeeks(common.TransactionCase):
             'week_num': 4,
             'year': 2020
         })
-        self.assertNotEqual(week.name_get()[0][1], 'Week 2 2020', "Week string should be Week 4 and not 2")
+        self.assertNotEqual(week.name_get()[0][1], 'Week 2 2020', "Week string should be Week 4 2020 and not 2")
 
     def test_name_get_3(self):
         """
@@ -95,7 +95,7 @@ class TestWeeks(common.TransactionCase):
             'year': 2020
         })
         self.assertNotEqual(week.name_get()[0][1], 'Week  2 2020',
-                            "Week string should be Week 2, one white space too much")
+                            "Week string should be Week 2 2020, one white space too much")
 
     def test_name_get_incorrect_year(self):
         """
@@ -105,8 +105,8 @@ class TestWeeks(common.TransactionCase):
             'week_num': 2,
             'year': 2021
         })
-        self.assertNotEqual(week.name_get()[0][1], 'Week 2 2020', "Week string should be Week 2")
-        self.assertEqual(week.name_get()[0][1], 'Week 2 2021', "Week string should be Week 2")
+        self.assertNotEqual(week.name_get()[0][1], 'Week 2 2020', "Week string should be Week 2 2020")
+        self.assertEqual(week.name_get()[0][1], 'Week 2 2021', "Week string should be Week 2 2021")
 
 # -----------------------------------------------------------------------------------------------------------------------
     def test_set_is_week_in_period_week_bool_true(self):

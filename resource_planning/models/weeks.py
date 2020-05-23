@@ -58,7 +58,8 @@ class Weeks(models.Model):
         """
         today = datetime.datetime.today()
         week_delta = int(self.env['ir.config_parameter'].sudo().get_param('resource_planning.filter_weeks'))
-        this_week = today - datetime.timedelta(today.weekday())
+        this_week_uncut = today - datetime.timedelta(today.weekday())
+        this_week=this_week_uncut.replace(hour=0,minute=0,second=0,microsecond=0)
 
         self.set_is_week_in_period(this_week, week_delta)
         return week_delta
@@ -88,7 +89,7 @@ class Weeks(models.Model):
 
             else:
                 if this_week + datetime.timedelta(
-                        weeks=week_delta) <= start_date_of_week and this_week > start_date_of_week:
+                        weeks=week_delta) <= start_date_of_week and this_week >= start_date_of_week:
                     week.week_bool = True
                 else:
                     week.week_bool = False

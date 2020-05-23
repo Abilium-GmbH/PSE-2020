@@ -46,3 +46,15 @@ class WeeklyResource(models.Model):
 
         else:
             self.manually_changed = False
+
+    def name_get(self):
+        """
+         Creates a String representation which is used for the report view
+         :return: String representation
+        """
+        result = []
+        for record in self:
+            record_name = 'Weekly Resource Week' + ' ' + str(record.week_num) + ', ' + str(record.year)
+            result.append((record.id, record_name))
+        return result
+
