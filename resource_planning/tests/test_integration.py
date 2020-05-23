@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from odoo import exceptions
 from odoo.tests import common
 
@@ -19,7 +19,6 @@ class TestIntegration1(common.SingleTransactionCase):
         """
         Tests the creation of a resource.
 
-        :return:
         """
         TestIntegration1.project_1 = self.env['project.project'].create({'name': 'test_project_1'})
         TestIntegration1.employee_1 = self.env['hr.employee'].create({'name': 'test_employee_1'})
@@ -33,21 +32,24 @@ class TestIntegration1(common.SingleTransactionCase):
         start_date = datetime(1990, 6, 13, 12, 0, 0)
         end_date = datetime(1990, 12, 4, 12, 0, 0)
 
-        self.assertEqual(TestIntegration1.resource_1.project.id, TestIntegration1.project_1.id, "project id doesn't match")
-        self.assertEqual(TestIntegration1.resource_1.employee.id, TestIntegration1.employee_1.id, "employee id doesn't match")
+        self.assertEqual(TestIntegration1.resource_1.project.id, TestIntegration1.project_1.id,
+                         "project id doesn't match")
+        self.assertEqual(TestIntegration1.resource_1.employee.id, TestIntegration1.employee_1.id,
+                         "employee id doesn't match")
         self.assertEqual(TestIntegration1.resource_1.base_workload, 70, "base_workload should be 70")
-        self.assertEqual(TestIntegration1.resource_1.start_date, start_date, "start_date should be '1990-06-13 12:00:00'")
+        self.assertEqual(TestIntegration1.resource_1.start_date, start_date,
+                         "start_date should be '1990-06-13 12:00:00'")
         self.assertEqual(TestIntegration1.resource_1.end_date, end_date, "end_date should be '1990-12-4 12:00:00'")
 
         for weekly_resource in TestIntegration1.resource_1.weekly_resources:
-            self.assertEqual(weekly_resource.resource_id.id, TestIntegration1.resource_1.id, "resource_id doesn't match")
+            self.assertEqual(weekly_resource.resource_id.id, TestIntegration1.resource_1.id,
+                             "resource_id doesn't match")
             self.assertEqual(weekly_resource.weekly_workload, 70, "weekly_workload should be 70")
 
     def test_02_edit_base_workload_1(self):
         """
         Tests the editing of the base workload of a resource.
 
-        :return:
         """
         values = {
             'base_workload': 10
@@ -58,21 +60,24 @@ class TestIntegration1(common.SingleTransactionCase):
         start_date = datetime(1990, 6, 13, 12, 0, 0)
         end_date = datetime(1990, 12, 4, 12, 0, 0)
 
-        self.assertEqual(TestIntegration1.resource_1.project.id, TestIntegration1.project_1.id, "project id doesn't match")
-        self.assertEqual(TestIntegration1.resource_1.employee.id, TestIntegration1.employee_1.id, "employee id doesn't match")
+        self.assertEqual(TestIntegration1.resource_1.project.id, TestIntegration1.project_1.id,
+                         "project id doesn't match")
+        self.assertEqual(TestIntegration1.resource_1.employee.id, TestIntegration1.employee_1.id,
+                         "employee id doesn't match")
         self.assertEqual(TestIntegration1.resource_1.base_workload, 10, "base_workload should be 10")
-        self.assertEqual(TestIntegration1.resource_1.start_date, start_date, "start_date should be '1990-06-13 12:00:00'")
+        self.assertEqual(TestIntegration1.resource_1.start_date, start_date,
+                         "start_date should be '1990-06-13 12:00:00'")
         self.assertEqual(TestIntegration1.resource_1.end_date, end_date, "end_date should be '1990-12-4 12:00:00'")
 
         for weekly_resource in TestIntegration1.resource_1.weekly_resources:
-            self.assertEqual(weekly_resource.resource_id.id, TestIntegration1.resource_1.id, "resource_id doesn't match")
+            self.assertEqual(weekly_resource.resource_id.id, TestIntegration1.resource_1.id,
+                             "resource_id doesn't match")
             self.assertEqual(weekly_resource.weekly_workload, 10, "weekly_workload should be 10")
 
     def test_03_edit_weekly_resource_1(self):
         """
         Tests the editing of the weekly workload of a weekly resource.
 
-        :return:
         """
         weekly_resource = TestIntegration1.resource_1.weekly_resources[10]
         weekly_resource.write({'weekly_workload': 50})
@@ -85,18 +90,20 @@ class TestIntegration1(common.SingleTransactionCase):
         Tests if editing the base workload of the resource doesn't
         affect the previously changed weekly workload of a weekly resource.
 
-        :return:
         """
         TestIntegration1.resource_1.write({'base_workload': 60})
 
-        self.assertEqual(TestIntegration1.resource_1.project.id, TestIntegration1.project_1.id, "project id doesn't match")
-        self.assertEqual(TestIntegration1.resource_1.employee.id, TestIntegration1.employee_1.id, "employee id doesn't match")
+        self.assertEqual(TestIntegration1.resource_1.project.id, TestIntegration1.project_1.id,
+                         "project id doesn't match")
+        self.assertEqual(TestIntegration1.resource_1.employee.id, TestIntegration1.employee_1.id,
+                         "employee id doesn't match")
         self.assertEqual(TestIntegration1.resource_1.base_workload, 60, "base_workload should be 60")
 
         weekly_resources = TestIntegration1.resource_1.weekly_resources
 
         for i in range(0, len(weekly_resources)):
-            self.assertEqual(weekly_resources[i].resource_id.id, TestIntegration1.resource_1.id, "resource_id doesn't match")
+            self.assertEqual(weekly_resources[i].resource_id.id, TestIntegration1.resource_1.id,
+                             "resource_id doesn't match")
 
             if i == 10:
                 self.assertEqual(weekly_resources[i].weekly_workload, 50, "weekly_workload should be 50")
@@ -108,7 +115,6 @@ class TestIntegration1(common.SingleTransactionCase):
         Tests if creating a second resource raises a validation error when the
         base workload is too high and doesn't if not.
 
-        :return:
         """
         TestIntegration1.project_2 = self.env['project.project'].create({'name': 'test_project_2'})
         values = {'project': TestIntegration1.project_2.id,
@@ -131,14 +137,18 @@ class TestIntegration1(common.SingleTransactionCase):
         start_date = datetime(1990, 10, 6, 12, 0, 0)
         end_date = datetime(1990, 11, 20, 12, 0, 0)
 
-        self.assertEqual(TestIntegration1.resource_2.project.id, TestIntegration1.project_2.id, "project id doesn't match")
-        self.assertEqual(TestIntegration1.resource_2.employee.id, TestIntegration1.employee_1.id, "employee id doesn't match")
+        self.assertEqual(TestIntegration1.resource_2.project.id, TestIntegration1.project_2.id,
+                         "project id doesn't match")
+        self.assertEqual(TestIntegration1.resource_2.employee.id, TestIntegration1.employee_1.id,
+                         "employee id doesn't match")
         self.assertEqual(TestIntegration1.resource_2.base_workload, 30, "base_workload should be 30")
-        self.assertEqual(TestIntegration1.resource_2.start_date, start_date, "start_date should be '1990-10-06 12:00:00'")
+        self.assertEqual(TestIntegration1.resource_2.start_date, start_date,
+                         "start_date should be '1990-10-06 12:00:00'")
         self.assertEqual(TestIntegration1.resource_2.end_date, end_date, "end_date should be '1990-11-20 12:00:00'")
 
         for weekly_resource in TestIntegration1.resource_2.weekly_resources:
-            self.assertEqual(weekly_resource.resource_id.id, TestIntegration1.resource_2.id, "resource_id doesn't match")
+            self.assertEqual(weekly_resource.resource_id.id, TestIntegration1.resource_2.id,
+                             "resource_id doesn't match")
             self.assertEqual(weekly_resource.weekly_workload, 30, "weekly_workload should be 30")
 
     def test_06_delete_resource(self):
@@ -146,7 +156,6 @@ class TestIntegration1(common.SingleTransactionCase):
         Tests if creating a third resource raises a validation error because of the base workload
         being too high. Tests if deleting a resource allows the third resource to be created.
 
-        :return:
         """
         TestIntegration1.project_3 = self.env['project.project'].create({'name': 'test_project_3'})
         values = {'project': TestIntegration1.project_3.id,
@@ -175,14 +184,18 @@ class TestIntegration1(common.SingleTransactionCase):
         start_date = datetime(1990, 10, 1, 12, 0, 0)
         end_date = datetime(1990, 10, 5, 12, 0, 0)
 
-        self.assertEqual(TestIntegration1.resource_3.project.id, TestIntegration1.project_3.id, "project id doesn't match")
-        self.assertEqual(TestIntegration1.resource_3.employee.id, TestIntegration1.employee_1.id, "employee id doesn't match")
+        self.assertEqual(TestIntegration1.resource_3.project.id, TestIntegration1.project_3.id,
+                         "project id doesn't match")
+        self.assertEqual(TestIntegration1.resource_3.employee.id, TestIntegration1.employee_1.id,
+                         "employee id doesn't match")
         self.assertEqual(TestIntegration1.resource_3.base_workload, 20, "base_workload should be 20")
-        self.assertEqual(TestIntegration1.resource_3.start_date, start_date, "start_date should be '1990-10-01 12:00:00'")
+        self.assertEqual(TestIntegration1.resource_3.start_date, start_date,
+                         "start_date should be '1990-10-01 12:00:00'")
         self.assertEqual(TestIntegration1.resource_3.end_date, end_date, "end_date should be '1990-10-05 12:00:00'")
 
         for weekly_resource in TestIntegration1.resource_3.weekly_resources:
-            self.assertEqual(weekly_resource.resource_id.id, TestIntegration1.resource_3.id, "resource_id doesn't match")
+            self.assertEqual(weekly_resource.resource_id.id, TestIntegration1.resource_3.id,
+                             "resource_id doesn't match")
             self.assertEqual(weekly_resource.weekly_workload, 20, "weekly_workload should be 20")
 
     def test_07_edit_weekly_resource_2(self):
@@ -190,7 +203,6 @@ class TestIntegration1(common.SingleTransactionCase):
         Tests if editing the weekly workload of a specific weekly resource
         raises a validation error for the workload being too high.
 
-        :return:
         """
         weekly_resource = TestIntegration1.resource_3.weekly_resources[0]
 
@@ -203,6 +215,7 @@ class TestIntegration1(common.SingleTransactionCase):
 
         self.assertEqual(TestIntegration1.resource_3.base_workload, 20, "base_workload should be 20")
         self.assertEqual(weekly_resource.weekly_workload, 20, "weekly_workload should be 20")
+
 
 # -------------------------------------------------------------------------------------------------------------------- #
 
@@ -221,7 +234,6 @@ class TestIntegration2(common.SingleTransactionCase):
         """
         Tests the creation of a resource.
 
-        :return:
         """
         TestIntegration2.project_1 = self.env['project.project'].create({'name': 'test_project_1'})
         TestIntegration2.employee_1 = self.env['hr.employee'].create({'name': 'test_employee_1'})
@@ -235,36 +247,39 @@ class TestIntegration2(common.SingleTransactionCase):
         start_date = datetime(1992, 3, 23, 12, 0, 0)
         end_date = datetime(1992, 7, 17, 12, 0, 0)
 
-        self.assertEqual(TestIntegration2.resource_1.project.id, TestIntegration2.project_1.id, "project id doesn't match")
-        self.assertEqual(TestIntegration2.resource_1.employee.id, TestIntegration2.employee_1.id, "employee id doesn't match")
+        self.assertEqual(TestIntegration2.resource_1.project.id, TestIntegration2.project_1.id,
+                         "project id doesn't match")
+        self.assertEqual(TestIntegration2.resource_1.employee.id, TestIntegration2.employee_1.id,
+                         "employee id doesn't match")
         self.assertEqual(TestIntegration2.resource_1.base_workload, 50, "base_workload should be 50")
-        self.assertEqual(TestIntegration2.resource_1.start_date, start_date, "start_date should be '1992-03-23 12:00:00'")
+        self.assertEqual(TestIntegration2.resource_1.start_date, start_date,
+                         "start_date should be '1992-03-23 12:00:00'")
         self.assertEqual(TestIntegration2.resource_1.end_date, end_date, "end_date should be '1992-07-17 12:00:00'")
 
         self.assertEqual(len(TestIntegration2.resource_1.weekly_resources), 17, "Should contain 17 weekly_resources")
 
         for weekly_resource in TestIntegration2.resource_1.weekly_resources:
-            self.assertEqual(weekly_resource.resource_id.id, TestIntegration2.resource_1.id, "resource_id doesn't match")
+            self.assertEqual(weekly_resource.resource_id.id, TestIntegration2.resource_1.id,
+                             "resource_id doesn't match")
             self.assertEqual(weekly_resource.weekly_workload, 50, "weekly_workload should be 50")
 
     def test_02_add_week_1(self):
         """
         Tests if adding one week to the resource works correctly.
 
-        :return:
         """
         TestIntegration2.resource_1.plus_one_week()
         self.assertEqual(len(TestIntegration2.resource_1.weekly_resources), 18, "Should contain 20 weekly_resources")
 
         for weekly_resource in TestIntegration2.resource_1.weekly_resources:
-            self.assertEqual(weekly_resource.resource_id.id, TestIntegration2.resource_1.id, "resource_id doesn't match")
+            self.assertEqual(weekly_resource.resource_id.id, TestIntegration2.resource_1.id,
+                             "resource_id doesn't match")
             self.assertEqual(weekly_resource.weekly_workload, 50, "weekly_workload should be 50")
 
     def test_03_edit_weekly_resource(self):
         """
         Tests if editing the weekly workload of a weekly resource works correctly.
 
-        :return:
         """
         weekly_resource = TestIntegration2.resource_1.weekly_resources[17]
         weekly_resource.write({'weekly_workload': 30})
@@ -277,14 +292,14 @@ class TestIntegration2(common.SingleTransactionCase):
         Tests if adding one week to the resource does not affect the previously changed
         weekly workload of a weekly resource.
 
-        :return:
         """
         TestIntegration2.resource_1.plus_one_week()
         self.assertEqual(len(TestIntegration2.resource_1.weekly_resources), 19, "Should contain 20 weekly_resources")
 
         weekly_resources = TestIntegration2.resource_1.weekly_resources
         for i in range(0, len(weekly_resources)):
-            self.assertEqual(weekly_resources[i].resource_id.id, TestIntegration2.resource_1.id, "resource_id doesn't match")
+            self.assertEqual(weekly_resources[i].resource_id.id, TestIntegration2.resource_1.id,
+                             "resource_id doesn't match")
 
             if i == 17:
                 self.assertEqual(weekly_resources[i].weekly_workload, 30, "weekly_workload should be 50")
@@ -295,7 +310,6 @@ class TestIntegration2(common.SingleTransactionCase):
         """
         Tests the creation of a second resource.
 
-        :return:
         """
         TestIntegration2.project_2 = self.env['project.project'].create({'name': 'test_project_2'})
         values = {'project': TestIntegration2.project_2.id,
@@ -308,16 +322,20 @@ class TestIntegration2(common.SingleTransactionCase):
         start_date = datetime(1992, 2, 17, 12, 0, 0)
         end_date = datetime(1992, 3, 17, 12, 0, 0)
 
-        self.assertEqual(TestIntegration2.resource_2.project.id, TestIntegration2.project_2.id, "project id doesn't match")
-        self.assertEqual(TestIntegration2.resource_2.employee.id, TestIntegration2.employee_1.id, "employee id doesn't match")
+        self.assertEqual(TestIntegration2.resource_2.project.id, TestIntegration2.project_2.id,
+                         "project id doesn't match")
+        self.assertEqual(TestIntegration2.resource_2.employee.id, TestIntegration2.employee_1.id,
+                         "employee id doesn't match")
         self.assertEqual(TestIntegration2.resource_2.base_workload, 60, "base_workload should be 60")
-        self.assertEqual(TestIntegration2.resource_2.start_date, start_date, "start_date should be '1992-02-17 12:00:00'")
+        self.assertEqual(TestIntegration2.resource_2.start_date, start_date,
+                         "start_date should be '1992-02-17 12:00:00'")
         self.assertEqual(TestIntegration2.resource_2.end_date, end_date, "end_date should be '1992-03-17 12:00:00'")
 
         self.assertEqual(len(TestIntegration2.resource_2.weekly_resources), 5, "Should contain 5 weekly_resources")
 
         for weekly_resource in TestIntegration2.resource_2.weekly_resources:
-            self.assertEqual(weekly_resource.resource_id.id, TestIntegration2.resource_2.id, "resource_id doesn't match")
+            self.assertEqual(weekly_resource.resource_id.id, TestIntegration2.resource_2.id,
+                             "resource_id doesn't match")
             self.assertEqual(weekly_resource.weekly_workload, 60, "weekly_workload should be 60")
 
     def test_06_add_week_3(self):
@@ -326,7 +344,6 @@ class TestIntegration2(common.SingleTransactionCase):
         because of the weekly workload being too high, since the added week is overlapping
         with the first resource.
 
-        :return:
         """
         with self.assertRaises(exceptions.ValidationError) as error:
             TestIntegration2.resource_2.plus_one_week()
@@ -342,7 +359,6 @@ class TestIntegration2(common.SingleTransactionCase):
         Tests if deleting one week works correctly and raises a validation error
         if the user wants to delete a week, if the resource contains only one week.
 
-        :return:
         """
         TestIntegration2.resource_2.minus_one_week()
         self.assertEqual(len(TestIntegration2.resource_2.weekly_resources), 4, "Should contain 4 weekly_resources")

@@ -9,12 +9,11 @@ class TestResource(common.TransactionCase):
     Class to test the Resource class
     """
 
-    def test_get_weeks_normal(self):
+    def test_compute_weeks_normal(self):
         """
         Tests if the returned array from the compute_weeks method contains the correct weeks
         (multiple weeks)
 
-        :return:
         """
         start_date = datetime(2020, 4, 5, 23, 55, 0)
         end_date = datetime(2020, 4, 14, 12, 42, 7)
@@ -27,11 +26,10 @@ class TestResource(common.TransactionCase):
             'Should calculate project weeks 14 to 16'
         )
 
-    def test_get_weeks_normal_over_year_bound(self):
+    def test_compute_weeks_normal_over_year_bound(self):
         """
-        Tests if compute_weeks works correctly for at a turn of the year
+        Tests if compute_weeks works correctly at a turn of the year
 
-        :return:
         """
         start_date = datetime(2019, 12, 27, 0, 0, 0)
         end_date = datetime(2020, 1, 17, 7, 30, 25)
@@ -45,11 +43,10 @@ class TestResource(common.TransactionCase):
             'Calculates weeks 52, 2019 to 3, 2020'
         )
 
-    def test_get_weeks_start_week_end_week_changed(self):
+    def test_compute_weeks_start_week_end_week_changed(self):
         """
         Tests if compute_weeks returns an empty array if end_date is before the start_date
 
-        :return:
         """
         start_date = datetime(2020, 1, 17, 7, 30, 25)
         end_date = datetime(2019, 12, 27, 0, 0, 0)
@@ -58,12 +55,11 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(week_data[1], [], 'No weeks because start and end date are interchanged')
 
-    def test_get_weeks_normal_result_one_week(self):
+    def test_compute_weeks_normal_result_one_week(self):
         """
         Tests if the returned array from the compute_weeks method contains the correct weeks
         (a single week)
 
-        :return:
         """
         start_date = datetime(2020, 11, 10, 20, 45, 25)
         end_date = datetime(2020, 11, 14, 4, 30, 25)
@@ -72,14 +68,13 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(week_data[1], [{'week_num': 46, 'year': 2020}], 'Result is only one week (46)')
 
-# -------------------------------------------------------------------------------------------------------------------- #
+    # -------------------------------------------------------------------------------------------------------------------- #
 
     def test_add_weeks_object_normal(self):
         """
         Tests if add_weeks_objects preserves the week number and year
         (part 1)
 
-        :return:
         """
         week = self.env['resource.model'].add_weeks_object({'week_num': 52, 'year': 2020})
         self.assertEqual(week.week_num, 52, 'Week number is 52')
@@ -90,7 +85,6 @@ class TestResource(common.TransactionCase):
         Tests if add_weeks_objects preserves the week number and year
         (part 2)
 
-        :return:
         """
         week = self.env['resource.model'].add_weeks_object({'week_num': 52, 'year': 2050})
         self.assertNotEqual(week.week_num, 1, 'Week number is not 1')
@@ -100,32 +94,29 @@ class TestResource(common.TransactionCase):
         """
         Tests if a week far in the past can be saved
 
-        :return:
         """
-        week = self.env['resource.model'].add_weeks_object({'week_num': 50, 'year': 1900})
+        week = self.env['resource.model'].add_weeks_object({'week_num': 50, 'year': 1901})
         self.assertEqual(week.week_num, 50, 'Week number is 50')
-        self.assertEqual(week.year, 1900, 'Year is 1900')
-        self.assertEqual(week.week_string, "1900, W50", "Invalid week_string")
+        self.assertEqual(week.year, 1901, 'Year is 1901')
+        self.assertEqual(week.week_string, "1901, W50", "Invalid week_string")
 
     def test_add_weeks_object_future_year(self):
         """
         Tests if a week far in the future can be saved
 
-        :return:
         """
         week = self.env['resource.model'].add_weeks_object({'week_num': 1, 'year': 3000})
         self.assertEqual(week.week_num, 1, 'Week number is 1')
         self.assertEqual(week.year, 3000, 'Year is 3000')
         self.assertEqual(week.week_string, "3000, W01", "Invalid week_string")
 
-# -------------------------------------------------------------------------------------------------------------------- #
+    # -------------------------------------------------------------------------------------------------------------------- #
 
     def test_create_resource_normal(self):
         """
         Tests if create stores the values (project, employee, workload, start_date, end_dat) correctly
         (part 1, workload 50)
 
-        :return:
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -150,7 +141,6 @@ class TestResource(common.TransactionCase):
         Tests if create stores the values (project, employee, workload, start_date, end_dat) correctly
         (part 2, workload 90)
 
-        :return:
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -175,7 +165,6 @@ class TestResource(common.TransactionCase):
         Tests if create stores the values (project, employee, workload, start_date, end_dat) correctly
         (part 3, workload 100)
 
-        :return:
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -200,7 +189,6 @@ class TestResource(common.TransactionCase):
         Tests if create stores the values (project, employee, workload, start_date, end_dat) correctly
         (part 4, start_date equals end_date)
 
-        :return:
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -225,7 +213,6 @@ class TestResource(common.TransactionCase):
         Tests if create raises an exception if the start_date is after the end_date
         (part 1, same year)
 
-        :return:
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -247,7 +234,6 @@ class TestResource(common.TransactionCase):
         Tests if create raises an exception if the start_date is after the end_date
         (part 2, different years)
 
-        :return:
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -304,7 +290,7 @@ class TestResource(common.TransactionCase):
 
     def test_create_resource_exception_no_start_no_end_date(self):
         """
-                Tests if create raises an exception if the end_date is not filled out
+                Tests if create raises an exception if the end_date and the start_date are not filled out
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -324,7 +310,7 @@ class TestResource(common.TransactionCase):
     def test_create_resource_no_project(self):
         """
           Tests if create raises an exception if the employee is not given
-          :return:
+          displays error message in console, error message is intended
         """
         employee = self.env['hr.employee'].create({'name': 'e1'})
         values = {'project': '',
@@ -339,7 +325,7 @@ class TestResource(common.TransactionCase):
     def test_create_resource_no_employee(self):
         """
             Tests if create raises an exception if the employee is not given
-            :return:
+             displays error message in console, error message is intended
         """
         project = self.env['project.project'].create({'name': 'p1'})
         values = {'project': project.id,
@@ -351,14 +337,13 @@ class TestResource(common.TransactionCase):
         with self.assertRaises(errors.NotNullViolation):
             self.env['resource.model'].create(values)
 
-# -------------------------------------------------------------------------------------------------------------------- #
+    # -------------------------------------------------------------------------------------------------------------------- #
 
     def test_verify_workload_warning_1(self):
         """
         Tests if an exception is raised if workload exceeds 100
         (part 1, 101)
 
-        :return:
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -380,7 +365,6 @@ class TestResource(common.TransactionCase):
         Tests if an exception is raised if workload exceeds 100
         (part 2, 1000)
 
-        :return:
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -402,7 +386,6 @@ class TestResource(common.TransactionCase):
         Tests if an exception is raised if workload exceeds 100
         (part 3, 3243200)
 
-        :return:
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -423,7 +406,6 @@ class TestResource(common.TransactionCase):
         """
         Tests if an exception is raised if workload falls below 0
 
-        :return:
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -444,7 +426,6 @@ class TestResource(common.TransactionCase):
         """
         Tests if no exception is raised if workload is exactly 0
 
-        :return:
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -462,7 +443,6 @@ class TestResource(common.TransactionCase):
         """
         Tests if no exception is raised if workload is exactly 100
 
-        :return:
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -480,7 +460,6 @@ class TestResource(common.TransactionCase):
         """
         Tests if no exception is raised if workload is exactly 1
 
-        :return:
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -493,14 +472,13 @@ class TestResource(common.TransactionCase):
 
         self.assertEqual(resource.verify_workload(), None, 'Warning is not shown (1%)')
 
-# -------------------------------------------------------------------------------------------------------------------- #
+    # -------------------------------------------------------------------------------------------------------------------- #
 
     def test_write_resource_project(self):
         """
         Tests if write stores the values (project, employee, workload, start_date, end_dat) correctly
         (part 1, overwrite project)
 
-        :return:
         """
         # Step 1: Create project
         project = self.env['project.project'].create({'name': 'p1'})
@@ -519,6 +497,7 @@ class TestResource(common.TransactionCase):
                   'base_workload': 50,
                   'start_date': '2020-04-05 13:42:07',
                   'end_date': '2020-04-12 13:42:07'}
+
         # Step 2: Update project
         resource.write(values)
 
@@ -537,7 +516,6 @@ class TestResource(common.TransactionCase):
         Tests if write updates the values correctly
         (part 2, update employee)
 
-        :return:
         """
         # Step 1: Create project
         project = self.env['project.project'].create({'name': 'p1'})
@@ -558,7 +536,7 @@ class TestResource(common.TransactionCase):
                   'end_date': '2020-04-12 13:42:07'}
         resource.write(values)
 
-        #Step 3: Evaluate values
+        # Step 3: Evaluate values
         manual_start_date = datetime(2020, 4, 5, 13, 42, 7)
         manual_end_date = datetime(2020, 4, 12, 13, 42, 7)
 
@@ -573,7 +551,6 @@ class TestResource(common.TransactionCase):
         Tests if write updates the values correctly
         (part 3, update workload)
 
-        :return:
         """
         # Step 1: Create project
         project = self.env['project.project'].create({'name': 'p1'})
@@ -608,7 +585,6 @@ class TestResource(common.TransactionCase):
         Tests if write updates the values correctly
         (part 4, update start_date and end_date)
 
-        :return:
         """
         # Step 1: Create project
         project = self.env['project.project'].create({'name': 'p1'})
@@ -643,7 +619,6 @@ class TestResource(common.TransactionCase):
         Tests if write updates the values correctly
         (part 5, overwrite all values)
 
-        :return:
         """
         # Step 1: Create Resource
         project = self.env['project.project'].create({'name': 'p1'})
@@ -680,7 +655,6 @@ class TestResource(common.TransactionCase):
         Tests if write updates the values correctly
         (part 6, start_date equals end_date)
 
-        :return:
         """
 
         # Step 1: Create project
@@ -716,7 +690,6 @@ class TestResource(common.TransactionCase):
         Tests if write raises an exception if the start_date is after the end_date
         (difference is only 1s)
 
-        :return:
         """
 
         # Step 1: Create project
@@ -739,12 +712,13 @@ class TestResource(common.TransactionCase):
         with self.assertRaises(exceptions.ValidationError):
             resource.write(values)
 
-# -------------------------------------------------------------------------------------------------------------------- #
+    # -------------------------------------------------------------------------------------------------------------------- #
 
     def test_create_single_week(self):
         """
         Tests whether the correct WeeklyResource models are created by create
         (part 1, resource during 1 week)
+
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -767,6 +741,7 @@ class TestResource(common.TransactionCase):
         """
         Tests whether the correct WeeklyResource models are created by create
         (part 2, resource during 3 weeks)
+
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -791,6 +766,7 @@ class TestResource(common.TransactionCase):
         """
         Tests whether the WeeklyResource models are updated correctly by write
         (part 1, update timespan from 1 week to 2 weeks)
+
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -821,6 +797,7 @@ class TestResource(common.TransactionCase):
         """
         Tests whether the correct WeeklyResource models are created by write
         (part 2, update timespan from 4 weeks to 1 week)
+
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -852,6 +829,7 @@ class TestResource(common.TransactionCase):
         """
         Tests whether the WeeklyResource models are updated correctly by write
         (part 3, delay resource)
+
         """
 
         project = self.env['project.project'].create({'name': 'p1'})
@@ -877,12 +855,13 @@ class TestResource(common.TransactionCase):
                 self.assertEqual(model.week_num, 18, "Wrong week_num")
                 self.assertNotEqual(model.week_num, 16, "Old WeeklyResource still exists")
 
-# -------------------------------------------------------------------------------------------------------------------- #
+    # -------------------------------------------------------------------------------------------------------------------- #
 
     def test_plus_one_week_normal(self):
         """
         Tests plus one week method whether it adds one week to the end date
         (part 1 same year)
+
          """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -903,9 +882,10 @@ class TestResource(common.TransactionCase):
 
     def test_plus_one_week_normal_push_button_twice(self):
         """
-            Tests plus one week method whether it adds one week to the enddate
+            Tests plus one week method whether it adds one week to the end date
             "button" pressed twice (method called twice)
              (part 1 same year)
+
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -929,6 +909,7 @@ class TestResource(common.TransactionCase):
         """
         Tests plus one week method whether it adds one week to the end date
          (part 2 different year)
+
          """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -952,6 +933,7 @@ class TestResource(common.TransactionCase):
         """
         Tests plus/minus one week method whether it subtracts and adds one week to/from the end date
         (part 1 same year)
+
          """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -979,6 +961,7 @@ class TestResource(common.TransactionCase):
         """
         Tests plus/minus one week method whether it adds and subtracts one week to/from the end date
          (part 2 different year)
+
          """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -1004,11 +987,12 @@ class TestResource(common.TransactionCase):
                          'The resource was extended by 1 weeks over the year bound')
         self.assertEqual(resource.start_date, manual_start_date, 'Start date got not changed')
 
-# -------------------------------------------------------------------------------------------------------------------- #
+    # -------------------------------------------------------------------------------------------------------------------- #
 
     def test_minus_one_week_normal(self):
         """
-         Tests minus one week method whether it subtracts one week from the enddate
+         Tests minus one week method whether it subtracts one week from the end date
+
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -1029,8 +1013,9 @@ class TestResource(common.TransactionCase):
 
     def test_minus_one_normal_button_pushed_three_times(self):
         """
-            Tests minus one week method whether it subtracts one week from the enddate
+            Tests minus one week method whether it subtracts one week from the end date
             "button" pushed 3 times (method called 3 times)
+
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -1053,8 +1038,9 @@ class TestResource(common.TransactionCase):
 
     def test_minus_one_normal_over_year_bound(self):
         """
-            Tests minus one week method whether it subtracts one week from the enddate
-            (part 2 different years
+            Tests minus one week method whether it subtracts one week from the end date
+            (part 2 different years)
+
         """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -1077,8 +1063,9 @@ class TestResource(common.TransactionCase):
 
     def test_minus_week_exception(self):
         """
-        Tests minus one week method whether it subtracts one week from the enddate
+        Tests minus one week method whether it subtracts one week from the end date
         :raises exception that the start date mustn't be after the end date
+
          """
         project = self.env['project.project'].create({'name': 'p1'})
         employee = self.env['hr.employee'].create({'name': 'e1'})
@@ -1095,6 +1082,7 @@ class TestResource(common.TransactionCase):
         self.assertEqual(error.exception.name,
                          "Start date must be before end date", "Should raise exception if start is after"
                                                                "end dates")
+
 
 # -------------------------------------------------------------------------------------------------------------------- #
 
@@ -1117,14 +1105,13 @@ class TestWorkload(common.SavepointCase):
         Tests if creating two resources in the same week with a total workload of 110
         raises an exception.ValidationError for the workload in that week.
 
-        :return:
         """
         values = {'project': TestWorkload.project.id,
                   'employee': TestWorkload.employee.id,
                   'base_workload': 50,
                   'start_date': '2020-04-06 13:42:07',
                   'end_date': '2020-04-10 13:42:07'}
-        resource = self.env['resource.model'].create(values)
+        self.env['resource.model'].create(values)
 
         values = {'project': TestWorkload.project.id,
                   'employee': TestWorkload.employee.id,
@@ -1143,21 +1130,20 @@ class TestWorkload(common.SavepointCase):
         Tests if creating three resources in the same week with a total workload of 120
         raises an exception.ValidationError for the workload in that week.
 
-        :return:
         """
         values = {'project': TestWorkload.project.id,
                   'employee': TestWorkload.employee.id,
                   'base_workload': 40,
                   'start_date': '2020-04-13 13:42:07',
                   'end_date': '2020-04-22 13:42:07'}
-        resource = self.env['resource.model'].create(values)
+        self.env['resource.model'].create(values)
 
         values = {'project': TestWorkload.project.id,
                   'employee': TestWorkload.employee.id,
                   'base_workload': 60,
                   'start_date': '2020-04-21 13:42:07',
                   'end_date': '2020-04-30 13:42:07'}
-        resource = self.env['resource.model'].create(values)
+        self.env['resource.model'].create(values)
 
         values = {'project': TestWorkload.project.id,
                   'employee': TestWorkload.employee.id,
@@ -1176,21 +1162,20 @@ class TestWorkload(common.SavepointCase):
         Tests if creating two resources in the same week with a total workload of 110
         raises an exception.ValidationError for the workload in that week.
 
-        :return:
         """
         values = {'project': TestWorkload.project.id,
                   'employee': TestWorkload.employee.id,
                   'base_workload': 40,
                   'start_date': '2020-05-05 13:42:07',
                   'end_date': '2020-05-08 13:42:07'}
-        resource = self.env['resource.model'].create(values)
+        self.env['resource.model'].create(values)
 
         values = {'project': TestWorkload.project.id,
                   'employee': TestWorkload.employee.id,
                   'base_workload': 60,
                   'start_date': '2020-05-18 13:42:07',
                   'end_date': '2020-05-29 13:42:07'}
-        resource = self.env['resource.model'].create(values)
+        self.env['resource.model'].create(values)
 
         values = {'project': TestWorkload.project.id,
                   'employee': TestWorkload.employee.id,
@@ -1203,6 +1188,7 @@ class TestWorkload(common.SavepointCase):
 
         self.assertEqual(error.exception.name,
                          "The workload in week 2020, W21 is too high", "Should raise exception for Workload too high")
+
 
 # -------------------------------------------------------------------------------------------------------------------- #
 
@@ -1222,7 +1208,6 @@ class TestAddDelete(common.SavepointCase):
         Set up the test class by creating a resource with one
         weekly_resource in week 16, year 2020.
 
-        :return:
         """
         super(TestAddDelete, cls).setUpClass()
         project = cls.env['project.project'].create({'name': 'p1'})
@@ -1239,7 +1224,7 @@ class TestAddDelete(common.SavepointCase):
 
         for week_num in range(16, 20):
             exists = cls.env['week.model'].search([['week_num', '=', week_num],
-                                                        ['year', '=', 2020]])
+                                                   ['year', '=', 2020]])
 
             if not exists:
                 cls.env['week.model'].create({'week_num': week_num, 'year': 2020})
@@ -1248,7 +1233,6 @@ class TestAddDelete(common.SavepointCase):
         """
         Test if the resource created in setUpClass is correct.
 
-        :return:
         """
         weekly_resources = self.resource.weekly_resources
         self.assertEqual(len(weekly_resources), 1, 'resource should contain 1 weekly_resources')
@@ -1261,7 +1245,6 @@ class TestAddDelete(common.SavepointCase):
         """
         Test if adding one week adds one weekly_resource to the resource.
 
-        :return:
         """
         project_week_data = [{'week_num': 17, 'year': 2020}]
         TestAddDelete.resource.add_missing_weekly_resources(project_week_data)
@@ -1306,7 +1289,6 @@ class TestAddDelete(common.SavepointCase):
         Test if adding a week for which already a weekly_workload exists doesn't
         change the existing weekly_resources workload.
 
-        :return:
         """
         TestAddDelete.resource.weekly_resources[0].weekly_workload = 20
         self.assertEqual(TestAddDelete.resource.weekly_resources[0].weekly_workload, 20)
@@ -1354,7 +1336,6 @@ class TestAddDelete(common.SavepointCase):
         Test if calling delete_spare_weekly_resources with empty project_week_data
         array deletes all weekly_resources of the resource.
 
-        :return:
         """
         project_week_data = [{'week_num': 17, 'year': 2020}]
 
@@ -1369,7 +1350,6 @@ class TestAddDelete(common.SavepointCase):
         Test if adding and deleting weekly_resources to / from resource results
         in the correct weekly_resources existing.
 
-        :return:
         """
         project_week_data_add = [{'week_num': 17, 'year': 2020},
                                  {'week_num': 18, 'year': 2020},
@@ -1420,7 +1400,6 @@ class TestAddDelete(common.SavepointCase):
         Test if calling delete_spare_weekly_resources with existing weekly_resource and additional
         non existing weekly_resource doesn't create or delete any weekly_resources.
 
-        :return:
         """
         project_week_data = [{'week_num': 16, 'year': 2020},
                              {'week_num': 17, 'year': 2020}]
@@ -1438,7 +1417,6 @@ class TestAddDelete(common.SavepointCase):
         Test if calling delete_spare_weekly_resources with existing weekly_resource
         doesn't change its weekly_workload.
 
-        :return:
         """
         TestAddDelete.resource.weekly_resources[0].weekly_workload = 70
         self.assertEqual(TestAddDelete.resource.weekly_resources[0].weekly_workload, 70)
