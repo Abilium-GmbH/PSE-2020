@@ -4,7 +4,7 @@ import datetime
 
 def get_week(date):
     """
-    Returns the year and week of a given date as Int in
+    Returns the year and week of a given date as Integer in
     the format YYYYWW  (Y Year, W Week)
 
     :param date:

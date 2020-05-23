@@ -17,10 +17,11 @@ class Weeks(models.Model):
     _name = "week.model"
     _description = "Week"
     _order = "week_num asc"
+
     week_num = fields.Integer(string='Week', required=True)
     year = fields.Integer(string="Year", required=True)
     week_string = fields.Char(string="Week String", compute='build_week_string', store=True)
-    week_bool = fields.Boolean(compute="is_week_in_period", string="is week in the weeks definded by settings",
+    week_bool = fields.Boolean(compute="is_week_in_period", string="is week in the weeks defined by settings",
                                store=True)
 
     @api.model
@@ -59,7 +60,7 @@ class Weeks(models.Model):
         today = datetime.datetime.today()
         week_delta = int(self.env['ir.config_parameter'].sudo().get_param('resource_planning.filter_weeks'))
         this_week_uncut = today - datetime.timedelta(today.weekday())
-        this_week=this_week_uncut.replace(hour=0,minute=0,second=0,microsecond=0)
+        this_week = this_week_uncut.replace(hour=0, minute=0, second=0, microsecond=0)
 
         self.set_is_week_in_period(this_week, week_delta)
         return week_delta
@@ -93,7 +94,6 @@ class Weeks(models.Model):
                     week.week_bool = True
                 else:
                     week.week_bool = False
-
 
     @api.depends('year', 'week_num')
     def build_week_string(self):

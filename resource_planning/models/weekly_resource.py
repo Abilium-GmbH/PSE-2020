@@ -1,4 +1,3 @@
-
 from odoo import models, fields, api, exceptions
 
 
@@ -57,4 +56,3 @@ class WeeklyResource(models.Model):
             record_name = 'Weekly Resource Week' + ' ' + str(record.week_num) + ', ' + str(record.year)
             result.append((record.id, record_name))
         return result
-
