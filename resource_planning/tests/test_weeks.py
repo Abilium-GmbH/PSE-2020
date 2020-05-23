@@ -333,3 +333,69 @@ class TestWeeks(common.TransactionCase):
                 self.assertTrue(week.week_bool,
                                  "Week_bool is true therefore week is before this week, lies within week delta")
 
+# -----------------------------------------------------------------------------------------------------------------------
+    def test_build_week_string_one_digit(self):
+        """
+        Tests the building of a week string with 0 in front of number
+
+        :return:
+        """
+        week = self.env['week.model'].create({
+            'week_num': 2,
+            'year': 2020
+        })
+
+        self.assertEqual(week.week_string, "2020, W02", "Week string should be '2020, W02'")
+        self.assertEqual(week.year, 2020, "Year should be 2020")
+
+    def test_build_week_string_two_digits(self):
+            """
+            Tests the building of a week string without 0 in front
+
+            :return:
+            """
+            week = self.env['week.model'].create({
+                'week_num': 11,
+                'year': 2020
+            })
+
+            self.assertEqual(week.week_string, "2020, W11", "Week string should be '2020, W11'")
+
+    def test_build_week_string_with_space(self):
+        """
+        Tests the building of a week string
+
+        :return:
+        """
+        week = self.env['week.model'].create({
+            'week_num': 12,
+            'year': 2021
+        })
+
+        self.assertNotEqual(week.week_string, "2021, W 12", "Week string should be '2021, W12' but is not")
+
+    def test_build_week_string_with_10(self):
+        """
+        Tests the building of a week string with 10
+
+        :return:
+        """
+        week = self.env['week.model'].create({
+            'week_num': 10,
+            'year': 2020
+        })
+
+        self.assertEqual(week.week_string, "2020, W10", "Week string should be '2020, W10'")
+
+    def test_build_week_string_with_9(self):
+        """
+        Tests the building of a week string with 10
+
+        :return:
+        """
+        week = self.env['week.model'].create({
+            'week_num': 9,
+            'year': 2020
+        })
+
+        self.assertEqual(week.week_string, "2020, W09", "Week string should be '2020, W09'")
