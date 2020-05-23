@@ -62,4 +62,23 @@ class ReportWizard(models.TransientModel):
             if (week.week_string >= start.week_string) & (week.week_string <= end.week_string):
                 weeks.append(week.week_string)
 
+        weeks = self.order_weeks(weeks)
         return weeks
+
+    def order_weeks(self, weeks):
+        length = len(weeks)
+        l = length
+        result = []
+        while len(result) != length:
+            print(str(weeks))
+            temp = weeks[0]
+            index = 0
+            for i in range(l):
+                if weeks[i] < temp:
+                    temp = weeks[i]
+                    index = i
+            result.append(temp)
+            del(weeks[index])
+            l = l-1
+
+        return result
