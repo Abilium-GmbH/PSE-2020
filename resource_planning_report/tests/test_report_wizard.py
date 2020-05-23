@@ -63,6 +63,36 @@ class TestReportWizard(common.TransactionCase):
         self.assertFalse('1990, W19' in wizard.get_weeks(), '1990 W19 should not be in result')
         self.assertFalse('1990, W21' in wizard.get_weeks(), '1990 W21 should not be in result')
 
+    # ---------------------------------------------------------------------------------------------------------------- #
+    def test_order_weeks_1(self):
+        """
+        Tests whether week-strings are ordered correctly
+        """
+
+        weeks = ['2020, W19', '2020, W17', '2020, W18']
+        self.assertEqual(['2020, W17', '2020, W18', '2020, W19'],
+                         self.env['resource.planning.report.wizard'].order_weeks(weeks),
+                         'Weeks are not ordered correctly')
+
+    def test_order_weeks_2(self):
+        """
+        Tests whether week-strings in correct order are not reordered
+        """
+
+        weeks = ['2020, W19', '2020, W20', '2020, W21']
+        self.assertEqual(['2020, W19', '2020, W20', '2020, W21'],
+                         self.env['resource.planning.report.wizard'].order_weeks(weeks),
+                         'Weeks are not ordered correctly')
+
+    def test_order_weeks_3(self):
+        """
+        Tests whether week-strings are ordered correctly with a timespan over new year
+        """
+
+        weeks = ['2020, W01', '2020, W02', '2019, W52']
+        self.assertEqual(['2019, W52', '2020, W01', '2020, W02'],
+                         self.env['resource.planning.report.wizard'].order_weeks(weeks),
+                         'Weeks are not ordered correctly')
 # -----------------------------------------------------------------------------------------------------------------------
 
     def test_start_week_before_end_week_wrong_year(self):
