@@ -10,7 +10,6 @@ class Weeks(models.Model):
     Stores also other variables used in the module:
 
     # week_string to represent a week_model in the UI
-
     # week_bool to declare whether a week is in the timespan defined by res_config_settings.
 
     """
@@ -41,8 +40,8 @@ class Weeks(models.Model):
 
     def name_get(self):
         """
-         Creates a String representation which is used for the report view
-         :return: String representation
+         Creates a string representation which is used for the report view
+         :return: string representation
         """
         result = []
         for record in self:

@@ -3,7 +3,7 @@
 <!-- View for the Weeks model -->
 <!-- Lists the Weeks in the database -->
 <!-- Currently not active -->
-<!-- may be erased in future iterations -->
+<!-- can be used for safe deletion of weeks -->
 <odoo>
     <data>
         <record id="view_week_tree" model="ir.ui.view">

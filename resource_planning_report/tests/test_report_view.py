@@ -2,6 +2,11 @@ from odoo.tests import common
 
 
 class TestReportView(common.TransactionCase):
+    """
+        Test class for ReportView
+        Tests whether the required data for the report is computed correctly
+
+    """
 
     def test_is_relevant_1(self):
         """

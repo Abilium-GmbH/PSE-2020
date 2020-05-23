@@ -8,7 +8,7 @@ class ReportView(models.AbstractModel):
         Abstract Model for report template.
         Computes the required data for report.
     """
-    _name = 'report.resource_planning_report.planning_report_view' #
+    _name = 'report.resource_planning_report.planning_report_view'  #
     _description = 'Computes values for report view'
 
     @api.model

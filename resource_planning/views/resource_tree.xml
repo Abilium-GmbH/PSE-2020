@@ -67,10 +67,6 @@
             <field name="res_model">resource.model</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
-            <!--            <field name="help" type="html">-->
-            <!--                <p class="oe_view_nocontent_create">Create/Edit</p>-->
-            <!--            </field>-->
-            <!--            <field name="view_id" ref="view_resource_tree"/>-->
         </record>
 
         <menuitem id="menu_resource" name="Resource Planning" groups="resource_manager"/>

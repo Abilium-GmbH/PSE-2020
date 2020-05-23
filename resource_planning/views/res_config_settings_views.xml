@@ -50,8 +50,4 @@
     <menuitem id="resource_settings_menu" name="Settings" parent="menu_resource" action="resource_config_settings_action" groups="resource_manager"/>
 
 
-
-
-
-
 </odoo>
