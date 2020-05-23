@@ -111,7 +111,7 @@ class Weeks(models.Model):
         return 0
 
     @api.constrains('week_num')
-    def _check_if_week_num_is_valid(self):
+    def check_if_week_num_is_valid(self):
         """
         Checks if week_num is within the valid range from 1 to 53
 
