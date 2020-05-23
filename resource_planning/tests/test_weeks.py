@@ -346,7 +346,7 @@ class TestWeeks(common.TransactionCase):
         })
 
         self.assertEqual(week.week_string, "2020, W02", "Week string should be '2020, W02'")
-        self.assertEqual(week.year, 2020, "Year should be 2020")
+
 
     def test_build_week_string_two_digits(self):
             """
