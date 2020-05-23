@@ -66,11 +66,15 @@ class ReportWizard(models.TransientModel):
         return weeks
 
     def order_weeks(self, weeks):
+        """
+        Orders the week-strings chronologically for the report.
+        :param weeks: the weeks defining the timespan for the report
+        :return: the same weeks in chronological order
+        """
         length = len(weeks)
         l = length
         result = []
         while len(result) != length:
-            print(str(weeks))
             temp = weeks[0]
             index = 0
             for i in range(l):
