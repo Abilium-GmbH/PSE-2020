@@ -9,7 +9,7 @@ class ResConfigSettings(models.TransientModel):
     """
 
     _inherit = 'res.config.settings'
-    filter_weeks = fields.Integer(string="Weeks Filter", default=8)
+    filter_weeks = fields.Integer(string="Weeks Filter")
 
     def set_values(self):
         """

@@ -23,6 +23,21 @@ class Weeks(models.Model):
     week_bool = fields.Boolean(compute="is_week_in_period", string="is week in the weeks definded by settings",
                                store=True)
 
+    @api.model
+    def create(self, values):
+        """
+        Constructor
+        calls is_week_in_period to set the week_bool
+        :param values: the values used to create the week model
+
+        :return: the created record
+        """
+        rec = super(Weeks, self).create(values)
+
+        rec.is_week_in_period()
+
+        return rec
+
     def name_get(self):
         """
          Creates a String representation which is used for the report view
