@@ -6,7 +6,7 @@ class TestWeeklyResource(common.TransactionCase):
     """
     Class to test the WeeklyResource class
     """
-    
+
     def create_resource(self):
         """
         This method is used to create a resource used for testing the weekly_resource model.
@@ -28,8 +28,7 @@ class TestWeeklyResource(common.TransactionCase):
         """
         Tests if week_id and resource_id are stored correctly
         (part 1)
-        
-        :return: 
+
         """
         week = self.env['week.model'].create({'week_num': 30, 'year': 2020})
         resource = self.create_resource()
@@ -44,7 +43,6 @@ class TestWeeklyResource(common.TransactionCase):
         Tests if week_id and resource_id are stored correctly
         (part 2, not equal to the next higher number)
 
-        :return:
         """
         week = self.env['week.model'].create({'week_num': 30, 'year': 2020})
         resource = self.create_resource()
@@ -58,7 +56,6 @@ class TestWeeklyResource(common.TransactionCase):
         Tests if week_id and resource_id are stored correctly
         (part 3, not equal to the next lower number)
 
-        :return:
         """
         week = self.env['week.model'].create({'week_num': 30, 'year': 2020})
         resource = self.create_resource()
@@ -67,13 +64,12 @@ class TestWeeklyResource(common.TransactionCase):
         self.assertNotEqual(weekly_resource.week_id.id, week.id - 1, "week id doesn't match")
         self.assertNotEqual(weekly_resource.resource_id.id, resource.id - 1, "resource id doesn't match")
 
-# -----------------------------------------------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------------------------------------------
 
     def test_edit_weekly_resource_1(self):
         """
         Test editing the weekly_workload.
 
-        :return:
         """
         week = self.env['week.model'].create({'week_num': 30, 'year': 2020})
         resource = self.create_resource()
@@ -89,7 +85,6 @@ class TestWeeklyResource(common.TransactionCase):
         Test if editing weekly_workload raises an error
         if weekly_workload is larger than 100.
 
-        :return:
         """
         week = self.env['week.model'].create({'week_num': 30, 'year': 2020})
         resource = self.create_resource()
@@ -106,7 +101,6 @@ class TestWeeklyResource(common.TransactionCase):
         Test if editing weekly_workload raises an error
         if weekly_workload is smaller than 0.
 
-        :return:
         """
         week = self.env['week.model'].create({'week_num': 30, 'year': 2020})
         resource = self.create_resource()
@@ -123,7 +117,6 @@ class TestWeeklyResource(common.TransactionCase):
         Test if editing weekly_workload so that the total workload of a employee
         in a week is larger than 100 raises an error.
 
-        :return:
         """
         week = self.env['week.model'].create({'week_num': 40, 'year': 2020})
         resource = self.create_resource()
@@ -139,7 +132,7 @@ class TestWeeklyResource(common.TransactionCase):
         self.assertEqual("The workload in week " + week.week_string + " is too high", error.exception.name,
                          'Error does not match')
 
- # -----------------------------------------------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------------------------------------------
 
     def test_name_get(self):
         """
@@ -153,12 +146,15 @@ class TestWeeklyResource(common.TransactionCase):
                   'base_workload': 100,
                   'start_date': '2018-04-19 14:12:04',
                   'end_date': '2018-04-26 14:12:04'}
-        resource = self.env['resource.model'].create(values)
+        self.env['resource.model'].create(values)
+
         weekly_resources = self.env['weekly_resource.model'].search([])
+
         for week in weekly_resources:
-                self.assertEqual(week.name_get()[0][1],
-                                 'Weekly Resource Week' + ' ' + str(week.week_num) + ', ' + str(week.year),
-                                 "Weekly Resource string should be Weekly Resource Week 16 2018 and Weekly Resource Week 17 2018")
+            self.assertEqual(week.name_get()[0][1],
+                             'Weekly Resource Week' + ' ' + str(week.week_num) + ', ' + str(week.year),
+                             "Weekly Resource string should be Weekly Resource Week 16 2018 and Weekly Resource Week "
+                             "17 2018")
 
     def test_name_get_2(self):
         """
@@ -172,12 +168,15 @@ class TestWeeklyResource(common.TransactionCase):
                   'base_workload': 100,
                   'start_date': '2018-05-19 14:12:04',
                   'end_date': '2018-05-26 14:12:04'}
-        resource = self.env['resource.model'].create(values)
+        self.env['resource.model'].create(values)
+
         weekly_resources = self.env['weekly_resource.model'].search([])
+
         for week in weekly_resources:
             self.assertEqual(week.name_get()[0][1],
                              'Weekly Resource Week' + ' ' + str(week.week_num) + ', ' + str(week.year),
-                             "Weekly Resource string should be Weekly Resource Week 21 2018 and Weekly Resource Week 22 2018 ")
+                             "Weekly Resource string should be Weekly Resource Week 21 2018 and Weekly Resource Week "
+                             "22 2018 ")
 
     def test_name_get_3_over_year(self):
         """
@@ -191,12 +190,12 @@ class TestWeeklyResource(common.TransactionCase):
                   'base_workload': 100,
                   'start_date': '2020-12-28 14:12:04',
                   'end_date': '2021-01-04 14:12:04'}
-        resource = self.env['resource.model'].create(values)
+        self.env['resource.model'].create(values)
+
         weekly_resources = self.env['weekly_resource.model'].search([])
+
         for week in weekly_resources:
             self.assertEqual(week.name_get()[0][1],
                              'Weekly Resource Week' + ' ' + str(week.week_num) + ', ' + str(week.year),
-                             "Weekly Resource string should be Weekly Resource Week 53 2020 and Weekly Resource Week 1 2021 ")
-
-
-
+                             "Weekly Resource string should be Weekly Resource Week 53 2020 and Weekly Resource Week "
+                             "1 2021 ")
