@@ -5,6 +5,11 @@ class WeeklyResource(models.Model):
     """
     Represents the mapping between a resource.model and a week.model. Inherits (delegates to) both models.
     Additionally, stores data that is valid for only one week of a resource planned for several weeks.
+
+    # manually_changed is a boolean value that is set to true when the workload of specifically this weekly_resource
+      object is manually changed. If it is true this objects workload will not be updated if the base_workload 
+      of the resource object is changed.
+
     """
     _name = "weekly_resource.model"
     _description = "Weekly Resource"
