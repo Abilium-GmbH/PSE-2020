@@ -22,6 +22,9 @@ class Weeks(models.Model):
     week_string = fields.Char(string="Week String", compute='build_week_string', store=True)
     week_bool = fields.Boolean(compute="is_week_in_period", string="is week in the weeks defined by settings",
                                store=True)
+    _sql_constraints = [
+        ('week_unique', 'UNIQUE(week_num, year)', 'Double week!'),
+    ]
 
     @api.model
     def create(self, values):
