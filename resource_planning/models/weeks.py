@@ -15,7 +15,7 @@ class Weeks(models.Model):
     """
     _name = "week.model"
     _description = "Week"
-    _order = "week_num asc"
+    _order = "week_string asc"
 
     week_num = fields.Integer(string='Week', required=True)
     year = fields.Integer(string="Year", required=True)

@@ -1,7 +1,7 @@
 Version 0.8
 # Odoo Resource-Planning Module 
 
-Resource-Planning is a module for the enterprise-resource-planning (ERP) software [odoo](www.odoo.com) (https://github.com/odoo/odoo).
+Resource-Planning is a module for the enterprise-resource-planning (ERP) software [odoo](https://www.odoo.com) - (https://github.com/odoo/odoo).
 
 It consists of 2 modules. The first one is the main module `resource_planning` the second `resource_planning_report` is a extension to the first that add some extended report functionality `
 
@@ -9,7 +9,7 @@ This module allows you to manage the workload of your employees on a weekly basi
 and the [Project](https://www.odoo.com/page/project-management) module. You only have to enter how the workload (percentage) you want a employee 
 to invest in to a project during a time period.
 
-It was developed by 5 Computer Science students at the university of Bern in cooperation with [abilium](https://www.abilium.com/)
+It was developed by 5 Computer Science students at the university of Bern in cooperation with [Abilium](https://www.abilium.com/).
 
 ## Getting started
 
