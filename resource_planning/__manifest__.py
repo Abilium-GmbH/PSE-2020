@@ -36,8 +36,6 @@
         'views/weekly_resource.xml',
         'views/weekly_resource_project.xml',
         'views/res_config_settings_views.xml',
-        'views/assets.xml',
-        'views/weeks.xml',
         'data/default_settings.xml'
     ],
     # only loaded in demonstration mode

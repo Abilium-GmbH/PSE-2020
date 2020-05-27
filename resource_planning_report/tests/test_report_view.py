@@ -106,13 +106,6 @@ class TestReportView(common.TransactionCase):
                     'end_date': '1990-05-13 13:42:07'}
         self.env['resource.model'].create(r_values)
 
-        w_values = {'year': 1990,
-                    'week_num': 20}
-        self.env['week.model'].create(w_values)
-        w_values = {'year': 1990,
-                    'week_num': 21}
-        self.env['week.model'].create(w_values)
-
         data = {'model': 'resource.planning.report.wizard',
                 'ids': 1,
                 'form': {
