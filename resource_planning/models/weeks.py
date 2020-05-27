@@ -1,5 +1,4 @@
 import datetime
-from datetime import timedelta, date
 
 from odoo import models, fields, api, exceptions
 
