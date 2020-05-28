@@ -1,4 +1,3 @@
-Version 0.8
 # Odoo Resource-Planning Module 
 
 Resource-Planning is a module for the enterprise-resource-planning (ERP) software [odoo](https://www.odoo.com).
